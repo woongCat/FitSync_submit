@@ -2,17 +2,18 @@ import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-na
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import HomeScreen from '../screens/HomeScreen';
-import MenuScreen from '../screens/MenuScreen';
 import { useNavigation } from '@react-navigation/native';
 import { useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import TabNavgation from './TabNavigation';
+
 
 
 export type RootStackParamList = {
-    Login : undefined,
-    SignUp : undefined,
-    Home : undefined,
-    Menu : undefined
+    Login : undefined;
+    SignUp : undefined;
+    Home : undefined;
+    TabNav : undefined;
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -25,10 +26,10 @@ const {isAuthenticated, isLoading} = useContext(AuthContext);
 
 useEffect(() => {
     if(!isLoading) {
-        if (isAuthenticated) {
+        if (!isAuthenticated) { //TODO: 나중에 ! 삭제
             navigation.reset({
                 index : 0,
-                routes : [{name: 'Home'}]
+                routes : [{name: 'TabNav'}]
             })
         } else {
             navigation.reset({
@@ -56,8 +57,8 @@ useEffect(() => {
                 options={{headerShown : false}}
             />
             <Stack.Screen 
-                name = "Menu" 
-                component={MenuScreen}
+                name = "TabNav" 
+                component={TabNavgation}
                 options={{headerShown : false}}
             />
         </Stack.Navigator>
