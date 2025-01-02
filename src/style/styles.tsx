@@ -73,6 +73,41 @@ const styles = StyleSheet.create ({
         fontSize: 16,
         marginRight: 5,
     },
+    addBtn : {
+        position: 'absolute',
+        right: 16,
+        bottom: 16,
+        backgroundColor: '#007aff',
+        width: 110,
+        height: 50,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 4,
+    },
+    addBtnText : {
+        fontSize: 16,
+        color: '#ffffff',
+        fontWeight: 'bold',
+    },
+    contentContainer : {
+        flex: 1,
+        backgroundColor: '#f5f5f5',
+    },
+    modalContainer : {
+        flex : 1,
+        justifyContent : 'center',
+        alignItems : 'center',
+        backgroundColor : '',
+    },
+    modalContent : {
+        backgroundColor : '#ffffff',
+        borderRadius : 8,
+        padding: 20,
+        width : '90%',
+        maxWidth: 400,
+        elevation: 5,
+    }
 });
 
 export default styles;
