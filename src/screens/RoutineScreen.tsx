@@ -1,13 +1,18 @@
-import {
-    Text,
-    View,
-} from 'react-native';
+import { useState } from 'react';
+import {Calendar, LocaleConfig} from 'react-native-calendars';
 
 const RoutineScreen : React.FC = () => {
+    const [selected, setSelected] = useState('');
+    
     return (
-        <View>
-            <Text>Routine Screen</Text>
-        </View>
+        <Calendar
+            onDayPress={day => {
+                setSelected(day.dateString);
+            }}
+            markedDates={{
+                [selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
+            }}
+        />
     );
 };
 
