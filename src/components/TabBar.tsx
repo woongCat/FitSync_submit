@@ -83,11 +83,13 @@ function TabBar({ state, descriptors, navigation } : Readonly<BottomTabBarProps>
     );
 }
 
+export default TabBar;
+
 const styles = StyleSheet.create({
     tabbar: {
         flexDirection: 'row',
-        paddingTop : 16,
-        paddingBottom : 40,
+        paddingTop : 15,
+        paddingBottom : 15,
         backgroundColor : '#FFF',
     },
 })
