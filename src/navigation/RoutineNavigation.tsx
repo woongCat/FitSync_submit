@@ -3,7 +3,6 @@ import { useNavigation } from '@react-navigation/native';
 import { useContext, useEffect } from 'react';
 import RoutineScreen from '../screens/RoutineScreen';
 import ChooseOptionScreen from '../screens/ChooseOptionScreen';
-import FileSearchScreen from '../screens/FileSearchScreen';
 import CameraShotScreen from '../screens/CameraShotScreen';
 import RenderScreen from '../screens/RenderScreen';
 
@@ -12,7 +11,6 @@ export type RoutineStackParamList = {
     Routine : undefined;
     ChooseOption : undefined;
     CameraShot : undefined;
-    FileSearch : undefined;
     Render : undefined;
 }
 
@@ -37,11 +35,6 @@ const RoutineNavigation : React.FC = () => {
             <RoutineStack.Screen
                 name = "CameraShot"
                 component={CameraShotScreen}
-                options={{headerShown : false}}
-            />
-            <RoutineStack.Screen
-                name = "FileSearch"
-                component={FileSearchScreen}
                 options={{headerShown : false}}
             />
             <RoutineStack.Screen
