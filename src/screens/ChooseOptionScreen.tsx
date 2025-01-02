@@ -1,12 +1,9 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
-    Alert,
     Text,
     View,
     TouchableOpacity,
-    TextInput
 } from 'react-native';
-import { SetStateAction, useContext, useState } from 'react';
 import styles from '../style/styles';
 import { RoutineStackParamList } from '../navigation/RoutineNavigation';
 

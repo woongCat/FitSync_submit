@@ -5,6 +5,7 @@ import RoutineScreen from '../screens/RoutineScreen';
 import ChooseOptionScreen from '../screens/ChooseOptionScreen';
 import FileSearchScreen from '../screens/FileSearchScreen';
 import CameraShotScreen from '../screens/CameraShotScreen';
+import RenderScreen from '../screens/RenderScreen';
 
 
 export type RoutineStackParamList = {
@@ -12,6 +13,7 @@ export type RoutineStackParamList = {
     ChooseOption : undefined;
     CameraShot : undefined;
     FileSearch : undefined;
+    Render : undefined;
 }
 
 const RoutineStack = createNativeStackNavigator<RoutineStackParamList>()
@@ -40,6 +42,12 @@ const RoutineNavigation : React.FC = () => {
             <RoutineStack.Screen
                 name = "FileSearch"
                 component={FileSearchScreen}
+                options={{headerShown : false}}
+            />
+            <RoutineStack.Screen
+                name = "Render"
+                component={RenderScreen}
+                options={{headerShown : false}}
             />
         </RoutineStack.Navigator>
     );

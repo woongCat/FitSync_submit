@@ -1,22 +1,19 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
-    Alert,
     Text,
     View,
     TouchableOpacity,
-    TextInput
 } from 'react-native';
-import { SetStateAction, useContext, useState } from 'react';
 import styles from '../style/styles';
 import { RoutineStackParamList } from '../navigation/RoutineNavigation';
 
-type ChooseOptionScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'Routine'>
+type FileSearchScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'Routine'>
 
-interface ChooseOptionScreenProps {
-    navigation : ChooseOptionScreenNavigationProp
+interface FileSearchScreenProps {
+    navigation : FileSearchScreenNavigationProp
 }
 
-const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) => {
+const FileSearchScreen : React.FC<FileSearchScreenProps> = ({navigation}) => {
 
     return (
         <View style={styles.container}>
@@ -27,4 +24,4 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
     );
 };
 
-export default ChooseOptionScreen;
+export default FileSearchScreen;

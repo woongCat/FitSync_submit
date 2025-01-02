@@ -26,7 +26,7 @@ const {isAuthenticated, isLoading} = useContext(AuthContext);
 
 useEffect(() => {
     if(!isLoading) {
-        if (isAuthenticated) { //TODO: 나중에 ! 삭제
+        if (isAuthenticated) {
             navigation.reset({
                 index : 0,
                 routes : [{name: 'TabNav'}]
