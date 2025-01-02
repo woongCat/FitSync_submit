@@ -1,12 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { createContext, useState, ReactNode, useEffect } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Alert } from "react-native";
+import Config from "react-native-config";
 
-const API_URL = 'https://onederthesea.pythonanywhere.com/api/data/';
+const DB_API_URL = "https://onederthesea.pythonanywhere.com/"; //Config.API_URL;
 
 interface AuthContextData {
-    //
     token : string | null;
     isLoading : boolean;
     userId : string| null;
@@ -52,18 +52,15 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
     })
 
     const signUp = async(name : string, email:string, password:string, userType : string) : Promise<boolean> => {
-        //console.log(email, password)
+        console.log(email, password, name, userType)
         try {
             let result;
 
-            if (userType === 'trainer') {
-                result = await axios.post('${API_URL/trainer}', {name, email, password}); //TODO: URL 확인
-            } else {
-                result = await axios.post('${API_URL/customer}', {name, email, password}); 
-            }    
+            result = await axios.post(`${DB_API_URL}/signup`, {email, password, name, userType});
+
             console.log(result, 'result')
 
-            if (result.data.status === 'success') {
+            if (result.status === 201) {
                 return true;
             } else {
                 return false;
@@ -72,6 +69,9 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
             console.error('Error: ', error);
             if (axios.isAxiosError(error)) {
                 console.error('Error details: ', error.response?.data);
+            } else {
+                const message = error.result?.data?.message || 'An unexpected error occurred.'
+                console.error('Error: ', message)
             }
         };
         return false;
@@ -79,24 +79,29 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
 
     const signIn = async(email:string, password:string, userType : string) : Promise<boolean> => {
         try {
-            const result = await axios.post('${API_URL/}', {email, password, userType}); //TODO: URL 확인
+            const result = await axios.post(`${DB_API_URL}/login`, {email, password, userType}); //TODO: URL 확인
+            
             console.log(result, 'result')
 
-            const {token, userId, success} = result.data;
-            if (success) {
-                await AsyncStorage.setItem('token', token);
-                setToken(token);
-                await AsyncStorage.setItem('userId', userId);
-                setUserId(userId);
+            if (result.status === 200) {
+                Alert.alert('Success', `Welcome ${result.data.name}!`);
+                //await AsyncStorage.setItem('token', token);
+                //setToken(token);
+                //await AsyncStorage.setItem('userId', result.data.userId);
+                //setUserId(userId);
                 setisAuthenticated(true);
                 return true;
             } else {
                 return false;
             }
+
         } catch (error) {
             console.error('Error: ', error);
             if (axios.isAxiosError(error)) {
                 console.error('Error details: ', error.response?.data);
+            } else {
+                const message = error.result?.data?.message || 'An unexpected error occurred.'
+                console.error('Error: ', message);
             }
         };
         return false;

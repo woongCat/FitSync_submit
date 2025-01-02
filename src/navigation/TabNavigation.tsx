@@ -4,6 +4,8 @@ import RoutineScreen from "../screens/RoutineScreen";
 import ScheduleScreen from "../screens/ScheduleScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import MyTabBar from "../components/TabBar";
+import RootNavigation from "./RootNavigation";
+import RoutineNavigation from "./RoutineNavigation";
 
 export type BottomTabParamsList = {
     Home: undefined;
@@ -21,7 +23,7 @@ const TabNavgation : React.FC = () => {
         >
             <BottomTab.Screen name="Home" component={HomeScreen} options={{headerShown : false}}/>
             <BottomTab.Screen name="Schedule" component={ScheduleScreen} options={{headerShown : false}}/>
-            <BottomTab.Screen name="Routine" component={RoutineScreen} options={{headerShown : false}}/>
+            <BottomTab.Screen name="Routine" component={RoutineNavigation} options={{headerShown : false}}/>
             <BottomTab.Screen name="Profile" component={ProfileScreen} options={{headerShown : false}}/>
         </BottomTab.Navigator>
     );

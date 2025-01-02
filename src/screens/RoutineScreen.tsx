@@ -3,10 +3,17 @@ import { Modal, Text, View } from 'react-native';
 import { KeyboardAvoidingView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import styles from '../style/styles';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RoutineStackParamList } from '../navigation/RoutineNavigation';
 
-const RoutineScreen : React.FC = () => {
+type RoutineScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'Routine'>
+
+interface RoutineScreenProps {
+    navigation : RoutineScreenNavigationProp
+}
+
+const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
     const [selected, setSelected] = useState('');
-    const [isModalVisible, setIsModalVisible] = useState(false);
     const [newRoutine, setNewRoutine] = useState('');
     
     return (
@@ -19,7 +26,10 @@ const RoutineScreen : React.FC = () => {
                     [selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
                 }}
             />
-            <TouchableOpacity style={styles.addBtn}>
+            <TouchableOpacity 
+                style={styles.addBtn}
+                onPress={() => navigation.navigate('ChooseOption')}
+            >
                 <Text style={styles.addBtnText}>Add New</Text>
             </TouchableOpacity>
         </View>

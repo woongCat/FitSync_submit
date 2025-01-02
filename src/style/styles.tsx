@@ -94,20 +94,18 @@ const styles = StyleSheet.create ({
         flex: 1,
         backgroundColor: '#f5f5f5',
     },
-    modalContainer : {
-        flex : 1,
+    RoutineOptBtn : {
+        width : '80%',
+        height : 50,
+        backgroundColor : '#056edd',
         justifyContent : 'center',
         alignItems : 'center',
-        backgroundColor : '',
-    },
-    modalContent : {
-        backgroundColor : '#ffffff',
-        borderRadius : 8,
-        padding: 20,
-        width : '90%',
-        maxWidth: 400,
-        elevation: 5,
+        borderRadius : 5,
+        paddingHorizontal : 10,
+        marginTop : 10,
+        marginBottom : 10,
     }
+    
 });
 
 export default styles;

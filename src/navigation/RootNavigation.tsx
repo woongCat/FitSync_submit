@@ -16,7 +16,7 @@ export type RootStackParamList = {
     TabNav : undefined;
 }
 
-const Stack = createNativeStackNavigator<RootStackParamList>()
+const RootStack = createNativeStackNavigator<RootStackParamList>()
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 const RootNavigation : React.FC = () => {
@@ -26,7 +26,7 @@ const {isAuthenticated, isLoading} = useContext(AuthContext);
 
 useEffect(() => {
     if(!isLoading) {
-        if (!isAuthenticated) { //TODO: 나중에 ! 삭제
+        if (isAuthenticated) { //TODO: 나중에 ! 삭제
             navigation.reset({
                 index : 0,
                 routes : [{name: 'TabNav'}]
@@ -38,30 +38,30 @@ useEffect(() => {
             })
         }
     }
-}, [isAuthenticated, isLoading, navigation])
+}, [isAuthenticated, isLoading, navigation]);
 
     return (
-        <Stack.Navigator initialRouteName="Login">
-            <Stack.Screen 
+        <RootStack.Navigator initialRouteName="Login">
+            <RootStack.Screen 
                 name = "Login" 
                 component={LoginScreen}
                 options={{headerShown : false}}
             />
-            <Stack.Screen 
+            <RootStack.Screen 
                 name = "SignUp" 
                 component={SignUpScreen}
             />
-            <Stack.Screen 
+            <RootStack.Screen 
                 name = "Home" 
                 component={HomeScreen}
                 options={{headerShown : false}}
             />
-            <Stack.Screen 
+            <RootStack.Screen 
                 name = "TabNav" 
                 component={TabNavgation}
                 options={{headerShown : false}}
             />
-        </Stack.Navigator>
+        </RootStack.Navigator>
     );
 };
 
