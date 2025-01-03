@@ -13,17 +13,18 @@ interface RoutineScreenProps {
 }
 
 const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
-    const [selected, setSelected] = useState('');
-    const [newRoutine, setNewRoutine] = useState('');
+    const [selectedDate, setSelectedDate] = useState('');
+    const [exerciseData, setExerciseData] = useState([]);
+    const [loading, setLoading] = useState(false);
     
     return (
         <View style={styles.contentContainer}>
             <Calendar
                 onDayPress={day => {
-                    setSelected(day.dateString);
+                    setSelectedDate(day.dateString);
                 }}
                 markedDates={{
-                    [selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
+                    [selectedDate]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
                 }}
             />
             <TouchableOpacity 

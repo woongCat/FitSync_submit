@@ -10,7 +10,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigation';
 import styles from '../style/styles';
 
-type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>
+type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'TabNav'>
 
 interface ProfileScreenProps {
     navigation : ProfileScreenNavigationProp

@@ -11,6 +11,8 @@ import { useEffect, useState } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import { requestMultiple, PERMISSIONS, openSettings } from 'react-native-permissions';
+import { upload } from '../context/UploadContext';
+import Config  from "react-native-config"; // .env에서 변수를 가져옴
 
 type ChooseOptionScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'Routine'>
 
@@ -22,45 +24,7 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
     const [fileUri, setFileUri] = useState<string | null>(null);
     const [hasPermission, setHasPermission] = useState(false);
 
-    //useEffect(() => {
-        const requestStoragePermission = async () => {
-            if (Platform.OS === 'android' && Platform.Version >= 29) {
-                try {
-                    await requestMultiple([PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE, PERMISSIONS.ANDROID.READ_MEDIA_IMAGES]).then((statuses) => {
-                        console.log(statuses[PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE]);
-                        console.log(statuses[PERMISSIONS.ANDROID.READ_MEDIA_IMAGES]);
-
-                        if (statuses[PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE] === 'granted' && statuses[PERMISSIONS.ANDROID.READ_MEDIA_IMAGES] === 'granted') {
-                            console.log('The permission is granted.');
-                            setHasPermission(true);
-                        } else {
-                            // 사용자가 권한을 다시 활성화하도록 유도
-                            Alert.alert(
-                                'Permission Required',
-                                'You need to go to the app settings and change the permissions to enable file access.',
-                                [
-                                {
-                                    text: 'CANCEL',
-                                    style: 'cancel',
-                                },
-                                {
-                                    text: 'GO TO SETTINGS',
-                                    onPress: () => openSettings(), // 앱 설정으로 이동
-                                },
-                                ]
-                            );
-                            setHasPermission(false);
-                        }
-                    });
-                } catch (err) {
-                    console.warn(err);
-                }
-            }
-        };
-    //    requestStoragePermission();
-    //}, []);
-
-
+    //DocumentPicker를 사용하는 경우 가져오는 파일에 대한 권한을 자동으로 요청 및 세팅하므로 requestStoragePermission가 필요없음.
     // 파일을 선택하는 함수
     const pickFile = async () => {
         try {
@@ -73,8 +37,25 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
             const file = res[0]; // 첫 번째 파일 선택
             setFileUri(file.uri); // 선택한 파일의 URI를 상태에 저장
             //Alert.alert('파일 선택', `선택한 파일 경로: ${file.uri}`);
-            console.log('Selected file: ', file)
-            navigation.navigate('Render');
+            console.log('Selected file: ', file) // TODO: 나중에 지우기
+            
+            //서버로 사진 전송
+            const response = await upload(
+                {
+                    uri: file.uri,
+                    type: file.type, // 사진의 MIME 타입
+                    name: 'photo.jpg', // TODO: 파일 이름 형식 나중에 수정
+                },
+                `${Config.API_URL}/upload` // TODO: url 나중에 수정
+            );
+    
+            if (response) {
+                //Alert.alert('Upload Success', '사진이 서버에 업로드되었습니다.');
+                navigation.navigate('UpdateDetail');
+            } else {
+                Alert.alert('Error', 'Fail to process file.');
+                navigation.navigate('ChooseOption');
+            }
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
                 // 사용자가 파일 선택을 취소했을 경우
@@ -96,6 +77,10 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
 
             <TouchableOpacity onPress={pickFile} style={styles.RoutineOptBtn}>
                 <Text style={styles.bottonText}>Find file</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigation.navigate('CreateDetail')} style={styles.RoutineOptBtn}>
+                <Text style={styles.bottonText}>Create New</Text>
             </TouchableOpacity>
         </View>
     );

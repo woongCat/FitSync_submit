@@ -2,9 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { createContext, useState, ReactNode, useEffect } from "react";
 import { ActivityIndicator, Alert } from "react-native";
-import Config from "react-native-config";
-
-const DB_API_URL = "https://onederthesea.pythonanywhere.com/"; //Config.API_URL;
+import Config  from "react-native-config"; // .env에서 변수를 가져옴
 
 interface AuthContextData {
     token : string | null;
@@ -52,13 +50,10 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
     })
 
     const signUp = async(name : string, email:string, password:string, userType : string) : Promise<boolean> => {
-        console.log(email, password, name, userType)
         try {
             let result;
 
-            result = await axios.post(`${DB_API_URL}/signup`, {email, password, name, userType});
-
-            console.log(result, 'result')
+            result = await axios.post(`${Config.API_URL}/signup`, {email, password, name, userType});
 
             if (result.status === 201) {
                 return true;
@@ -79,9 +74,7 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
 
     const signIn = async(email:string, password:string, userType : string) : Promise<boolean> => {
         try {
-            const result = await axios.post(`${DB_API_URL}/login`, {email, password, userType}); //TODO: URL 확인
-            
-            console.log(result, 'result')
+            const result = await axios.post(`${Config.API_URL}/login`, {email, password, userType});
 
             if (result.status === 200) {
                 Alert.alert('Success', `Welcome ${result.data.name}!`);

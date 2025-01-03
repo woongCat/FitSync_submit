@@ -1,18 +1,17 @@
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
-import LoginScreen from '../screens/LoginScreen';
-import SignUpScreen from '../screens/SignUpScreen';
-import HomeScreen from '../screens/HomeScreen';
 import { useNavigation } from '@react-navigation/native';
 import { useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import TabNavgation from './TabNavigation';
-
+import IndexScreen from '../screens/IndexScreen';
+import LoginScreen from '../screens/LoginScreen';
+import SignUpScreen from '../screens/SignUpScreen';
 
 
 export type RootStackParamList = {
     Login : undefined;
     SignUp : undefined;
-    Home : undefined;
+    Index : undefined;
     TabNav : undefined;
 }
 
@@ -52,8 +51,8 @@ useEffect(() => {
                 component={SignUpScreen}
             />
             <RootStack.Screen 
-                name = "Home" 
-                component={HomeScreen}
+                name = "Index" 
+                component={IndexScreen}
                 options={{headerShown : false}}
             />
             <RootStack.Screen 

@@ -4,14 +4,16 @@ import { useContext, useEffect } from 'react';
 import RoutineScreen from '../screens/RoutineScreen';
 import ChooseOptionScreen from '../screens/ChooseOptionScreen';
 import CameraShotScreen from '../screens/CameraShotScreen';
-import RenderScreen from '../screens/RenderScreen';
+import UpdateDetailScreen from '../screens/UpdateDetailScreen';
+import CreateDetailScreen from '../screens/CreateDetailScreen';
 
 
 export type RoutineStackParamList = {
     Routine : undefined;
     ChooseOption : undefined;
     CameraShot : undefined;
-    Render : undefined;
+    CreateDetail : undefined;
+    UpdateDetail : undefined;
 }
 
 const RoutineStack = createNativeStackNavigator<RoutineStackParamList>()
@@ -38,8 +40,13 @@ const RoutineNavigation : React.FC = () => {
                 options={{headerShown : false}}
             />
             <RoutineStack.Screen
-                name = "Render"
-                component={RenderScreen}
+                name = "CreateDetail"
+                component={CreateDetailScreen}
+                options={{headerShown : false}}
+            />
+            <RoutineStack.Screen
+                name = "UpdateDetail"
+                component={UpdateDetailScreen}
                 options={{headerShown : false}}
             />
         </RoutineStack.Navigator>
