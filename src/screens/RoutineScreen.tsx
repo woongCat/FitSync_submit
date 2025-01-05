@@ -14,7 +14,7 @@ interface RoutineScreenProps {
 
 const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
     const [selectedDate, setSelectedDate] = useState('');
-    const [exerciseData, setExerciseData] = useState([]);
+    const [ExerciseRecords, setExerciseRecords] = useState([]);
     const [loading, setLoading] = useState(false);
     
     return (
@@ -27,6 +27,9 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
                     [selectedDate]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
                 }}
             />
+
+            {/*  render all the record */}
+
             <TouchableOpacity 
                 style={styles.addBtn}
                 onPress={() => navigation.navigate('ChooseOption')}

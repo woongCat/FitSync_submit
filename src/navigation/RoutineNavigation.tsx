@@ -4,16 +4,16 @@ import { useContext, useEffect } from 'react';
 import RoutineScreen from '../screens/RoutineScreen';
 import ChooseOptionScreen from '../screens/ChooseOptionScreen';
 import CameraShotScreen from '../screens/CameraShotScreen';
-import UpdateDetailScreen from '../screens/UpdateDetailScreen';
-import CreateDetailScreen from '../screens/CreateDetailScreen';
+import UpdateRoutineScreen from '../screens/UpdateRoutineScreen';
+import CreateRoutineScreen from '../screens/CreateRoutineScreen';
 
 
 export type RoutineStackParamList = {
-    Routine : undefined;
+    RoutineDetail : undefined;
     ChooseOption : undefined;
     CameraShot : undefined;
-    CreateDetail : undefined;
-    UpdateDetail : undefined;
+    CreateRoutine : undefined;
+    UpdateRoutine : undefined;
 }
 
 const RoutineStack = createNativeStackNavigator<RoutineStackParamList>()
@@ -24,15 +24,16 @@ const RoutineNavigation : React.FC = () => {
     const navigation = useNavigation<NavigationProp>();
 
     return (
-        <RoutineStack.Navigator initialRouteName="Routine">
+        <RoutineStack.Navigator initialRouteName="RoutineDetail">
             <RoutineStack.Screen
-                name = "Routine"
+                name = "RoutineDetail"
                 component={RoutineScreen}
                 options={{headerShown : false}}
             />
             <RoutineStack.Screen
                 name = "ChooseOption"
                 component={ChooseOptionScreen}
+                options={{ headerShown : false, title: 'Choose Option' }}
             />
             <RoutineStack.Screen
                 name = "CameraShot"
@@ -40,13 +41,13 @@ const RoutineNavigation : React.FC = () => {
                 options={{headerShown : false}}
             />
             <RoutineStack.Screen
-                name = "CreateDetail"
-                component={CreateDetailScreen}
-                options={{headerShown : false}}
+                name = "CreateRoutine"
+                component={CreateRoutineScreen}
+                options={{ title: 'Create New Record' }}
             />
             <RoutineStack.Screen
-                name = "UpdateDetail"
-                component={UpdateDetailScreen}
+                name = "UpdateRoutine"
+                component={UpdateRoutineScreen}
                 options={{headerShown : false}}
             />
         </RoutineStack.Navigator>

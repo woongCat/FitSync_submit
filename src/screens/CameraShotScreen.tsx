@@ -71,7 +71,7 @@ const CameraShotScreen : React.FC<CameraShotScreenProps> = ({navigation}) => {
         
                 if (response) {
                     //Alert.alert('Upload Success', '사진이 서버에 업로드되었습니다.');
-                    navigation.navigate('UpdateDetail');
+                    navigation.navigate('UpdateRoutine');
                 } else {
                     Alert.alert('Error', 'Fail to process photo.');
                     navigation.navigate('ChooseOption');
@@ -79,7 +79,7 @@ const CameraShotScreen : React.FC<CameraShotScreenProps> = ({navigation}) => {
             } catch (error) {
                 Alert.alert('Error', 'Problem occurred during taking a photo.');
                 console.error(error);
-                navigation.navigate('Routine');
+                navigation.navigate('RoutineDetail');
             }
         } else {
             Alert.alert('Error', 'Camera Reference has not been reset.');

@@ -5,6 +5,7 @@ import {
 const styles = StyleSheet.create ({
     container : {
         flex : 1,
+        color : '#f5f5f5',
         justifyContent : 'center',
         alignItems : 'center',
         padding : 20
@@ -13,6 +14,13 @@ const styles = StyleSheet.create ({
         fontSize : 24,
         fontWeight : 'bold',
         marginBottom : 20
+    },
+    topHeader : {
+        flexDirection : 'row',
+        padding : 16,
+        alignItems : 'center',
+        justifyContent: 'space-between',
+        backgroundColor : '#f5f5f5'
     },
     input : {
         width : '100%',
@@ -30,6 +38,16 @@ const styles = StyleSheet.create ({
         justifyContent : 'center',
         alignItems : 'center',
         borderRadius : 5,
+    },
+    LogOutBtn : {
+        padding : 10,
+        backgroundColor : '#999999',
+        borderRadius : 24,
+    },
+    LogOutText : {
+        color : '#ffffff',
+        fontSize : 14,
+        fontWeight : 'bold'
     },
     bottonText : {
         color : '#ffffff',
@@ -104,8 +122,86 @@ const styles = StyleSheet.create ({
         paddingHorizontal : 10,
         marginTop : 10,
         marginBottom : 10,
-    }
-    
+    },
+    userInfoText : {
+        fontSize : 18,
+        fontWeight : 'bold'
+    },
+    searchInput : {
+        flex : 1,
+        height : 45,
+        backgroundColor : '#ffffff',
+        borderRadius : 20,
+        paddingHorizontal : 16,
+        marginLeft : 15,
+    },
+    exerciseCard : {
+        backgroundColor : '#ffffff',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        padding : 16,
+    },
+    exerciseCardContent : {
+        flex : 1,
+    },
+    routineCard : {
+        backgroundColor : '#ffffff',
+        borderRadius : 8,
+        padding : 16,
+        marginHorizontal : 16,
+        marginVertical : 8,
+        shadowColor : '#000',
+        shadowOffset : {
+            width : 0,
+            height : 2
+        },
+        shadowOpacity : 0.1,
+        shadowRadius : 4,
+        elevation : 5,
+    },
+    exerciseImage : {
+        width : 50,
+        height : 50,
+    },
+    exerciseName : {
+        fontSize: 14,
+        color: '#000',
+        fontWeight: 'bold',
+        marginTop: 5,
+        marginBottom : 5,
+    },
+    exercisePart : {
+        fontSize: 12,
+        color: '#666',
+        fontWeight: 'bold',
+    },
+    bodyPartFilterContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start', 
+        alignItems: 'stretch',
+    },
+    bodyPartFilterText : {
+        fontSize: 12,
+        color: '#000',
+        fontWeight: 'bold',
+        marginLeft: 5,
+        paddingVertical: 5,
+    },
+    bodyPartButton: {
+        paddingVertical: 5,
+        paddingHorizontal: 16,
+        borderRadius: 20,
+    },
+    selectedBodyPartButton: {
+        backgroundColor: '#007bff',
+    },
+    bodyPartText: {
+        fontSize: 12,
+        color: '#666',
+    },
+    selectedBodyPartText: {
+        color: '#007bff',
+    },
 });
 
 export default styles;

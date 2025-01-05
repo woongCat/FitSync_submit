@@ -7,18 +7,18 @@ import {
 import styles from '../style/styles';
 import { RoutineStackParamList } from '../navigation/RoutineNavigation';
 
-type CreateDetailScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'Routine'>
+type UpdateRoutineScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'Routine'>
 
-interface CreateDetailScreenProps {
-    navigation : CreateDetailScreenNavigationProp
+interface UpdateRoutineScreenProps {
+    navigation : UpdateRoutineScreenNavigationProp
 }
 
-const CreateDetailScreen : React.FC<CreateDetailScreenProps> = ({navigation}) => {
+const UpdateRoutineScreen : React.FC<UpdateRoutineScreenProps> = ({navigation}) => {
 
     
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Create new record</Text>
+            <Text style={styles.header}>Edit record</Text>
 
             <TouchableOpacity onPress={() => navigation.navigate('Routine')} style={styles.button}>
                 <Text style={styles.bottonText}>Confirm</Text>
@@ -27,4 +27,4 @@ const CreateDetailScreen : React.FC<CreateDetailScreenProps> = ({navigation}) =>
     );
 };
 
-export default CreateDetailScreen;
+export default UpdateRoutineScreen;

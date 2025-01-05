@@ -4,13 +4,12 @@ import {
     View,
     TouchableOpacity,
     Alert,
+    Modal,
 } from 'react-native';
 import styles from '../style/styles';
 import { RoutineStackParamList } from '../navigation/RoutineNavigation';
-import { useEffect, useState } from 'react';
-import { PermissionsAndroid, Platform } from 'react-native';
+import { useState } from 'react';
 import DocumentPicker from 'react-native-document-picker';
-import { requestMultiple, PERMISSIONS, openSettings } from 'react-native-permissions';
 import { upload } from '../context/UploadContext';
 import Config  from "react-native-config"; // .env에서 변수를 가져옴
 
@@ -22,7 +21,6 @@ interface ChooseOptionScreenProps {
 
 const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) => {
     const [fileUri, setFileUri] = useState<string | null>(null);
-    const [hasPermission, setHasPermission] = useState(false);
 
     //DocumentPicker를 사용하는 경우 가져오는 파일에 대한 권한을 자동으로 요청 및 세팅하므로 requestStoragePermission가 필요없음.
     // 파일을 선택하는 함수
@@ -51,7 +49,7 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
     
             if (response) {
                 //Alert.alert('Upload Success', '사진이 서버에 업로드되었습니다.');
-                navigation.navigate('UpdateDetail');
+                navigation.navigate('UpdateRoutine');
             } else {
                 Alert.alert('Error', 'Fail to process file.');
                 navigation.navigate('ChooseOption');
@@ -59,18 +57,17 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
                 // 사용자가 파일 선택을 취소했을 경우
-                console.log('파일 선택이 취소되었습니다.');
+                console.log('You canceled the file selection.');
             } else {
                 console.error(err);
-                Alert.alert('파일 선택 오류', '파일을 선택하는 데 오류가 발생했습니다.');
+                Alert.alert('Error', 'The error occured during file selection.');
             }
-            navigation.navigate('Routine');
+            navigation.navigate('RoutineDetail');
         }
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Choose Option</Text>
             <TouchableOpacity onPress={() => navigation.navigate('CameraShot')} style={styles.RoutineOptBtn}>
                 <Text style={styles.bottonText}>Use Camera</Text>
             </TouchableOpacity>
@@ -79,9 +76,11 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
                 <Text style={styles.bottonText}>Find file</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate('CreateDetail')} style={styles.RoutineOptBtn}>
+            <TouchableOpacity onPress={() => navigation.navigate('CreateRoutine')} style={styles.RoutineOptBtn}>
                 <Text style={styles.bottonText}>Create New</Text>
             </TouchableOpacity>
+
+
         </View>
     );
 };

@@ -2,56 +2,61 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 import axios from 'axios';
 import Config from 'react-native-config';
 
-
-interface ExerciseContextData {
+export interface Exercise {
+    exercise_id : number;
     name : string;
     name_en : string;
     target : string;
     target_en : string;
-    bodyPart : string;
-    bodyPart_en : string;
+    bodypart : string;
+    bodypart_en : string;
     equipment : string | null;
     equipment_en : string | null;
-    secondaryMuscles : string | null;
-    secondaryMuscles_en : string | null;
+    secondarymuscles : string | null;
+    secondarymuscles_en : string | null;
     instructions : string | null;
     gifUrl : string | null;
-    fetchExerciseData : (exerciseId : number) => Promise<Boolean>;
+}
+
+
+export interface ExerciseContextData {
+    exercises : Exercise[];
+    fetchExerciseData : () => Promise<boolean>;
 };
 
 export const ExerciseContext = createContext<ExerciseContextData>(
     {} as ExerciseContextData
 );
 
-export const ExerciseProvider : React.FC<{children : ReactNode}> = ({children}) => {
-    const [exerciseData, setExerciseData] = useState<ExerciseContextData[]>([]);
-    const [name, setName] = useState('');
-    const [name_en, setNameEN] = useState('');
-    const [target, setTarget] = useState('');
-    const [target_en, setTargetEN] = useState('');
-    const [bodyPart, setBodyPart] = useState('');
-    const [bodyPart_en, setBodyPartEN] = useState('');
-    const [equipment, setEquipment] = useState('');
-    const [equipment_en, setEquipmentEN] = useState('');
-    const [secondaryMuscles, setSecondaryMuscles] = useState('');
-    const [secondaryMuscles_en, setSecondaryMusclesEN] = useState('');
-    const [instructions, setInstructions] = useState('');
-    const [gifUrl, setGifUrl] = useState('');
 
-    const fetchExerciseData = async(exerciseId : number) : Promise<Boolean> => {
+
+export const ExerciseProvider : React.FC<{children : ReactNode}> = ({children}) => {
+    const [exercises, setExercises] = useState<Exercise[]>([]);
+
+    const fetchExerciseData = async() : Promise<boolean> => {
         try {
 
-            return true;
-        } catch {
+            const result = await axios.get(`${Config.API_URL}/api/data/exercise`, {
+                headers : {
+                    'Content-Type': 'exercise/get-data',
+                    // TODO: 인증 헤더나 추가적인 헤더가 필요하면 여기에 추가
+                    // 'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+                },
+            });
 
+            //console.log(result);
+
+            setExercises(result.data);
+            
+            return true;
+        } catch (error) {
+            console.error('Error:', error);
             return false;
         }
     };
 
     return <ExerciseContext.Provider
-            value={{ name, name_en,
-                    target, target_en, bodyPart, bodyPart_en, equipment, equipment_en,
-                    secondaryMuscles, secondaryMuscles_en, instructions, gifUrl, fetchExerciseData }}>
+            value={{ fetchExerciseData, exercises }}>
             {children}
         </ExerciseContext.Provider>;
 };

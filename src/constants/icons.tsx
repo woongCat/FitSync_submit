@@ -20,6 +20,9 @@ export const icon = {
 
     Profile : ({ color } : { color : string}) => (
         <Image source={{uri : "https://xsgames.co/randomusers/avatar.php?g=pixel"}} style = {styles.userImg}/>
+    ),
+    Back : ({ color } : { color : string}) => (
+        <Ionicons name="arrow-back" size={22} color={color} />
     )
 }
 

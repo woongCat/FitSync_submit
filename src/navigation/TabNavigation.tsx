@@ -1,10 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import HomeScreen from "../screens/HomeScreen";
-import RoutineScreen from "../screens/RoutineScreen";
 import ScheduleScreen from "../screens/ScheduleScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import MyTabBar from "../components/TabBar";
-import RootNavigation from "./RootNavigation";
 import RoutineNavigation from "./RoutineNavigation";
 
 export type BottomTabParamsList = {

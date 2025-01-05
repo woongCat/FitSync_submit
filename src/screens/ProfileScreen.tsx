@@ -17,10 +17,7 @@ interface ProfileScreenProps {
 }
 
 const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
-    //const {userId, token, signOut} = useContext(AuthContext);
-    //console.log(userId, token, 'userId, token');
-
-    const {signOut} = useContext(AuthContext);
+    const {userId, signOut} = useContext(AuthContext);
 
     const handleLogOut = () => {
         Alert.alert('Logout', 'Are you sure you want to log out?', [
@@ -39,10 +36,13 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
     };
 
     return (
-        <View>
-            <TouchableOpacity onPress={handleLogOut} style={styles.button}>
-                <Text style={styles.bottonText}>Log Out</Text>
-            </TouchableOpacity>
+        <View style={styles.contentContainer}>
+            <View style={styles.topHeader}>
+                <Text style={styles.userInfoText}>Hello, {userId}</Text>
+                <TouchableOpacity onPress={handleLogOut} style={styles.LogOutBtn}>
+                    <Text style={styles.LogOutText}>Log Out</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };

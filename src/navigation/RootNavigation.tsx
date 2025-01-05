@@ -20,48 +20,48 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 const RootNavigation : React.FC = () => {
 
-const navigation = useNavigation<NavigationProp>();
-const {isAuthenticated, isLoading} = useContext(AuthContext);
+    const navigation = useNavigation<NavigationProp>();
+    const {isAuthenticated, isLoading} = useContext(AuthContext);
 
-useEffect(() => {
-    if(!isLoading) {
-        if (isAuthenticated) {
-            navigation.reset({
-                index : 0,
-                routes : [{name: 'TabNav'}]
-            })
-        } else {
-            navigation.reset({
-                index : 0,
-                routes : [{name : 'Login'}]
-            })
+    useEffect(() => {
+        if(!isLoading) {
+            if (!isAuthenticated) {
+                navigation.reset({
+                    index : 0,
+                    routes : [{name: 'TabNav'}]
+                })
+            } else {
+                navigation.reset({
+                    index : 0,
+                    routes : [{name : 'Login'}]
+                })
+            }
         }
-    }
-}, [isAuthenticated, isLoading, navigation]);
+    }, [isAuthenticated, isLoading, navigation]);
 
-    return (
-        <RootStack.Navigator initialRouteName="Login">
-            <RootStack.Screen 
-                name = "Login" 
-                component={LoginScreen}
-                options={{headerShown : false}}
-            />
-            <RootStack.Screen 
-                name = "SignUp" 
-                component={SignUpScreen}
-            />
-            <RootStack.Screen 
-                name = "Index" 
-                component={IndexScreen}
-                options={{headerShown : false}}
-            />
-            <RootStack.Screen 
-                name = "TabNav" 
-                component={TabNavgation}
-                options={{headerShown : false}}
-            />
-        </RootStack.Navigator>
-    );
+        return (
+            <RootStack.Navigator initialRouteName="Login">
+                <RootStack.Screen 
+                    name = "Login" 
+                    component={LoginScreen}
+                    options={{headerShown : false}}
+                />
+                <RootStack.Screen 
+                    name = "SignUp" 
+                    component={SignUpScreen}
+                />
+                <RootStack.Screen 
+                    name = "Index" 
+                    component={IndexScreen}
+                    options={{headerShown : false}}
+                />
+                <RootStack.Screen 
+                    name = "TabNav" 
+                    component={TabNavgation}
+                    options={{headerShown : false}}
+                />
+            </RootStack.Navigator>
+        );
 };
 
 export default RootNavigation;

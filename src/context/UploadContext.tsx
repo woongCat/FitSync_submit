@@ -18,7 +18,6 @@ export const upload = async <T extends FileData>(fileData: T, uploadUrl: string)
     });
 
     try {
-    console.log(fileData.uri, " ", fileData.name);
     // 서버로 파일 전송
     const response = await axios.post(uploadUrl, formData, {
         headers: {
