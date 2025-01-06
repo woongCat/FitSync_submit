@@ -6,13 +6,14 @@ import ChooseOptionScreen from '../screens/ChooseOptionScreen';
 import CameraShotScreen from '../screens/CameraShotScreen';
 import UpdateRoutineScreen from '../screens/UpdateRoutineScreen';
 import CreateRoutineScreen from '../screens/CreateRoutineScreen';
+import { Exercise } from '../context/ExerciseContext';
 
 
 export type RoutineStackParamList = {
     RoutineDetail : undefined;
     ChooseOption : undefined;
     CameraShot : undefined;
-    CreateRoutine : undefined;
+    CreateRoutine : { selectedExercise: Exercise };
     UpdateRoutine : undefined;
 }
 

@@ -144,6 +144,19 @@ const styles = StyleSheet.create ({
     exerciseCardContent : {
         flex : 1,
     },
+    addExerciseBtn : {
+        width : '100%',
+        height : 40,
+        backgroundColor : '#f5f5f5',
+        justifyContent : 'center',
+        alignItems : 'center',
+        borderRadius : 5,
+    },
+    addExerciseText : {
+        fontSize : 14,
+        fontWeight : 'bold',
+        color: '#056edd'
+    },
     routineCard : {
         backgroundColor : '#ffffff',
         borderRadius : 8,
@@ -202,6 +215,28 @@ const styles = StyleSheet.create ({
     selectedBodyPartText: {
         color: '#007bff',
     },
+    dateContainer : {
+        flexDirection: 'row',
+        justifyContent: 'space-between', 
+        alignItems: 'flex-start',
+    },
+    dateText: {
+        fontSize: 16,
+        color: '#000',
+    },
+    dateInput: {
+        height: 40,
+        width: '40%',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 10,
+        paddingLeft: 10,
+        fontSize: 14,
+        marginBottom: 10,
+        marginLeft: 8,
+        marginRight: 8,
+        color: '#333',
+    }
 });
 
 export default styles;

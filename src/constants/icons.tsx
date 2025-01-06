@@ -23,6 +23,12 @@ export const icon = {
     ),
     Back : ({ color } : { color : string}) => (
         <Ionicons name="arrow-back" size={22} color={color} />
+    ),
+    Date : ({ color } : { color : string}) => (
+        <Ionicons name="calendar-clear-outline" size={30} color={color} />
+    ),
+    Time : ({ color } : { color : string}) => (
+        <Ionicons name="time-outline" size={35} color={color} />
     )
 }
 

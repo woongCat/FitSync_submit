@@ -2,18 +2,17 @@ import { Text, TextInput, TouchableOpacity, View, FlatList, ScrollView } from "r
 import styles from "../style/styles";
 import { icon } from "../constants/icons";
 import React, { useContext, useEffect, useState } from "react";
-import { ExerciseContext } from "../context/ExerciseContext";
+import { Exercise, ExerciseContext } from "../context/ExerciseContext";
 import ExerciseItem from "./ExerciseItem";
 
 interface SearchExerciseProps {
     bodypartfilter : string;
     // TODO: 나중에 targetfilter 도 추가하면 좋을 듯
     onCancel : () => void; 
+    onExerciseSelect: (exercise: Exercise) => void;  // exercise 선택 시 호출될 콜백 함수 추가
 }
 
-type bodypartfilter = ['허리', '상완부', '어깨', '허벅지 위쪽', '하완부', '가슴', ''];
-
-const SearchExercise : React.FC<SearchExerciseProps> = ({bodypartfilter, onCancel}) => {
+const SearchExercise : React.FC<SearchExerciseProps> = ({ bodypartfilter, onCancel, onExerciseSelect }) => {
     const [exerciseName, setExerciseName] = useState('');
     const {fetchExerciseData, exercises} = useContext(ExerciseContext);
     const [filteredExercises, setFilteredExercises] = useState(exercises);
@@ -35,7 +34,14 @@ const SearchExercise : React.FC<SearchExerciseProps> = ({bodypartfilter, onCance
             return matchesExerciseName && matchesBodyPart; // 두 조건을 모두 만족하는 항목만 반환
         });
 
-        setFilteredExercises(filtered); // 필터링된 결과 상태에 저장
+        // 중복된 exercise_id를 제거하여 고유한 exercise만 남기기
+        const uniqueExercises = filtered.filter((value, index, self) => 
+            index === self.findIndex((t) => (
+                t.exercise_id === value.exercise_id
+            ))
+        );
+
+        setFilteredExercises(uniqueExercises); // 필터링된 결과 상태에 저장
     }, [exerciseName, selectedBodyPart, exercises]);
 
     // bodypartfilter 목록 (필요한 필터 항목들을 추가하세요)
@@ -86,8 +92,8 @@ const SearchExercise : React.FC<SearchExerciseProps> = ({bodypartfilter, onCance
             
             <FlatList 
                 data={filteredExercises}
-                keyExtractor={(item) => item?.exercise_id.toString()}
-                renderItem={({item}) => <ExerciseItem exercise={item}/>}
+                keyExtractor={(item) => item?.exercise_id + item?.name}
+                renderItem={({item}) => <ExerciseItem exercise={item} onPress={() => onExerciseSelect(item)} />}
             />
 
         </View>
