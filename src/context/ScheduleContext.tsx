@@ -11,6 +11,7 @@ export interface TrainerSchedule {
     status: string; // 예약 상태 (예: "예약", "완료")
 }
 
+// 
 const fetchTrainerSchedule = async (trainerId: string): Promise<TrainerSchedule[]> => {
     try {
         const result = await axios.get(`${Config.API_URL}/api/data/pt_schedule`, {

@@ -6,6 +6,8 @@ import CustomerView from '../components/CustomerView';
 import TrainerView from '../components/TrainerView';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// schedule screen 확인
+
 const ScheduleScreen : React.FC = () => {
     const [selectedDate, setSelectedDate] = useState('');
     
