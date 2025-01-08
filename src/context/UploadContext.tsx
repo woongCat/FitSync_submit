@@ -7,7 +7,7 @@ type FileData = {
 };
 
 // Generic한 업로드 함수
-export const upload = async <T extends FileData>(fileData: T, uploadUrl: string) => {
+export const upload = async <T extends FileData>(fileData: T, uploadUrl: string) : Promise<any> => {
     const formData = new FormData();
 
   // FormData에 파일을 추가
@@ -28,14 +28,14 @@ export const upload = async <T extends FileData>(fileData: T, uploadUrl: string)
     });
 
     if (response.status === 200) {
-        console.log('Upload successful:', response.data);
-        return true;
-        } else {
-            console.error('Upload failed:', response.status);
-            return false;
+        console.log('Upload successful', response.data);
+        return response.data;
+    } else {
+        console.error('Upload failed', response.status);
+        return null;
     }
     } catch (error) {
-        console.error('Upload error:', error);
-        return false;
+        console.error('Upload error', error);
+        return null;
     }
 };

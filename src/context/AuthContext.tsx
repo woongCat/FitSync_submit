@@ -7,7 +7,9 @@ import Config  from "react-native-config"; // .env에서 변수를 가져옴
 interface AuthContextData {
     token : string | null;
     isLoading : boolean;
-    userId : string| null;
+    userId : string; //Trainer가 될 수도 있고, customer가 될 수도 있음
+    userName : string;
+    userType : string;
     isAuthenticated: boolean;
     signUp : (name : string, email : string, password : string, userType : string) => Promise<boolean>;
     signIn : (email : string, password : string, userType : string) => Promise<boolean>;
@@ -22,18 +24,20 @@ export const AuthContext = createContext<AuthContextData> (
 export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
 
     const [token, setToken] = useState<string | null>(null);
-    const [userId, setUserId] = useState<string | null>(null);
+    const [userName, setUserName] = useState<string>('');
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setisAuthenticated] = useState(false);
 
     const checkAuth = async(): Promise<boolean> => {
         try {
             const getStoredToken = await AsyncStorage.getItem('token');
-            const getStoredUserId = await AsyncStorage.getItem('userId');
+            const getStoredUserName = await AsyncStorage.getItem('userName');
 
-            if (getStoredToken && getStoredUserId) {
+            console.log("token", getStoredToken);
+
+            if (getStoredToken && getStoredUserName) {
                 setToken(getStoredToken);
-                setUserId(getStoredUserId);
+                setUserName(getStoredUserName);
                 setisAuthenticated(true);
                 return true;
             }
@@ -44,16 +48,15 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
             setIsLoading(false);
         }
         return false;
-    }
+    };
+
     useEffect(() => {
         checkAuth();
-    })
+    });
 
     const signUp = async(name : string, email:string, password:string, userType : string) : Promise<boolean> => {
         try {
-            let result;
-
-            result = await axios.post(`${Config.API_URL}/signup`, {email, password, name, userType});
+            const result = await axios.post(`${Config.API_URL}/signup`, {email, password, name, userType});
 
             if (result.status === 201) {
                 return true;
@@ -75,13 +78,14 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
     const signIn = async(email:string, password:string, userType : string) : Promise<boolean> => {
         try {
             const result = await axios.post(`${Config.API_URL}/login`, {email, password, userType});
-
+            //console.log(result);
             if (result.status === 200) {
                 Alert.alert('Success', `Welcome ${result.data.name}!`);
-                //await AsyncStorage.setItem('token', token);
-                //setToken(token);
-                //await AsyncStorage.setItem('userId', result.data.userId);
-                //setUserId(userId);
+                // 여기 set 추가되는 만큼 logout에서 remove & null 처리 해줘야함
+                setToken(result.data.access_token);
+                await AsyncStorage.setItem('token', result.data.access_token);
+                setUserName(result.data.name);
+                await AsyncStorage.setItem('userName', result.data.name);
                 setisAuthenticated(true);
                 return true;
             } else {
@@ -103,9 +107,9 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
     const signOut = async() : Promise<void> => {
         try {
             await AsyncStorage.removeItem('token');
-            await AsyncStorage.removeItem('userId');
+            await AsyncStorage.removeItem('userName');
             setToken(null);
-            setUserId(null);
+            setUserName('');
             setisAuthenticated(false);
         }catch (e) {
             console.error(e);
@@ -115,7 +119,7 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
     if (isLoading) return <ActivityIndicator size={'large'} color={'red'}/>
 
     return <AuthContext.Provider 
-                value={{token, userId, isLoading, isAuthenticated, signIn, signUp, signOut, checkAuth}}>
+                value={{token, userName, isLoading, isAuthenticated, signIn, signUp, signOut, checkAuth}}>
                 {children}
             </AuthContext.Provider>;
 }

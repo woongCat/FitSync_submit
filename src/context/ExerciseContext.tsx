@@ -4,6 +4,7 @@ import Config from 'react-native-config';
 
 export interface Exercise {
     exercise_id : number;
+    id : number;
     name : string;
     name_en : string;
     target : string;
@@ -18,7 +19,6 @@ export interface Exercise {
     gifUrl : string | null;
 }
 
-
 export interface ExerciseContextData {
     exercises : Exercise[];
     fetchExerciseData : () => Promise<boolean>;
@@ -27,8 +27,6 @@ export interface ExerciseContextData {
 export const ExerciseContext = createContext<ExerciseContextData>(
     {} as ExerciseContextData
 );
-
-
 
 export const ExerciseProvider : React.FC<{children : ReactNode}> = ({children}) => {
     const [exercises, setExercises] = useState<Exercise[]>([]);

@@ -4,9 +4,8 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import { RoutineStackParamList } from '../navigation/RoutineNavigation';
 import { RootStackParamList } from '../navigation/RootNavigation';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../style/styles';
 
@@ -17,12 +16,12 @@ interface HomeScreenProps {
 }
 
 const HomeScreen : React.FC = () => {
-    const {userId, signOut} = useContext(AuthContext);
-    
+    const {userName} = useContext(AuthContext);
+
     return (
         <View style={styles.contentContainer}>
             <View style={styles.topHeader}>
-                <Text style={styles.userInfoText}>Hello, {userId}</Text>
+                <Text style={styles.userInfoText}>Hello, {userName}</Text>
             </View>
         </View>
     );

@@ -13,7 +13,7 @@ import DocumentPicker from 'react-native-document-picker';
 import { upload } from '../context/UploadContext';
 import Config  from "react-native-config"; // .env에서 변수를 가져옴
 
-type ChooseOptionScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'Routine'>
+type ChooseOptionScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'RoutineDetail'>
 
 interface ChooseOptionScreenProps {
     navigation : ChooseOptionScreenNavigationProp
@@ -49,7 +49,7 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
     
             if (response) {
                 //Alert.alert('Upload Success', '사진이 서버에 업로드되었습니다.');
-                navigation.navigate('UpdateRoutine');
+                navigation.navigate('UpdateRoutine', {selectedRecord : response});
             } else {
                 Alert.alert('Error', 'Fail to process file.');
                 navigation.navigate('ChooseOption');
@@ -76,7 +76,7 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
                 <Text style={styles.bottonText}>Find file</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate('CreateRoutine')} style={styles.RoutineOptBtn}>
+            <TouchableOpacity onPress={() => navigation.navigate('CreateRoutine', {})} style={styles.RoutineOptBtn}>
                 <Text style={styles.bottonText}>Create New</Text>
             </TouchableOpacity>
 

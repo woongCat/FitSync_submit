@@ -13,7 +13,7 @@ import { upload } from '../context/UploadContext';
 import RNFS from 'react-native-fs';
 import Config  from "react-native-config"; // .env에서 변수를 가져옴
 
-type CameraShotScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'Routine'>
+type CameraShotScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'RoutineDetail'>
 
 interface CameraShotScreenProps {
     navigation : CameraShotScreenNavigationProp
@@ -71,7 +71,7 @@ const CameraShotScreen : React.FC<CameraShotScreenProps> = ({navigation}) => {
         
                 if (response) {
                     //Alert.alert('Upload Success', '사진이 서버에 업로드되었습니다.');
-                    navigation.navigate('UpdateRoutine');
+                    navigation.navigate('UpdateRoutine', {selectedRecord : response});
                 } else {
                     Alert.alert('Error', 'Fail to process photo.');
                     navigation.navigate('ChooseOption');

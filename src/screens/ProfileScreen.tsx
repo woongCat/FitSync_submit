@@ -17,7 +17,7 @@ interface ProfileScreenProps {
 }
 
 const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
-    const {userId, signOut} = useContext(AuthContext);
+    const {userName, signOut} = useContext(AuthContext);
 
     const handleLogOut = () => {
         Alert.alert('Logout', 'Are you sure you want to log out?', [
@@ -38,7 +38,7 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
     return (
         <View style={styles.contentContainer}>
             <View style={styles.topHeader}>
-                <Text style={styles.userInfoText}>Hello, {userId}</Text>
+                <Text style={styles.userInfoText}>Hello, {userName}</Text>
                 <TouchableOpacity onPress={handleLogOut} style={styles.LogOutBtn}>
                     <Text style={styles.LogOutText}>Log Out</Text>
                 </TouchableOpacity>

@@ -8,7 +8,7 @@ const styles = StyleSheet.create ({
         color : '#f5f5f5',
         justifyContent : 'center',
         alignItems : 'center',
-        padding : 20
+        padding : 10
     },
     header : {
         fontSize : 24,
@@ -157,22 +157,7 @@ const styles = StyleSheet.create ({
         fontWeight : 'bold',
         color: '#056edd'
     },
-    routineCard : {
-        backgroundColor : '#ffffff',
-        borderRadius : 8,
-        padding : 16,
-        marginHorizontal : 16,
-        marginVertical : 8,
-        shadowColor : '#000',
-        shadowOffset : {
-            width : 0,
-            height : 2
-        },
-        shadowOpacity : 0.1,
-        shadowRadius : 4,
-        elevation : 5,
-    },
-    exerciseImage : {
+    searchExerciseImage : {
         width : 50,
         height : 50,
     },
@@ -192,6 +177,7 @@ const styles = StyleSheet.create ({
         flexDirection: 'row',
         justifyContent: 'flex-start', 
         alignItems: 'stretch',
+        marginBottom : 10,
     },
     bodyPartFilterText : {
         fontSize: 12,
@@ -220,23 +206,129 @@ const styles = StyleSheet.create ({
         justifyContent: 'space-between', 
         alignItems: 'flex-start',
     },
-    dateText: {
-        fontSize: 16,
-        color: '#000',
-    },
     dateInput: {
         height: 40,
-        width: '40%',
+        flex : 1,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 10,
         paddingLeft: 10,
         fontSize: 14,
         marginBottom: 10,
-        marginLeft: 8,
-        marginRight: 8,
+        marginLeft: 3,
+        marginRight: 3,
         color: '#333',
-    }
+    },
+    RoutineCard : {
+        flex : 1,
+        marginBottom: 10,
+        padding:5,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    RoutineHeader: {
+        flex: 2,
+        alignItems: 'center',
+    },
+    RoutineExerciseName : {
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    RoutineCardRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+    RoutineExerciseImage : {
+        flex: 1,
+        width : 100,
+        height : 100,
+    },
+    RoutineCardSetsContainer: {
+        marginTop: 10,
+    },
+    RoutineCardSetRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 8,
+        alignItems: 'center',
+    },
+    RoutineCardSetText: {
+        width: 40,
+        textAlign: 'center',
+        fontSize: 16,
+    },
+    RoutineCardSetInput: {
+        width: 60,
+        height: 40,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        textAlign: 'center',
+        marginHorizontal: 5,
+    },
+    addSetsBtn : {
+        height : 40,
+        padding : 5,
+        marginTop : 3,
+        justifyContent : 'center',
+        alignItems : 'center',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+    },
+    addSetsText : {
+        fontSize : 14,
+        fontWeight : 'bold',
+        color: '#3ec2d2',
+    },
+    RecordCard : {
+        backgroundColor : '#ffffff',
+        borderRadius : 8,
+        padding : 16,
+        marginHorizontal : 16,
+        marginVertical : 8,
+        shadowColor : '#000',
+        shadowOffset : {
+            width : 0,
+            height : 2
+        },
+        shadowOpacity : 0.1,
+        shadowRadius : 4,
+        elevation : 5,
+    },
+    RecordContents : {
+        flex : 1,
+    },
+    RecordHeader : {
+        fontSize : 16,
+        fontWeight : 'bold',
+        marginBottom : 5,
+    },
+    RecordDescription : {
+        fontSize : 14,
+        color: '#ccc',
+
+    },
+    RecordDeleteBtn : {
+        position : 'absolute',
+        top : 25,
+        right : 10,
+        backgroundColor : '#056edd',
+        paddingHorizontal : 5,
+        paddingVertical : 5,
+        borderRadius : 4,
+    },
+    RecordDeleteBtnText : {
+        color : '#fff',
+        fontWeight : 'bold',
+        fontSize : 14,
+    },
+    timeSlot: {
+        marginVertical: 5, padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 5 
+    },
 });
 
 export default styles;

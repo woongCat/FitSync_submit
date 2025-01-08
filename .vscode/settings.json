@@ -1,4 +1,26 @@
 {
     "java.compile.nullAnalysis.mode": "disabled",
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "115.139.31.54",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "kdtproject",
+            "database": "fitsync",
+            "username": "oneder"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "fitsync.ch4xfyi6stod.ap-northeast-2.rds.amazonaws.com",
+            "username": "oneder",
+            "database": "fitsync"
+        }
+    ]
 }

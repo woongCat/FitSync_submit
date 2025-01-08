@@ -25,7 +25,7 @@ const RootNavigation : React.FC = () => {
 
     useEffect(() => {
         if(!isLoading) {
-            if (!isAuthenticated) {
+            if (isAuthenticated) {
                 navigation.reset({
                     index : 0,
                     routes : [{name: 'TabNav'}]

@@ -25,10 +25,10 @@ export const icon = {
         <Ionicons name="arrow-back" size={22} color={color} />
     ),
     Date : ({ color } : { color : string}) => (
-        <Ionicons name="calendar-clear-outline" size={30} color={color} />
+        <Ionicons name="calendar-clear-outline" size={30} color={color} style = {styles.datetime} />
     ),
     Time : ({ color } : { color : string}) => (
-        <Ionicons name="time-outline" size={35} color={color} />
+        <Ionicons name="time-outline" size={35} color={color} style = {styles.datetime} />
     )
 }
 
@@ -37,5 +37,9 @@ const styles = StyleSheet.create({
         height : 24,
         width: 24,
         borderRadius : 10
+    },
+    datetime : {
+        marginLeft : 2,
+        marginRight : 2,
     }
 })

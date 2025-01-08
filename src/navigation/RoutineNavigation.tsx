@@ -1,20 +1,20 @@
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import { useContext, useEffect } from 'react';
 import RoutineScreen from '../screens/RoutineScreen';
 import ChooseOptionScreen from '../screens/ChooseOptionScreen';
 import CameraShotScreen from '../screens/CameraShotScreen';
 import UpdateRoutineScreen from '../screens/UpdateRoutineScreen';
 import CreateRoutineScreen from '../screens/CreateRoutineScreen';
 import { Exercise } from '../context/ExerciseContext';
+import { Record } from '../context/RecordContext';
 
 
 export type RoutineStackParamList = {
     RoutineDetail : undefined;
     ChooseOption : undefined;
     CameraShot : undefined;
-    CreateRoutine : { selectedExercise: Exercise };
-    UpdateRoutine : undefined;
+    CreateRoutine : { selectedExercise?: Exercise };
+    UpdateRoutine : { selectedRecord : Record };
 }
 
 const RoutineStack = createNativeStackNavigator<RoutineStackParamList>()
