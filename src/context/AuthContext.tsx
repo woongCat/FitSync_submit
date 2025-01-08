@@ -1,8 +1,9 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { createContext, useState, ReactNode, useEffect } from "react";
-import { ActivityIndicator, Alert } from "react-native";
-import Config  from "react-native-config"; // .env에서 변수를 가져옴
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { createContext, useState, ReactNode, useEffect } from 'react';
+import { ActivityIndicator, Alert } from 'react-native';
+import Config  from 'react-native-config'; // .env에서 변수를 가져옴
+
 
 interface AuthContextData {
     token : string | null;
@@ -75,7 +76,16 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
 
     const signIn = async(email:string, password:string, userType : string) : Promise<boolean> => {
         try {
-            const result = await axios.post(`${Config.API_URL}/login`, {email, password, userType});
+            // const result = await axios.post(`${Config.API_URL}/login`, {email, password, userType}); //젠장 맞게도 
+
+            const result = await axios.post(`${Config.API_URL}/login`, {
+                email, password, userType
+              }, {
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                }
+              });
             //console.log(result);
             if (result.status === 200) {
                 Alert.alert('Success', `Welcome ${result.data.name}!`);
@@ -90,17 +100,34 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
                 return false;
             }
 
-        } catch (error:any) {
-            console.error('Error: ', error);
+        } catch (error: any) {
+            console.error('An error occurred during sign-in:', error);
+            console.log(Config.API_URL); 
+
             if (axios.isAxiosError(error)) {
-                console.error('Error details: ', error.response?.data);
+                if (error.response) {
+                    // 서버 응답이 있는 경우 (예: 4xx, 5xx 에러)
+                    console.error('Server responded with an error:', error.response.data);
+                    Alert.alert('Error', error.response.data?.message || 'Failed to sign in. Please try again.');
+                } else if (error.request) {
+                    // 요청은 보내졌으나 응답이 없는 경우
+                    console.error('No response received from server:', error.request);
+                    Alert.alert('Error', 'Unable to connect to the server. Please check your network connection.');
+                } else {
+                    // 요청 설정 중 문제가 발생한 경우
+                    console.error('Error setting up the request:', error.message);
+                    Alert.alert('Error', `An unexpected error occurred: ${error.message}`);
+                }
             } else {
-                const message = error.result?.data?.message || 'An unexpected error occurred.'
-                console.error('Error: ', message);
+                // Axios 외의 에러 처리
+                console.error('An unknown error occurred:', error);
+                Alert.alert('Error', 'An unexpected error occurred. Please try again.');
             }
-        };
+        }
         return false;
     };
+
+    
 
     const signOut = async() : Promise<void> => {
         try {

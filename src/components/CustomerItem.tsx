@@ -4,7 +4,7 @@ import { Calendar } from "react-native-calendars";
 import { PTSchedule } from "../context/PTScheduleContext";
 import styles from "../style/styles";
 
-interface ScheduleItemProps {
+interface ScheduleItemProps { 
     schedule: PTSchedule;
     onScheduleSelect: (id: string) => void;
     onConfirm: (id: string) => void;
