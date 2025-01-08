@@ -49,8 +49,10 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
             // AsyncStorage에서 userId,userType 값을 가져오기
             const access_token = await AsyncStorage.getItem('token');
 
+            console.log(access_token);
+
             // 요청 보내기
-            const response = await axios.get(`${Config.API_URL}/record/read`, {params: { access_token }});
+            const response = await axios.get(`${Config.API_URL}/record/read`, {headers: { Authorization: access_token }});
 
             // 응답 처리
             if (response.status) {
@@ -64,9 +66,19 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
 
             setIsLoading(false);
             return true;
-        } catch (error) {
+        } catch (error: any) {
             setIsLoading(false);
-            console.error('Error fetching routine data:', error);
+            if (error.response) {
+                // 서버가 오류 응답을 보냈을 때
+                console.error('Server responded with error:', error.response.status); // 500 상태 코드
+                console.error('Response data:', error.response.data); // 서버에서 반환한 데이터
+            } else if (error.request) {
+                // 요청이 서버로 전송되지 않았을 때
+                console.error('No response received:', error.request);
+            } else {
+                // 요청을 설정하는 중에 오류가 발생했을 때
+                console.error('Error setting up the request:', error.message);
+            }
             return false;
         }
     };
@@ -83,7 +95,7 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
             const sessionDate = date.toISOString().split('T')[0] + time.toTimeString().split(' ')[0];
 
             // 요청 보내기
-            const response = await axios.post(`${Config.API_URL}/record/create`, { access_token, relatedName, sessionDate, routines });
+            const response = await axios.post(`${Config.API_URL}/record/create`, { relatedName, sessionDate, routines }, {headers : {access_token}});
 
             // 응답 처리
             if (response.status === 200) {
@@ -95,9 +107,19 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
 
             setIsLoading(false);
             return true;
-        } catch (error) {
+        } catch (error:any) {
             setIsLoading(false);
-            console.error('Error creating routine data:', error);
+            if (error.response) {
+                // 서버가 오류 응답을 보냈을 때
+                console.error('Server responded with error:', error.response.status); // 500 상태 코드
+                console.error('Response data:', error.response.data); // 서버에서 반환한 데이터
+            } else if (error.request) {
+                // 요청이 서버로 전송되지 않았을 때
+                console.error('No response received:', error.request);
+            } else {
+                // 요청을 설정하는 중에 오류가 발생했을 때
+                console.error('Error setting up the request:', error.message);
+            }
             return false;
         }
     };
@@ -110,7 +132,7 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
             const access_token = await AsyncStorage.getItem('token');
 
             // 요청 보내기
-            const response = await axios.put(`${Config.API_URL}/record/update`, { access_token, sessionDate, recordId, routines });
+            const response = await axios.put(`${Config.API_URL}/record/update`, { sessionDate, recordId, routines }, {headers : {access_token}});
 
             // 응답 처리
             if (response.status === 200) {
@@ -120,9 +142,19 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
             }
 
             setIsLoading(false);
-        } catch (error) {
+        } catch (error:any) {
             setIsLoading(false);
-            console.error('Error creating routine data:', error);
+            if (error.response) {
+                // 서버가 오류 응답을 보냈을 때
+                console.error('Server responded with error:', error.response.status); // 500 상태 코드
+                console.error('Response data:', error.response.data); // 서버에서 반환한 데이터
+            } else if (error.request) {
+                // 요청이 서버로 전송되지 않았을 때
+                console.error('No response received:', error.request);
+            } else {
+                // 요청을 설정하는 중에 오류가 발생했을 때
+                console.error('Error setting up the request:', error.message);
+            }
         }
     };
 
@@ -133,7 +165,7 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
             // AsyncStorage에서 userId,userType 값을 가져오기
             const access_token = await AsyncStorage.getItem('token');
             // 요청 보내기
-            const response = await axios.delete(`${Config.API_URL}/record/delete`, { params : {access_token, sessionDate, recordId }});
+            const response = await axios.delete(`${Config.API_URL}/record/delete`, { params : { sessionDate, recordId }, headers : {access_token}});
         
             // 응답 처리
             if (response.status === 200) {
@@ -143,9 +175,19 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
             }
 
             setIsLoading(false);
-        } catch (error) {
+        } catch (error:any) {
             setIsLoading(false);
-            console.error('Error deleting routine data:', error);
+            if (error.response) {
+                // 서버가 오류 응답을 보냈을 때
+                console.error('Server responded with error:', error.response.status); // 500 상태 코드
+                console.error('Response data:', error.response.data); // 서버에서 반환한 데이터
+            } else if (error.request) {
+                // 요청이 서버로 전송되지 않았을 때
+                console.error('No response received:', error.request);
+            } else {
+                // 요청을 설정하는 중에 오류가 발생했을 때
+                console.error('Error setting up the request:', error.message);
+            }
         }
     };
 

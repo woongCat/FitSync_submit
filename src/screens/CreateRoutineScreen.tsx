@@ -105,7 +105,10 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation}) 
             return;
         }
         
-        const result = await createRecordData(selectedDate, selectedDateTime, createdRoutine);
+        // TODO: record 관련자 이름 넣기
+        const relatedName = '';
+
+        const result = await createRecordData(selectedDate, selectedDateTime, relatedName, createdRoutine);
 
         if (result) {
             navigation.navigate('RoutineDetail');

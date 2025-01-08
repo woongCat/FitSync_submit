@@ -33,8 +33,6 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
             const getStoredToken = await AsyncStorage.getItem('token');
             const getStoredUserName = await AsyncStorage.getItem('userName');
 
-            console.log("token", getStoredToken);
-
             if (getStoredToken && getStoredUserName) {
                 setToken(getStoredToken);
                 setUserName(getStoredUserName);
@@ -63,7 +61,7 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
             } else {
                 return false;
             }
-        } catch (error) {
+        } catch (error:any) {
             console.error('Error: ', error);
             if (axios.isAxiosError(error)) {
                 console.error('Error details: ', error.response?.data);
@@ -92,7 +90,7 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
                 return false;
             }
 
-        } catch (error) {
+        } catch (error:any) {
             console.error('Error: ', error);
             if (axios.isAxiosError(error)) {
                 console.error('Error details: ', error.response?.data);
