@@ -329,6 +329,98 @@ const styles = StyleSheet.create ({
     timeSlot: {
         marginVertical: 5, padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 5 
     },
+    // 스케쥴을 위한 style 추가
+    scheduleHeader: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333333',
+        marginBottom: 5,
+    },
+    scheduleDescription: {
+        fontSize: 14,
+        color: '#666666',
+        marginBottom: 5,
+    },
+    scheduleTimeSlot: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eeeeee',
+    },
+    confirmBtn: {
+        backgroundColor: '#28a745',
+        padding: 12,
+        borderRadius: 6,
+        marginTop: 10,
+    },
+    confirmBtnText: {
+        color: '#ffffff',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: 14,
+    },
+    selectBtn: {
+        backgroundColor: '#007bff',
+        padding: 12,
+        borderRadius: 6,
+        marginTop: 10,
+    },
+    selectBtnText: {
+        color: '#ffffff',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: 14,
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    addButton: {
+        backgroundColor: '#4CAF50',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+    },
+    addButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    scheduleCard: {
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 16,
+        marginBottom: 12,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    scheduleText: {
+        fontSize: 16,
+        color: '#555',
+        marginBottom: 8,
+    },
+    deleteButton: {
+        backgroundColor: '#f44336',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        alignSelf: 'flex-start',
+        marginTop: 8,
+    },
+    deleteButtonText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
 });
 
 export default styles;
