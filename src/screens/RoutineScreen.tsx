@@ -20,13 +20,11 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
     const [selectedDateRecord, setSelectedDateRecord] = useState(records);
 
     // 모든 record에 대해 sessionDate를 기준으로 markedDates를 설정할 수 있게 날짜 배열 생성
-    // const markedDates = (Array.isArray(records) && records.length > 0? records  : []).reduce((acc, record) => {
-    //     const dateString = record.sessionDate.split(' ')[0]; // "YYYY-MM-DD" 형식으로 변환
-    //     acc[dateString] = { marked: true, selectedDotColor: 'blue' };
-    //     return acc;
-    // }, {});
-
-    const markedDates = {};
+    const markedDates = (Array.isArray(records) && records.length > 0? records  : []).reduce((acc, record) => {
+        const dateString = record.sessionDate.split(' ')[0]; // "YYYY-MM-DD" 형식으로 변환
+        acc[dateString] = { marked: true, selectedDotColor: 'blue' };
+        return acc;
+    }, {});
 
     useEffect(() => {
         fetchRecordData();
@@ -73,7 +71,7 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
                     <RecordItem 
                         record={item} 
                         onPressRecordItem={() => 
-                            navigation.navigate('UpdateRoutine', {selectedRecord : item})
+                            navigation.navigate('UpdateRoutine', {selectedRecord : item.routines})
                         }
                         onPressDeleteRecordItem = {() =>
                             deleteRecordData(item?.recordId, item?.sessionDate)

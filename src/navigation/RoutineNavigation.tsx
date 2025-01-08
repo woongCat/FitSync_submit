@@ -6,7 +6,7 @@ import CameraShotScreen from '../screens/CameraShotScreen';
 import UpdateRoutineScreen from '../screens/UpdateRoutineScreen';
 import CreateRoutineScreen from '../screens/CreateRoutineScreen';
 import { Exercise } from '../context/ExerciseContext';
-import { Record } from '../context/RecordContext';
+import { Routine, Record } from '../context/RecordContext';
 
 
 export type RoutineStackParamList = {
@@ -14,7 +14,7 @@ export type RoutineStackParamList = {
     ChooseOption : undefined;
     CameraShot : undefined;
     CreateRoutine : { selectedExercise?: Exercise };
-    UpdateRoutine : { selectedRecord : Record };
+    UpdateRoutine : { selectedRecord : Routine[] };
 }
 
 const RoutineStack = createNativeStackNavigator<RoutineStackParamList>()

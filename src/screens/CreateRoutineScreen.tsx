@@ -164,13 +164,15 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation}) 
             <FlatList 
                 data={createdRoutine}
                 keyExtractor={(item) => {return item?.exercise_id + item?.exercise_name;}}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                     <RoutineItem 
                         routine={item} 
+                        index={index}
                         addNewSet={function (): void {
                             throw new Error('Function not implemented.');
                         } }                    />
                 )}
+                contentContainerStyle={styles.RoutineContext}
             />
 
             <TouchableOpacity onPress={() => setShowModal(true)} style={styles.addExerciseBtn}>

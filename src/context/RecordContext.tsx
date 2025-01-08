@@ -12,7 +12,7 @@ export interface Routine{
     sets : number;
     reps : number[];
     weight : number[];
-    comment : string;
+    comment : string | null;
 };
 
 export interface Record {
@@ -56,12 +56,23 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
 
             // 응답 처리
             if (response.status) {
-                const data = response.data;
+                console.log(response.data);
+                response.data.data.forEach((item: { routines: any; }) => {
+                    console.log(item.routines);  // routines 배열 출력
+                });
+                console.log(response.data.data);
                 // TODO: data 맞춰서 저장하기
-                setRecords(prevRecords => [...prevRecords, response.data]);
 
-                console.log(data);
-                console.log(response.data.routines);
+                // 응답 데이터를 Record[] 형태로 변환하기 전에 확인 및 변환 필요
+                const data = response.data.data.map((item: any) => ({
+                    ...item,
+                    routines: item.routines.map((routine: any) => ({
+                    ...routine,
+                    reps: Array.isArray(routine.reps) ? routine.reps : [routine.reps],  // reps가 배열이 아닐 경우 배열로 변환
+                    weight: Array.isArray(routine.weight) ? routine.weight : [routine.weight],  // weight가 배열이 아닐 경우 배열로 변환
+                    })),
+                }));
+                setRecords(data);
             }
 
             setIsLoading(false);

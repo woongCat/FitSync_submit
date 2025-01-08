@@ -6,18 +6,31 @@ import { Routine } from "../context/RecordContext";
 
 interface RoutineItemProps {
     routine: Routine;
+    index : number;
     addNewSet: () => void;
 }
 
-const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, addNewSet }) => {
+const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, index, addNewSet }) => {
     
     return (
         <View style={styles.RoutineCard}>
-            <Text style={styles.RoutineExerciseName}>{routine.exercise_name}</Text>
+            <View style={styles.RoutineCardRow}>
+                <View style={styles.RoutineHeader}>
+                    <Text style={styles.RoutineExerciseName}>{index+1}. {routine.exercise_name}</Text>
+                    <Text>Reps&</Text>
+                </View>     
+                    {/* TODO: 나중에 uri 수정*/}
+                <FastImage source={{ uri: "https://mir-s3-cdn-cf.behance.net/projects/original/fe8318108677535.Y3JvcCw5MDAsNzAzLDAsMTkz.gif", priority: FastImage.priority.normal, }} style={styles.RoutineExerciseImage} resizeMode={FastImage.resizeMode.stretch}/>
+            </View>
+                
             <Text>Sets: {routine.sets}</Text>
-            <Text>Reps: {routine.reps.join(', ')}</Text>
+            
             <Text>Weight: {routine.weight.join(', ')}</Text>
-            <Text>Comment: {routine.comment}</Text>
+            <Text style={styles.RoutineLabel}>Comment: </Text>
+            <TextInput style={styles.RoutineComment} placeholder="Add comment" value={routine.comment}/>
+            <TouchableOpacity style={styles.addSetsBtn} onPress={addNewSet}>
+                <Text style={styles.addSetsText}>+ add new set</Text>
+            </TouchableOpacity>
         </View>
     );
 });

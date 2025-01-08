@@ -220,17 +220,20 @@ const styles = StyleSheet.create ({
         color: '#333',
     },
     RoutineCard : {
-        flex : 1,
+        width:'100%',
         marginBottom: 10,
-        padding:5,
+        paddingHorizontal:10,
         borderWidth: 1,
         borderColor: '#ccc',
         justifyContent: 'center',
         alignItems: 'center',
     },
+    RoutineContext : {
+        flex : 1,
+    },
     RoutineHeader: {
-        flex: 2,
-        alignItems: 'center',
+        flex: 1,
+        alignItems: 'flex-start',
     },
     RoutineExerciseName : {
         fontSize: 14,
@@ -326,8 +329,26 @@ const styles = StyleSheet.create ({
         fontWeight : 'bold',
         fontSize : 14,
     },
+    RoutineLabel : {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    RoutineComment : {
+        width: '100%',
+        height : 50,
+        borderWidth : 1,
+        borderColor : '#ccc',
+        borderRadius : 6,
+        paddingHorizontal:10,
+        marginBottom:10,
+        textAlignVertical : 'top',
+    },
     timeSlot: {
-        marginVertical: 5, padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 5 
+        marginVertical: 5, 
+        padding: 10, 
+        borderWidth: 1, 
+        borderColor: '#ccc', 
+        borderRadius: 5 
     },
 });
 
