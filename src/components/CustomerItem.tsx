@@ -1,61 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { Alert, Text, View, FlatList, Button, TouchableOpacity, StyleSheet } from "react-native";
-import { Calendar } from "react-native-calendars";
-import { PTSchedule } from "../context/PTScheduleContext";
-import styles from "../style/styles";
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import styles from '../style/styles'; // 스타일 가져오기
+import { PTSchedule } from '../context/CustomerPTScheduleContext';
 
-interface ScheduleItemProps { 
+interface ScheduleItemProps {
     schedule: PTSchedule;
-    onScheduleSelect: (id: string) => void;
-    onConfirm: (id: string) => void;
+    onDelete: (scheduleId: number) => void;
 }
 
-const CustomerItem: React.FC<ScheduleItemProps> = React.memo(({ schedule, onScheduleSelect, onConfirm }) => {
-    const handleScheduleSelect = () => {
-        onScheduleSelect(schedule.scheduleId);
-    };
-
-    const handleConfirm = async () => {
-        try {
-            await onConfirm(schedule.scheduleId);
-            Alert.alert("Success", "The schedule has been confirmed.");
-        } catch (error) {
-            Alert.alert("Error", "Failed to confirm the schedule.");
-        }
-    };
-
+const ScheduleItem: React.FC<ScheduleItemProps> = ({ schedule, onDelete }) => {
     return (
         <View style={styles.scheduleCard}>
-            <Text style={styles.scheduleHeader}>{schedule.trainerId}</Text>
-            <Text style={styles.scheduleDescription}>Date: {schedule.sessionDate}</Text>
-            <Text style={styles.scheduleDescription}>Start Time: {schedule.startTime}</Text>
-            <Text style={styles.scheduleDescription}>End Time: {schedule.endTime}</Text>
-            <Text style={styles.scheduleDescription}>Reservation Status: {schedule.status}</Text>
-            
-            <FlatList
-                data={schedule.sessionDate}
-                keyExtractor={(item) => item}
-                renderItem={({ item }) => (
-                    <View style={styles.scheduleTimeSlot}>
-                        <Text>{item}</Text>
-                    </View>
-                )}
-            />
-
-            <TouchableOpacity 
-                style={styles.confirmBtn} 
-                onPress={handleConfirm}>
-                <Text style={styles.confirmBtnText}>Confirm Schedule</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-                style={styles.selectBtn} 
-                onPress={handleScheduleSelect}>
-                <Text style={styles.selectBtnText}>Select Schedule</Text>
+            <Text style={styles.scheduleText}>
+                Trainer: {schedule.trainerId}
+            </Text>
+            <Text style={styles.scheduleText}>
+                Date: {schedule.sessionDate.split('T')[0]}
+            </Text>
+            <Text style={styles.scheduleText}>
+                Time: {schedule.startTime} - {schedule.endTime}
+            </Text>
+            <Text style={styles.scheduleText}>
+                Status: {schedule.status}
+            </Text>
+            <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => onDelete(schedule.scheduleId)}
+            >
+                <Text style={styles.deleteButtonText}>Cancel</Text>
             </TouchableOpacity>
         </View>
     );
-});
+};
 
-
-export default CustomerItem;
+export default ScheduleItem;

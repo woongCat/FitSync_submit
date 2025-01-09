@@ -76,16 +76,8 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
 
     const signIn = async(email:string, password:string, userType : string) : Promise<boolean> => {
         try {
-            // const result = await axios.post(`${Config.API_URL}/login`, {email, password, userType}); //젠장 맞게도 
+            const result = await axios.post(`${Config.API_URL}/login`, {email, password, userType}); //젠장 맞게도 
 
-            const result = await axios.post(`${Config.API_URL}/login`, {
-                email, password, userType
-              }, {
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                }
-              });
             //console.log(result);
             if (result.status === 200) {
                 Alert.alert('Success', `Welcome ${result.data.name}!`);

@@ -421,6 +421,22 @@ const styles = StyleSheet.create ({
         fontSize: 14,
         fontWeight: 'bold',
     },
+    searchContainer: {
+        flexDirection: 'row',
+        marginBottom: 10,
+    },
+    searchButton: {
+        backgroundColor: '#007bff',
+        paddingHorizontal: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 5,
+        marginLeft: 5,
+    },
+    searchButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
 });
 
 export default styles;

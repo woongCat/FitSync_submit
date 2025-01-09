@@ -1,11 +1,12 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import Config from "react-native-config";
 import { Alert } from 'react-native';
 
 // Schedule 인터페이스 정의
 export interface PTSchedule {
-    scheduleId: string; // 스케쥴 고유 ID
+    scheduleId: number; // 스케쥴 고유 ID
     trainerId: string; // 트레이너 ID
     customerId: string; // 고객 ID
     sessionDate: string; // PT 세션 날짜 및 시간 (ISO 형식)
@@ -19,7 +20,7 @@ export interface PTScheduleContextData {
     schedules: PTSchedule[];
     fetchSchedules: () => Promise<boolean>;
     addSchedule: (newSchedule: Omit<PTSchedule, "scheduleId">) => Promise<boolean>;
-    deleteSchedule: (scheduleId: string) => Promise<boolean>;
+    deleteSchedule: (scheduleId: number) => Promise<boolean>;
 }
 
 // Context 생성
@@ -31,9 +32,17 @@ export const PTScheduleContext = createContext<PTScheduleContextData>(
 export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [schedules, setSchedules] = useState<PTSchedule[]>([]);
 
+    const getUserInfo = async() : Promise<void> => {
+        // 더이상 userType 저장 안 함
+        // 트레이너 및 고객 아이디가 필요함 어떻게 구성할까 고민중~
+    };
+
     // 스케줄 데이터를 가져오는 함수
     const fetchSchedules = async (): Promise<boolean> => {
         try {
+            const access_token = await AsyncStorage.getItem('token');
+            console.log(access_token);
+
             const result = await axios.get(`${Config.API_URL}/ptSchedule`, {
                 headers: {
                     "Content-Type": "application/json",
@@ -68,7 +77,7 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
     };
 
     // 스케줄을 삭제하는 함수
-    const deleteSchedule = async (scheduleId: string): Promise<boolean> => {
+    const deleteSchedule = async (scheduleId: number): Promise<boolean> => {
         try {
             await axios.delete(`${Config.API_URL}/ptSchedule/${scheduleId}`, {
                 headers: {
@@ -100,8 +109,10 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
 // Context를 사용하는 Hook
 export const usePTSchedule = (): PTScheduleContextData => {
     const context = useContext(PTScheduleContext);
+    
     if (!context) {
         throw new Error("usePTSchedule must be used within a PTScheduleProvider");
     }
     return context;
 };
+

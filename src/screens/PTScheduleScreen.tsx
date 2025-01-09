@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import {
     Alert,
     Text,
@@ -6,17 +6,22 @@ import {
     View,
     FlatList,
 } from 'react-native';
-import { PTScheduleContext } from '../context/PTScheduleContext'; // Context 사용
+import { PTScheduleContext } from '../context/CustomerPTScheduleContext'; // Context 사용
+import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { CustomerItem } from '../components/CustomerItem';
 import { TrainerItem } from '../components/TrainerItem';
 import styles from '../style/styles'; // 스타일 가져오기
 
 const ScheduleScreen: React.FC = () => {
-    const { schedules, fetchSchedules, addSchedule, deleteSchedule } = useContext(PTScheduleContext);
+    const {schedules, fetchSchedules, addSchedule, deleteSchedule } = useContext(PTScheduleContext);
+    
+    const [userType, setUserType] = useState<'customer' | 'trainer'>('customer'); // 기본값 설정
+    const [selectedDate, setSelectedDate] = useState<string | null>(null); // 선택된 날짜 저장
 
-    // 초기 데이터 로드
+
+    // 초기 데이터 로드 
     useEffect(() => {
-        fetchSchedules();
+        fetchSchedules;
     }, [fetchSchedules]);
 
     // 스케줄 삭제 핸들러
@@ -45,6 +50,11 @@ const ScheduleScreen: React.FC = () => {
         });
     };
 
+     // 날짜 선택 핸들러
+    const handleDateSelect = (day: { dateString: string }) => {
+        setSelectedDate(day.dateString);
+    };
+
     return (
         <View style={styles.contentContainer}>
             <View style={styles.topHeader}>
@@ -56,6 +66,38 @@ const ScheduleScreen: React.FC = () => {
                     <Text style={styles.addButtonText}>Add Schedule</Text>
                 </TouchableOpacity>
             </View>
+
+            <Calendar //calander 기능 추가 필요
+                onDayPress={handleDateSelect} // 날짜 클릭 이벤트
+                markedDates={{
+                    [selectedDate || '']: {
+                        selected: true,
+                        marked: true,
+                        selectedColor: 'blue',
+                    },
+                }}
+            />
+            
+            {selectedDate && (
+                <View style={styles.container}>
+                    {userType === 'customer' ? (
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={handleAddSchedule}
+                        >
+                            <Text style={styles.bottonText}>예약</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => Alert.alert('예약 확인', 'Reservation confirmed.')}
+                        >
+                            <Text style={styles.bottonText}>예약 확인</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+            )}
+
             <FlatList
                 data={schedules}
                 keyExtractor={(item) => item.scheduleId} // recordId가 string이므로 그대로 사용

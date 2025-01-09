@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import HomeScreen from "../screens/HomeScreen";
-import ScheduleScreen from "../screens/PTScheduleScreen";
+import ScheduleScreen from "../screens/TrainerPTScheduleScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import MyTabBar from "../components/TabBar";
 import RoutineNavigation from "./RoutineNavigation";
