@@ -18,10 +18,11 @@ const ScheduleScreen: React.FC = () => {
     const [userType, setUserType] = useState<'customer' | 'trainer'>('customer'); // 기본값 설정
     const [selectedDate, setSelectedDate] = useState<string | null>(null); // 선택된 날짜 저장
 
+    console.log(userType);
 
     // 초기 데이터 로드 
     useEffect(() => {
-        fetchSchedules;
+        fetchSchedules();
     }, [fetchSchedules]);
 
     // 스케줄 삭제 핸들러
