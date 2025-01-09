@@ -29,7 +29,7 @@ export const icon = {
     ),
     Time : ({ color } : { color : string}) => (
         <Ionicons name="time-outline" size={35} color={color} style = {styles.datetime} />
-    )
+    ),
 }
 
 const styles = StyleSheet.create({
@@ -41,5 +41,5 @@ const styles = StyleSheet.create({
     datetime : {
         marginLeft : 2,
         marginRight : 2,
-    }
+    },
 })

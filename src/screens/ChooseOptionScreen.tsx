@@ -67,7 +67,7 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
     };
 
     return (
-        <View style={styles.container}>
+        <View style={styles.optionContainer}>
             <TouchableOpacity onPress={() => navigation.navigate('CameraShot')} style={styles.RoutineOptBtn}>
                 <Text style={styles.bottonText}>Use Camera</Text>
             </TouchableOpacity>

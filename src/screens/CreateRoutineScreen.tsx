@@ -81,6 +81,12 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation}) 
         setShowModal(false);  // 운동을 선택한 후 모달을 닫음
     };
 
+    const handleDeleteExercise = (exercise_id: number) => {
+        // exercise_id를 기준으로 routines 배열에서 해당 운동 삭제
+        const updatedRoutines = createdRoutine.filter((routine: { exercise_id: number; }) => routine.exercise_id !== exercise_id);
+        setCreatedRoutine(updatedRoutines); // 상태 업데이트
+    };
+
     const handleDatePickerOpen = () => {
         setOpenDatePicker(true);
     };
@@ -138,6 +144,7 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation}) 
                     onCancel={() => {
                         setOpenDatePicker(false)
                     }}
+                    maximumDate={new Date()} // 현재 날짜 이후 날짜를 선택할 수 없게 제한
                 />
                 
                 {icon.Time({ color: '#000' })}
@@ -166,11 +173,10 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation}) 
                 keyExtractor={(item) => {return item?.exercise_id + item?.exercise_name;}}
                 renderItem={({ item, index }) => (
                     <RoutineItem 
-                        routine={item} 
-                        index={index}
-                        addNewSet={function (): void {
-                            throw new Error('Function not implemented.');
-                        } }                    />
+                        routine={item}
+                        index={index} 
+                        onDelete={handleDeleteExercise}                    
+                    />
                 )}
                 contentContainerStyle={styles.RoutineContext}
             />

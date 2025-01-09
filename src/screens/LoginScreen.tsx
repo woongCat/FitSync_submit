@@ -41,7 +41,7 @@ const LoginScreen : React.FC<LoginScreenProps> = ({navigation}) => {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={styles.authContainer}>
             <Text style={styles.header}>Log In</Text>
             <TextInput 
                 placeholder='Email' 

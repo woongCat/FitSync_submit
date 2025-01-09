@@ -14,7 +14,7 @@ export type RoutineStackParamList = {
     ChooseOption : undefined;
     CameraShot : undefined;
     CreateRoutine : { selectedExercise?: Exercise };
-    UpdateRoutine : { selectedRecord : Routine[] };
+    UpdateRoutine : { selectedRoutines : Routine[] };
 }
 
 const RoutineStack = createNativeStackNavigator<RoutineStackParamList>()

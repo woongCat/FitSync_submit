@@ -46,7 +46,7 @@ const SignUpScreen : React.FC<SignUpScreenProps> = ({navigation}) => {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={styles.authContainer}>
             <Text style={styles.header}>Sign Up</Text>
             <TextInput 
                 placeholder='Name' 

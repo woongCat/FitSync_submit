@@ -46,23 +46,15 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
         setIsLoading(true);
 
         try {
+            console.log('using fetch right now');
             // AsyncStorage에서 userId,userType 값을 가져오기
             const access_token = await AsyncStorage.getItem('token');
-
-            console.log(access_token);
 
             // 요청 보내기
             const response = await axios.get(`${Config.API_URL}/record/read`, {headers: { Authorization: access_token }});
 
             // 응답 처리
             if (response.status) {
-                console.log(response.data);
-                response.data.data.forEach((item: { routines: any; }) => {
-                    console.log(item.routines);  // routines 배열 출력
-                });
-                console.log(response.data.data);
-                // TODO: data 맞춰서 저장하기
-
                 // 응답 데이터를 Record[] 형태로 변환하기 전에 확인 및 변환 필요
                 const data = response.data.data.map((item: any) => ({
                     ...item,

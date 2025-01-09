@@ -6,9 +6,18 @@ const styles = StyleSheet.create ({
     container : {
         flex : 1,
         color : '#f5f5f5',
-        justifyContent : 'center',
-        alignItems : 'center',
         padding : 10
+    },
+    authContainer : {
+        flex : 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding : 20
+    },
+    optionContainer : {
+        flex : 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     header : {
         fontSize : 24,
@@ -21,6 +30,15 @@ const styles = StyleSheet.create ({
         alignItems : 'center',
         justifyContent: 'space-between',
         backgroundColor : '#f5f5f5'
+    },
+    subHeader : {
+        padding : 16,
+        alignItems : 'flex-start',
+        backgroundColor : '#f5f5f5'
+    },
+    subHeaderText : {
+        fontSize : 16,
+        fontWeight : 'bold',
     },
     input : {
         width : '100%',
@@ -220,24 +238,69 @@ const styles = StyleSheet.create ({
         color: '#333',
     },
     RoutineCard : {
-        width:'100%',
-        marginBottom: 10,
-        paddingHorizontal:10,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor : '#ffffff',
+        borderRadius : 8,
+        padding : 10,
+        marginHorizontal : 5,
+        marginVertical : 5,
+        shadowColor : '#000',
+        shadowOffset : {
+            width : 0,
+            height : 2
+        },
+        shadowOpacity : 0.1,
+        shadowRadius : 4,
+        elevation : 5,
     },
     RoutineContext : {
-        flex : 1,
+        flexGrow : 1,
+        paddingBottom: 5
     },
     RoutineHeader: {
-        flex: 1,
+        flex: 3,
         alignItems: 'flex-start',
     },
     RoutineExerciseName : {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: 'bold',
+    },
+    RoutineDetailText : {
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    RoutineSubText : {
+        fontSize : 14,
+        color: '#aaa',
+        marginTop : 5,
+    },
+    RoutineEmptyContainer : {
+        flex : 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    RoutineSetContainer : {
+        flex : 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal : 5,
+    },
+    deleteSetsBtn : {
+        flex : 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    RoutineRepsContainer : {
+        flex : 6,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    RoutineWeightContainer : {
+        flex : 6,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     RoutineCardRow: {
         flexDirection: 'row',
@@ -246,7 +309,6 @@ const styles = StyleSheet.create ({
     },
     RoutineExerciseImage : {
         flex: 1,
-        width : 100,
         height : 100,
     },
     RoutineCardSetsContainer: {
@@ -272,20 +334,43 @@ const styles = StyleSheet.create ({
         textAlign: 'center',
         marginHorizontal: 5,
     },
+    setIndexContainer : {
+        flex : 1,
+        alignItems: 'center',
+    },
+    editNumBtn: {
+        position : 'static',
+        backgroundColor : '#056edd',
+        width : 30,
+        height : 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius : 5,
+    },
+    editNumBtnText : {
+        fontSize : 18,
+        fontWeight : 'bold',
+        color: '#ffffff',
+    },
+    RepsAndWeightInputBox : {
+        width : '25%',
+        textAlignVertical : 'center',
+        textAlign : 'center',
+        marginHorizontal : 20,
+        fontWeight : 'bold',
+        fontSize : 15,
+    },
     addSetsBtn : {
-        height : 40,
+        flex : 1,
+        height : 30,
         padding : 5,
         marginTop : 3,
         justifyContent : 'center',
         alignItems : 'center',
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
     },
     addSetsText : {
         fontSize : 14,
-        fontWeight : 'bold',
-        color: '#3ec2d2',
+        color: '#056edd',
     },
     RecordCard : {
         backgroundColor : '#ffffff',
@@ -312,8 +397,7 @@ const styles = StyleSheet.create ({
     },
     RecordDescription : {
         fontSize : 14,
-        color: '#ccc',
-
+        color: '#aaa',
     },
     RecordDeleteBtn : {
         position : 'absolute',
@@ -330,12 +414,13 @@ const styles = StyleSheet.create ({
         fontSize : 14,
     },
     RoutineLabel : {
-        fontSize: 16,
+        fontSize: 12,
         fontWeight: 'bold',
+        marginBottom : 5,
     },
     RoutineComment : {
         width: '100%',
-        height : 50,
+        height : 75,
         borderWidth : 1,
         borderColor : '#ccc',
         borderRadius : 6,

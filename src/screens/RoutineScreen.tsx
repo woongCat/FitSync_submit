@@ -27,12 +27,6 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
     }, {});
 
     useEffect(() => {
-        fetchRecordData();
-    }, []);
-
-    //console.log(records);
-
-    useEffect(() => {
         if (selectedDate && records.length > 0) {
             // selectedDate와 sessionDate 비교
             const filteredRecords = records.filter(record => {
@@ -71,7 +65,7 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
                     <RecordItem 
                         record={item} 
                         onPressRecordItem={() => 
-                            navigation.navigate('UpdateRoutine', {selectedRecord : item.routines})
+                            navigation.navigate('UpdateRoutine', {selectedRoutines : item.routines})
                         }
                         onPressDeleteRecordItem = {() =>
                             deleteRecordData(item?.recordId, item?.sessionDate)
