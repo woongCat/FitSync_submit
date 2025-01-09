@@ -1,17 +1,20 @@
 import { useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Alert, Text, View, FlatList, Button } from 'react-native';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from '../style/styles';
 
-const TrainerView = ({ selectedDate, setSelectedDate,}) => {
+const TrainerItem = ({ selectedDate, setSelectedDate,}) => {
+    const [reservations, setReservations] = useState([]);
+    const [pendingRequests, setPendingRequests] = useState([]);
+    
     const handleDatePress = (day) => {
         setSelectedDate(day.dateString);
     };
 
-    const handleAcceptRequest = (requestID) => {
+    const handleAcceptRequest = (scheduleId) => {
         // 예약 수락 API 호출
-        fetch(`/api/reservation/${requestID}/accept`, { method: 'POST' })
+        fetch(`/api/reservation/${scheduleId}/accept`, { method: 'POST' })
             .then(response => {
                 if (response.ok) Alert.alert('예약이 확정되었습니다.');
             });
@@ -49,4 +52,4 @@ const TrainerView = ({ selectedDate, setSelectedDate,}) => {
         </View>
     );
 };
-export default TrainerView;
+export default TrainerItem;

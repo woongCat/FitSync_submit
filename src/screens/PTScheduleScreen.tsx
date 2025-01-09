@@ -7,6 +7,8 @@ import {
     FlatList,
 } from 'react-native';
 import { PTScheduleContext } from '../context/PTScheduleContext'; // Context 사용
+import { CustomerItem } from '../components/CustomerItem';
+import { TrainerItem } from '../components/TrainerItem';
 import styles from '../style/styles'; // 스타일 가져오기
 
 const ScheduleScreen: React.FC = () => {
@@ -18,7 +20,7 @@ const ScheduleScreen: React.FC = () => {
     }, [fetchSchedules]);
 
     // 스케줄 삭제 핸들러
-    const handleDeleteSchedule = (recordId: string) => {
+    const handleDeleteSchedule = (scheduleId: string) => {
         Alert.alert('Delete Schedule', 'Are you sure you want to delete this schedule?', [
             {
                 text: 'Cancel',
@@ -26,7 +28,7 @@ const ScheduleScreen: React.FC = () => {
             },
             {
                 text: 'Delete',
-                onPress: () => deleteSchedule(recordId),
+                onPress: () => deleteSchedule(scheduleId),
             },
         ]);
     };
@@ -37,7 +39,9 @@ const ScheduleScreen: React.FC = () => {
             trainerId: '1',
             customerId: '2',
             sessionDate: '2025-01-09T14:00:00Z',
-            notes: 'New PT Session',
+            startTime: '14:00:00',
+            endTime: '16:00:00',
+            status: '예약',
         });
     };
 
@@ -54,7 +58,7 @@ const ScheduleScreen: React.FC = () => {
             </View>
             <FlatList
                 data={schedules}
-                keyExtractor={(item) => item.recordId} // recordId가 string이므로 그대로 사용
+                keyExtractor={(item) => item.scheduleId} // recordId가 string이므로 그대로 사용
                 renderItem={({ item }) => (
                     <View style={styles.scheduleCard}>
                         <Text style={styles.scheduleText}>
@@ -67,10 +71,16 @@ const ScheduleScreen: React.FC = () => {
                             Date: {item.sessionDate}
                         </Text>
                         <Text style={styles.scheduleText}>
-                            Notes: {item.notes}
+                            Start Time: {item.startTime}
+                        </Text>
+                        <Text style={styles.scheduleText}>
+                            End Time: {item.endTime}
+                        </Text>
+                        <Text style={styles.scheduleText}>
+                            Reservation Status: {item.status}
                         </Text>
                         <TouchableOpacity
-                            onPress={() => handleDeleteSchedule(item.recordId)} // string 타입 그대로 사용
+                            onPress={() => handleDeleteSchedule(item.scheduleId)} // string 타입 그대로 사용
                             style={styles.deleteButton}
                         >
                             <Text style={styles.deleteButtonText}>

@@ -10,20 +10,27 @@ interface ScheduleItemProps {
     onConfirm: (id: string) => void;
 }
 
-const ScheduleItem: React.FC<ScheduleItemProps> = React.memo(({ schedule, onScheduleSelect, onConfirm }) => {
+const CustomerItem: React.FC<ScheduleItemProps> = React.memo(({ schedule, onScheduleSelect, onConfirm }) => {
     const handleScheduleSelect = () => {
-        onScheduleSelect(schedule.recordId);
+        onScheduleSelect(schedule.scheduleId);
     };
 
-    const handleConfirm = () => {
-        onConfirm(schedule.recordId);
+    const handleConfirm = async () => {
+        try {
+            await onConfirm(schedule.scheduleId);
+            Alert.alert("Success", "The schedule has been confirmed.");
+        } catch (error) {
+            Alert.alert("Error", "Failed to confirm the schedule.");
+        }
     };
 
     return (
         <View style={styles.scheduleCard}>
             <Text style={styles.scheduleHeader}>{schedule.trainerId}</Text>
             <Text style={styles.scheduleDescription}>Date: {schedule.sessionDate}</Text>
-            <Text style={styles.scheduleDescription}>Status: {schedule.notes}</Text>
+            <Text style={styles.scheduleDescription}>Start Time: {schedule.startTime}</Text>
+            <Text style={styles.scheduleDescription}>End Time: {schedule.endTime}</Text>
+            <Text style={styles.scheduleDescription}>Reservation Status: {schedule.status}</Text>
             
             <FlatList
                 data={schedule.sessionDate}
@@ -51,4 +58,4 @@ const ScheduleItem: React.FC<ScheduleItemProps> = React.memo(({ schedule, onSche
 });
 
 
-export default ScheduleItem;
+export default CustomerItem;
