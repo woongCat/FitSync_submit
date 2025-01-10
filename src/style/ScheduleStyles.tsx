@@ -121,6 +121,28 @@ const ScheduleStyles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 14,
     },
+    toggleDetailsButton: {
+        marginTop: 10,
+        padding: 10,
+        backgroundColor: '#007bff',
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    buttonGroup: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginTop: 10,
+    },
+    editButton: {
+        backgroundColor: '#17a2b8',
+        padding: 10,
+        borderRadius: 5,
+    },
+    scheduleDetailText: {
+        fontSize: 14,
+        color: '#6c757d',
+        marginTop: 5,
+    },
 });
 
 export default ScheduleStyles;

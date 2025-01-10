@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useMemo } from 'react';
+import React, { useEffect, useState, useContext, useMemo, useCallback, useRef } from 'react';
 import {
     View,
     Text,
@@ -6,10 +6,11 @@ import {
     FlatList,
     TouchableOpacity,
     Alert,
+    ActivityIndicator,
 } from 'react-native';
 import { PTScheduleContext } from '../context/PTScheduleContext';
 import { Calendar } from 'react-native-calendars';
-import ScheduleItem from '../components/ScheduleItme.tsx'; // Trainer/Customer 공통 ScheduleItem
+import ScheduleItem from '../components/ScheduleItme.tsx';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ScheduleStyles from '../style/ScheduleStyles';
 
@@ -21,104 +22,102 @@ const UnifiedScheduleScreen: React.FC = () => {
         updateSchedule,
         addSchedule,
         deleteSchedule,
-    } = useContext(PTScheduleContext); // PTSchedule Context 사용
+        isLoading,
+    } = useContext(PTScheduleContext);
 
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
-    const [markedDates, setMarkedDates] = useState<Record<string, any>>({});
-    const [trainerName, setTrainerName] = useState<string>(''); // 고객용 검색 기능
-    const [filteredSchedules, setFilteredSchedules] = useState<typeof schedules>([]); // 검색된 스케줄
-    const [trainerId, setTrainerId] = useState<number | null>(null);
+    const [trainerName, setTrainerName] = useState<string>(''); // 검색 기능
+    const [filteredSchedules, setFilteredSchedules] = useState<typeof schedules>([]); // 필터된 스케줄
     const [startTime, setStartTime] = useState<string>('');
     const [endTime, setEndTime] = useState<string>('');
     const [startPickerVisible, setStartPickerVisible] = useState(false);
     const [endPickerVisible, setEndPickerVisible] = useState(false);
+    const [markedDates, setMarkedDates] = useState<Record<string, any>>({}); // 마킹된 날짜들
 
+    // 초기화
     useEffect(() => {
         const today = new Date().toISOString().split('T')[0];
-        console.log('Today:', today); // 디버깅용
         setSelectedDate(today);
+    
         setMarkedDates({
-            [today]: {
-                selected: true,
-                marked: true,
-                selectedColor: '#007bff',
-            },
+            [today]: { selected: true, marked: true, selectedColor: '#007bff' },
         });
-        fetchSchedules(today);
+    
+        fetchSchedules(today).catch((error) =>
+            console.error('Error fetching schedules on initialization:', error)
+        );
     }, []);
 
     useEffect(() => {
-        console.log('UserType:', userType); // 현재 userType 확인
-    }, [userType]);
+        // 예약된 날짜 마킹 처리
+        const newMarkedDates = { ...markedDates };
+    
+        schedules.forEach((schedule) => {
+            const sessionDate = schedule.startTime.split('T')[0]; // 날짜만 추출
+            newMarkedDates[sessionDate] = {
+                ...newMarkedDates[sessionDate],
+                marked: true,
+                dotColor: '#007bff', // 예약 날짜 점
+            };
+        });
+    
+        setMarkedDates(newMarkedDates);
+    }, [schedules]);
 
     const handleDateSelect = async (day: { dateString: string }) => {
         const sessionDate = day.dateString;
     
-        console.log('Selected Date:', sessionDate); // 디버깅 로그 추가
+        // 선택 날짜 업데이트
         setSelectedDate(sessionDate);
     
-        // `markedDates`를 최적화된 방식으로 업데이트
+        // 마킹 데이터 업데이트
         setMarkedDates((prev) => {
-            const updatedMarkedDates = { ...prev };
+            const updatedDates = { ...prev };
     
-            // 기존 선택된 날짜를 초기화
-            if (selectedDate) {
-                updatedMarkedDates[selectedDate] = { marked: true, selected: false };
-            }
+            // 모든 날짜의 선택 상태 초기화
+            Object.keys(updatedDates).forEach((key) => {
+                if (updatedDates[key].selected) {
+                    delete updatedDates[key].selected;
+                    delete updatedDates[key].selectedColor;
+                }
+            });
     
-            // 새로 선택된 날짜를 마킹
-            updatedMarkedDates[sessionDate] = {
+            // 새로운 선택 날짜 마킹
+            updatedDates[sessionDate] = {
+                ...updatedDates[sessionDate],
                 selected: true,
-                marked: true,
                 selectedColor: '#007bff',
             };
     
-            return updatedMarkedDates;
+            return updatedDates;
         });
     
         try {
             await fetchSchedules(sessionDate);
-            console.log('Fetch Schedules called for:', sessionDate); // 디버깅 로그 추가
         } catch (error) {
             console.error('Failed to fetch schedules for date:', sessionDate, error);
         }
     };
 
-    const handleSearch = () => {
+    const handleSearch = useCallback(() => {
         if (trainerName.trim()) {
-            const result = schedules.filter((schedule) =>
-                schedule.trainerName.toLowerCase().includes(trainerName.toLowerCase())
+            setFilteredSchedules(
+                schedules.filter((schedule) =>
+                    schedule.trainerName.toLowerCase().includes(trainerName.toLowerCase())
+                )
             );
-            setFilteredSchedules(result);
         } else {
             setFilteredSchedules([]);
         }
-    };
+    }, [schedules, trainerName]);
 
-    const handleStartTimeChange = (event: any, selectedTime: Date | undefined) => {
-        setStartPickerVisible(false);
-        if (selectedTime) {
-            setStartTime(selectedTime.toTimeString().slice(0, 5));
-        }
-    };
-
-    const handleEndTimeChange = (event: any, selectedTime: Date | undefined) => {
-        setEndPickerVisible(false);
-        if (selectedTime) {
-            setEndTime(selectedTime.toTimeString().slice(0, 5));
-        }
-    };
-
-    const handleAddSchedule = () => {
-        if (!selectedDate || !trainerId || !startTime || !endTime) {
+    const handleAddSchedule = useCallback(() => {
+        if (!selectedDate || !startTime || !endTime) {
             Alert.alert('Error', 'Please complete all fields.');
             return;
         }
-        addSchedule(selectedDate, {
-            trainerId,
-            startTime,
-            endTime,
-        }).then((success) => {
+
+        addSchedule(selectedDate, { trainerId: 1, startTime, endTime }).then((success) => {
             if (success) {
                 Alert.alert('Success', 'Reservation added successfully!');
                 fetchSchedules(selectedDate);
@@ -126,28 +125,38 @@ const UnifiedScheduleScreen: React.FC = () => {
                 Alert.alert('Error', 'Failed to add reservation.');
             }
         });
-    };
+    }, [selectedDate, startTime, endTime, addSchedule, fetchSchedules]);
 
-    const handleCancelSchedule = (scheduleId: number) => {
-        Alert.alert('Cancel Reservation', 'Are you sure?', [
-            { text: 'Cancel', style: 'cancel' },
-            {
-                text: 'Delete',
-                onPress: () => {
-                    deleteSchedule(scheduleId).then((success) => {
-                        if (success && selectedDate) {
-                            fetchSchedules(selectedDate);
-                        } else {
-                            Alert.alert('Error', 'Failed to cancel reservation.');
-                        }
-                    });
+    const handleDeleteSchedule = useCallback(
+        (scheduleId: number) => {
+            Alert.alert('Cancel Reservation', 'Are you sure?', [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Delete',
+                    onPress: () => {
+                        deleteSchedule(scheduleId).then((success) => {
+                            if (success && selectedDate) {
+                                fetchSchedules(selectedDate);
+                            } else {
+                                Alert.alert('Error', 'Failed to cancel reservation.');
+                            }
+                        });
+                    },
                 },
-            },
-        ]);
-    };
+            ]);
+        },
+        [deleteSchedule, fetchSchedules, selectedDate]
+    );
+
+    // 메모이제이션된 데이터
+    const displayedSchedules = useMemo(
+        () => (filteredSchedules.length > 0 ? filteredSchedules : schedules),
+        [filteredSchedules, schedules]
+    );
 
     return (
         <View style={ScheduleStyles.contentContainer}>
+            {/* 검색 영역 */}
             {userType === 'customer' && (
                 <View style={ScheduleStyles.searchContainer}>
                     <TextInput
@@ -162,57 +171,28 @@ const UnifiedScheduleScreen: React.FC = () => {
                 </View>
             )}
 
+            {/* 캘린더 */}
             <Calendar
                 onDayPress={handleDateSelect}
-                markedDates={{
-                    ...markedDates,
-                    [selectedDate || '']: { selected: true, selectedColor: 'blue' },
+                markedDates={markedDates} // 이 부분이 핵심입니다.
+                theme={{
+                    selectedDayBackgroundColor: '#007bff',
+                    todayTextColor: '#007bff',
+                    arrowColor: '#007bff',
                 }}
             />
 
-            {userType === 'customer' && (
-                <>
-                    <TouchableOpacity
-                        onPress={() => setStartPickerVisible(true)}
-                        style={ScheduleStyles.addButton}
-                    >
-                        <Text style={ScheduleStyles.addButtonText}>Select Start Time</Text>
-                    </TouchableOpacity>
-                    {startPickerVisible && (
-                        <DateTimePicker
-                            mode="time"
-                            value={new Date()}
-                            onChange={handleStartTimeChange}
-                        />
-                    )}
+            {/* 로딩 상태 */}
+            {isLoading && <ActivityIndicator size="large" color="#007bff" />}
 
-                    <TouchableOpacity
-                        onPress={() => setEndPickerVisible(true)}
-                        style={ScheduleStyles.addButton}
-                    >
-                        <Text style={ScheduleStyles.addButtonText}>Select End Time</Text>
-                    </TouchableOpacity>
-                    {endPickerVisible && (
-                        <DateTimePicker
-                            mode="time"
-                            value={new Date()}
-                            onChange={handleEndTimeChange}
-                        />
-                    )}
-
-                    <TouchableOpacity style={ScheduleStyles.addButton} onPress={handleAddSchedule}>
-                        <Text style={ScheduleStyles.addButtonText}>Add Reservation</Text>
-                    </TouchableOpacity>
-                </>
-            )}
-
+            {/* FlatList */}
             <FlatList
-                data={filteredSchedules.length > 0 ? filteredSchedules : schedules}
+                data={displayedSchedules}
                 keyExtractor={(item) => item.scheduleId.toString()}
                 renderItem={({ item }) => (
                     <ScheduleItem
                         schedule={item}
-                        onDelete={userType === 'customer' ? handleCancelSchedule : undefined}
+                        onDelete={userType === 'customer' ? handleDeleteSchedule : undefined}
                         onApprove={
                             userType === 'trainer'
                                 ? () =>
@@ -243,7 +223,51 @@ const UnifiedScheduleScreen: React.FC = () => {
                         }
                     />
                 )}
+                ListEmptyComponent={<Text>No schedules available.</Text>}
             />
+
+            {/* 예약 추가 */}
+            {userType === 'customer' && (
+                <>
+                    <TouchableOpacity
+                        onPress={() => setStartPickerVisible(true)}
+                        style={ScheduleStyles.addButton}
+                    >
+                        <Text style={ScheduleStyles.addButtonText}>Select Start Time</Text>
+                    </TouchableOpacity>
+                    {startPickerVisible && (
+                        <DateTimePicker
+                            mode="time"
+                            value={new Date()}
+                            onChange={(event, date) => {
+                                setStartPickerVisible(false);
+                                if (date) setStartTime(date.toISOString().split('T')[1]);
+                            }}
+                        />
+                    )}
+
+                    <TouchableOpacity
+                        onPress={() => setEndPickerVisible(true)}
+                        style={ScheduleStyles.addButton}
+                    >
+                        <Text style={ScheduleStyles.addButtonText}>Select End Time</Text>
+                    </TouchableOpacity>
+                    {endPickerVisible && (
+                        <DateTimePicker
+                            mode="time"
+                            value={new Date()}
+                            onChange={(event, date) => {
+                                setEndPickerVisible(false);
+                                if (date) setEndTime(date.toISOString().split('T')[1]);
+                            }}
+                        />
+                    )}
+
+                    <TouchableOpacity style={ScheduleStyles.addButton} onPress={handleAddSchedule}>
+                        <Text style={ScheduleStyles.addButtonText}>Add Reservation</Text>
+                    </TouchableOpacity>
+                </>
+            )}
         </View>
     );
 };
