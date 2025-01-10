@@ -4,6 +4,9 @@ import { createContext, useState, ReactNode, useEffect } from 'react';
 import { ActivityIndicator, Alert } from 'react-native';
 import Config  from 'react-native-config'; // .env에서 변수를 가져옴
 
+import { Platform } from 'react-native';
+import RNFS from 'react-native-fs'; // ios 확인용 임포트
+
 
 interface AuthContextData {
     token : string | null;
@@ -28,6 +31,7 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
     const [userName, setUserName] = useState<string>('');
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setisAuthenticated] = useState(false);
+
 
     const checkAuth = async(): Promise<boolean> => {
         try {
@@ -76,8 +80,11 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
 
     const signIn = async(email:string, password:string, userType : string) : Promise<boolean> => {
         try {
-            const result = await axios.post(`${Config.API_URL}/login`, {email, password, userType}); //젠장 맞게도 
+            const result = await axios.post(`${Config.API_URL}/login`, {email, password, userType}); 
 
+            if (Platform.OS === 'ios') {
+                console.log('AsyncStorage Directory:', `${RNFS.DocumentDirectoryPath}/RCTAsyncLocalStorage_V1`);
+            }
 
             //console.log(result);
             if (result.status === 200) {

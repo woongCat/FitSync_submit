@@ -1,117 +1,158 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useContext } from 'react';
 import {
     View,
     Text,
     FlatList,
     TouchableOpacity,
     ActivityIndicator,
-    Modal,
-    Button,
     Alert,
-} from "react-native";
-import { Calendar } from "react-native-calendars";
-import { useTrainerSchedule } from "../context/TrainerPTScheduleContext";
-import styles from "../style/styles";
+    StyleSheet,
+} from 'react-native';
+import { PTScheduleContext } from '../context/PTScheduleContext.tsx'; // 경로를 맞춰주세요
+import { Calendar } from 'react-native-calendars';
 
 const TrainerPTScheduleScreen: React.FC = () => {
-    const { schedules, fetchTrainerSchedules, updateTrainerSchedule } =
-        useTrainerSchedule(); // Context에서 필요한 데이터와 함수 가져오기
+    const {
+        schedules,
+        fetchSchedules,
+        updateSchedule,
+        isLoading,
+    } = useContext(PTScheduleContext);
 
-    const [selectedDate, setSelectedDate] = useState<string | null>(null); // 선택한 날짜
-    const [filteredSchedules, setFilteredSchedules] = useState([]); // 선택된 날짜의 스케줄
-    const [isLoading, setIsLoading] = useState(false); // 로딩 상태
-    const [markedDates, setMarkedDates] = useState<any>({}); // 캘린더 마킹 상태
-    const [selectedSchedule, setSelectedSchedule] = useState<any | null>(null); // 선택한 스케줄
-    const [modalVisible, setModalVisible] = useState(false); // 모달 상태
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [markedDates, setMarkedDates] = useState<Record<string, any>>({});
 
-    // **추가된 fetchSchedulesByDate 함수**
-    const fetchSchedulesByDate = async (sessionDate: string) => {
+    const handleDateSelect = async (day: { dateString: string }) => {
+        const sessionDate = day.dateString;
+        setSelectedDate(sessionDate);
+
+        setMarkedDates({
+            [sessionDate]: {
+                selected: true,
+                marked: true,
+                selectedColor: '#007bff',
+            },
+        });
+
         try {
-            setIsLoading(true); // 로딩 시작
-            const access_token = await AsyncStorage.getItem('token'); // Access token 가져오기
-            if (!access_token) {
-                console.error("Access token is missing.");
-                setIsLoading(false);
-                return;
-            }
-
-            // API 요청
-            const response = await axios.post(
-                `${Config.API_URL}/schedule/read`, // API URL
-                { sessionDate }, // 요청 본문에 날짜 전달
-                {
-                    headers: {
-                        Authorization: `Bearer ${access_token}`, // 인증 헤더 추가
-                    },
-                }
-            );
-
-            if (response.status === 200) {
-                setFilteredSchedules(response.data.schedules); // 선택된 날짜의 스케줄 설정
-                console.log("Fetched schedules for:", sessionDate);
-            } else {
-                console.error("Failed to fetch schedules for the selected date.");
-            }
-        } catch (error: any) {
-            console.error("Error fetching schedules:", error.response?.data || error.message);
-        } finally {
-            setIsLoading(false); // 로딩 종료
+            await fetchSchedules(sessionDate);
+        } catch (error) {
+            Alert.alert('Error', 'Failed to fetch schedules.');
         }
     };
 
-    // 날짜 선택 핸들러
-    const handleDateSelect = (day: { dateString: string }) => {
-        const sessionDate = day.dateString; // 선택한 날짜 가져오기
-        setSelectedDate(sessionDate); // 선택한 날짜 상태 업데이트
-        fetchSchedulesByDate(sessionDate); // 선택한 날짜의 데이터 요청
+    const handleUpdateStatus = async (
+        scheduleId: number,
+        newStatus: '확정' | '거절',
+        sessionDate: string,
+        trainerId: number,
+        customerId: number,
+        startTime: string,
+        endTime: string
+    ) => {
+        const success = await updateSchedule(
+            scheduleId,
+            newStatus,
+            sessionDate,
+            trainerId,
+            customerId,
+            startTime,
+            endTime
+        );
+
+        if (success) {
+            Alert.alert('Success', 'Schedule updated successfully!');
+            fetchSchedules(sessionDate);
+        } else {
+            Alert.alert('Error', 'Failed to update schedule.');
+        }
     };
 
-    // 예약 상세 보기
-    const handleScheduleClick = (schedule: any) => {
-        setSelectedSchedule(schedule);
-        setModalVisible(true); // 모달 열기
-    };
+    useEffect(() => {
+        const today = new Date().toISOString().split('T')[0];
+        console.log('Today:', today); // 디버깅용
+        setSelectedDate(today);
+        setMarkedDates({
+            [today]: {
+                selected: true,
+                marked: true,
+                selectedColor: '#007bff',
+            },
+        });
+        fetchSchedules(today);
+    }, []);
 
     return (
-        <View style={styles.contentContainer}>
-            {/* 헤더 */}
-            <View style={styles.topHeader}>
+        <View style={styles.container}>
+            {/* Header */}
+            <View style={styles.header}>
                 <Text style={styles.headerText}>트레이너 스케줄</Text>
             </View>
 
-            {/* 로딩 스피너 */}
-            {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
-
-            {/* 캘린더 */}
+            {/* Calendar */}
             <Calendar
                 onDayPress={handleDateSelect}
-                markedDates={{
-                    ...markedDates,
-                    [selectedDate || ""]: {
-                        selected: true,
-                        marked: true,
-                        selectedColor: "blue",
-                    },
+                markedDates={markedDates}
+                theme={{
+                    selectedDayBackgroundColor: '#007bff',
+                    todayTextColor: '#007bff',
+                    arrowColor: '#007bff',
                 }}
             />
 
-            {/* 스케줄 리스트 */}
-            <Text style={styles.sectionTitle}>선택한 날짜의 스케줄</Text>
+            {/* Loading Indicator */}
+            {isLoading && <ActivityIndicator size="large" color="#007bff" />}
+
+            {/* Schedule List */}
+            <Text style={styles.scheduleTitle}>
+                {selectedDate}의 스케줄
+            </Text>
             <FlatList
-                data={filteredSchedules}
+                data={schedules}
                 keyExtractor={(item) => item.scheduleId.toString()}
                 renderItem={({ item }) => (
-                    <TouchableOpacity
-                        style={styles.scheduleCard}
-                        onPress={() => handleScheduleClick(item)}
-                    >
-                        <Text style={styles.scheduleText}>
-                            고객 이름: {item.customerName}
+                    <View style={styles.scheduleCard}>
+                        <Text style={styles.scheduleCustomer}>
+                            고객: {item.customerName}
                         </Text>
-                        <Text style={styles.scheduleText}>
+                        <Text style={styles.scheduleTime}>
                             시간: {item.startTime} ~ {item.endTime}
                         </Text>
-                    </TouchableOpacity>
+                        <View style={styles.buttonGroup}>
+                            <TouchableOpacity
+                                style={styles.approveButton}
+                                onPress={() =>
+                                    handleUpdateStatus(
+                                        item.scheduleId,
+                                        '확정',
+                                        selectedDate || '',
+                                        item.trainerId,
+                                        item.customerId,
+                                        item.startTime,
+                                        item.endTime
+                                    )
+                                }
+                            >
+                                <Text style={styles.buttonText}>확정</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.rejectButton}
+                                onPress={() =>
+                                    handleUpdateStatus(
+                                        item.scheduleId,
+                                        '거절',
+                                        selectedDate || '',
+                                        item.trainerId,
+                                        item.customerId,
+                                        item.startTime,
+                                        item.endTime
+                                    )
+                                }
+                            >
+                                <Text style={styles.buttonText}>거절</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 )}
                 ListEmptyComponent={
                     <Text style={styles.emptyText}>
@@ -119,42 +160,88 @@ const TrainerPTScheduleScreen: React.FC = () => {
                     </Text>
                 }
             />
-
-            {/* 예약 상세 정보 모달 */}
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        {selectedSchedule && (
-                            <>
-                                <Text style={styles.modalText}>
-                                    고객 이름: {selectedSchedule.customerName}
-                                </Text>
-                                <Text style={styles.modalText}>
-                                    트레이너 이름: {selectedSchedule.trainerName}
-                                </Text>
-                                <Text style={styles.modalText}>
-                                    시간: {selectedSchedule.startTime} ~{" "}
-                                    {selectedSchedule.endTime}
-                                </Text>
-                                <Text style={styles.modalText}>
-                                    상태: {selectedSchedule.status}
-                                </Text>
-                            </>
-                        )}
-                        <Button
-                            title="닫기"
-                            onPress={() => setModalVisible(false)}
-                        />
-                    </View>
-                </View>
-            </Modal>
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f8f9fa',
+        paddingHorizontal: 16,
+        paddingTop: 20,
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#343a40',
+    },
+    scheduleTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#495057',
+        marginVertical: 10,
+    },
+    scheduleCard: {
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
+        padding: 15,
+        marginVertical: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    scheduleCustomer: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#212529',
+        marginBottom: 5,
+        textAlign: 'center',
+    },
+    scheduleTime: {
+        fontSize: 14,
+        color: '#868e96',
+        textAlign: 'center',
+
+    },
+    buttonGroup: {
+        flexDirection: 'row',
+        justifyContent: 'center', // 버튼을 가운데 정렬
+        alignItems: 'center',
+        marginTop: 10,
+        gap: 10, // 버튼 간의 간격
+    },
+    approveButton: {
+        backgroundColor: '#28a745',
+        borderRadius: 5,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+    },
+    rejectButton: {
+        backgroundColor: '#dc3545',
+        borderRadius: 5,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontSize: 14,
+        fontWeight: '600',
+        textAlign: 'center',
+    },
+    emptyText: {
+        textAlign: 'center',
+        fontSize: 16,
+        color: '#adb5bd',
+        marginTop: 20,
+    },
+    
+});
 
 export default TrainerPTScheduleScreen;

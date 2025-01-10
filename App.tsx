@@ -4,18 +4,19 @@ import RootNavigation from './src/navigation/RootNavigation';
 import { AuthProvider } from './src/context/AuthContext';
 import { ExerciseProvider } from './src/context/ExerciseContext';
 import { RecordProvider } from './src/context/RecordContext';
-import { TrainerPTScheduleProvider } from './src/context/TrainerPTScheduleContext'; // 추가
+import { PTScheduleProvider } from './src/context/PTScheduleContext';
+
 
 function App(): React.JSX.Element {
   return (
     <AuthProvider>
       <ExerciseProvider>
         <RecordProvider>
-          <TrainerPTScheduleProvider>
+          <PTScheduleProvider>
             <NavigationContainer>
               <RootNavigation />
             </NavigationContainer>
-          </TrainerPTScheduleProvider>
+          </PTScheduleProvider>
         </RecordProvider>
       </ExerciseProvider>
     </AuthProvider>

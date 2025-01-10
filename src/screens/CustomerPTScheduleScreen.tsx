@@ -7,27 +7,38 @@ import {
     TouchableOpacity,
     Alert,
 } from 'react-native';
-import { useCustomerSchedule } from '../context/CustomerPTScheduleContext'; // Context 사용
+import { usePTSchedule } from '../context/PTScheduleContext'; // Context 사용
+import { useCustomerSchedule } from '../context/CustomerPTScheduleContext.tsx'
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Calendar } from 'react-native-calendars';
 import ScheduleItem from '../components/CustomerItem';
 import styles from '../style/styles'; // 스타일 가져오기
 
-const ScheduleScreen: React.FC = () => {
-    const { schedules, fetchSchedules, addSchedule, deleteSchedule } = useCustomerSchedule();
+const CustomerScheduleScreen: React.FC = () => {
+    // const {schedules, fetchSchedules, addSchedule, updateSchedule, deleteSchedule, isLoading, markedDates} = usePTSchedule();
+    const {schedules,userType,fetchSchedules,updateSchedule,addSchedule,deleteSchedule} = useCustomerSchedule();
     const [trainerName, setTrainerName] = useState<string>(''); // 검색어
     const [filteredSchedules, setFilteredSchedules] = useState<typeof schedules>([]); // 검색된 스케줄
     const [selectedDate, setSelectedDate] = useState<string | null>(null); // 선택된 날짜 저장
+    const [trainerId, setTrainerId] = useState<number | null>(null);
+    const [startTime, setStartTime] = useState<string>(''); // Start time 세팅
+    const [endTime, setEndTime] = useState<string>(''); // End time 세팅
+    const [startPickerVisible, setStartPickerVisible] = useState(false);
+    const [endPickerVisible, setEndPickerVisible] = useState(false);
+
 
     // 초기 데이터 로드
     useEffect(() => {
         const loadSchedules = async () => {
-            const success = await fetchSchedules('2025-01-01'); // 초기 날짜 설정 예제
-            if (!success) {
-                Alert.alert('Error', 'Failed to load schedules.');
+            if (selectedDate) {
+                const success = await fetchSchedules(selectedDate);
+                if (!success) {
+                    Alert.alert('Error', 'Failed to load schedules.');
+                }
             }
         };
         loadSchedules();
-    }, []);
+    }, [selectedDate]);
 
     // 트레이너 검색 핸들러
     const handleSearch = () => {
@@ -36,17 +47,33 @@ const ScheduleScreen: React.FC = () => {
         );
         setFilteredSchedules(result);
     };
+    
+    // 피티 예약 시작 시간
+    const handleStartTimeChange = (event: any, selectedTime: Date | undefined) => {
+        setStartPickerVisible(false);
+        if (selectedTime) {
+            setStartTime(selectedTime.toTimeString().slice(0, 5)); // Format to HH:mm
+        }
+    };
+
+    // 피티 예약 끝나는 시간
+    const handleEndTimeChange = (event: any, selectedTime: Date | undefined) => {
+        setEndPickerVisible(false);
+        if (selectedTime) {
+            setEndTime(selectedTime.toTimeString().slice(0, 5));
+        }
+    };
 
     // 예약 추가 핸들러
     const handleAddSchedule = () => {
-        if (!selectedDate) {
-            Alert.alert('Error', 'Please select a date first.');
+        if (!selectedDate || !trainerId || !startTime || !endTime) {
+            Alert.alert('Error', 'Please select a date, trainer, start time, and end time.');
             return;
         }
         addSchedule(selectedDate, {
-            trainerId: parseInt(trainerName), // 트레이너 ID를 숫자로 변환 (예제)
-            startTime: '14:00',
-            endTime: '16:00',
+            trainerId,
+            startTime,
+            endTime,
         }).then((success) => {
             if (success) {
                 Alert.alert('Success', 'Reservation added successfully!');
@@ -128,6 +155,29 @@ const ScheduleScreen: React.FC = () => {
                 }}
             />
 
+            {/* 시간 선택 */}
+             <TouchableOpacity onPress={() => setStartPickerVisible(true)} style={styles.addButton}>
+                <Text style={styles.addButtonText}>Select Start Time</Text>
+            </TouchableOpacity>
+            {startPickerVisible && (
+                <DateTimePicker
+                    mode="time"
+                    value={new Date()}
+                    onChange={handleStartTimeChange}
+                />
+            )}
+
+            <TouchableOpacity onPress={() => setEndPickerVisible(true)} style={styles.addButton}>
+                <Text style={styles.addButtonText}>Select End Time</Text>
+            </TouchableOpacity>
+            {endPickerVisible && (
+                <DateTimePicker
+                    mode="time"
+                    value={new Date()}
+                    onChange={handleEndTimeChange}
+                />
+            )}
+
             {/* 예약 추가 */}
             {selectedDate && trainerName && (
                 <TouchableOpacity style={styles.addButton} onPress={handleAddSchedule}>
@@ -150,4 +200,4 @@ const ScheduleScreen: React.FC = () => {
     );
 };
 
-export default ScheduleScreen;
+export default CustomerScheduleScreen;

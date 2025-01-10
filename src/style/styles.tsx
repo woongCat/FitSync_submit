@@ -330,6 +330,16 @@ const styles = StyleSheet.create ({
         marginVertical: 5, padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 5 
     },
     // 스케쥴을 위한 style 추가
+    headerContainer: {
+        flexDirection: 'row', // 자식 요소를 가로로 배치
+        justifyContent: 'space-between', // 좌우로 요소 배치
+        alignItems: 'center', // 수직 가운데 정렬
+        paddingHorizontal: 16, // 좌우 패딩 추가
+        paddingVertical: 10, // 상하 패딩 추가
+        backgroundColor: '#f5f5f5', // 배경 색상
+        borderBottomWidth: 1, // 하단 테두리
+        borderBottomColor: '#ccc', // 테두리 색상
+    },
     scheduleHeader: {
         fontSize: 18,
         fontWeight: 'bold',
@@ -435,6 +445,18 @@ const styles = StyleSheet.create ({
     },
     searchButtonText: {
         color: 'white',
+        fontWeight: 'bold',
+    },
+    markedDate: {
+        backgroundColor: '#FFB6C1',
+        borderRadius: 10,
+        width: 35,
+        height: 35,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    markedDateText: {
+        color: '#ffffff',
         fontWeight: 'bold',
     },
 });
