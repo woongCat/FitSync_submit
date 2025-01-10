@@ -4,6 +4,11 @@ import RootNavigation from './src/navigation/RootNavigation';
 import { AuthProvider } from './src/context/AuthContext';
 import { ExerciseProvider } from './src/context/ExerciseContext';
 import { RecordProvider } from './src/context/RecordContext';
+import RoutineNavigation from './src/navigation/RoutineNavigation';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import TabNavgation from './src/navigation/TabNavigation';
+
+const Stack = createNativeStackNavigator();
 
 function App(): React.JSX.Element {
   return (
@@ -11,7 +16,11 @@ function App(): React.JSX.Element {
       <ExerciseProvider>
         <RecordProvider>
           <NavigationContainer>
-            <RootNavigation />
+            <Stack.Navigator>
+                <Stack.Screen name="Root" component={RootNavigation} options={{headerShown : false}}/>
+                <Stack.Screen name="Tabs" component={TabNavgation} options={{headerShown : false}}/>
+                <Stack.Screen name="Routine" component={RoutineNavigation} options={{headerShown : false}}/>
+              </Stack.Navigator>
           </NavigationContainer>
         </RecordProvider>
       </ExerciseProvider> 

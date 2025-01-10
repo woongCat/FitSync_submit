@@ -5,33 +5,38 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import { RootStackParamList } from '../navigation/RootNavigation';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../style/styles';
 import { RecordContext } from '../context/RecordContext';
 import RecordItem from '../components/RecordItem';
 import { RoutineStackParamList } from '../navigation/RoutineNavigation';
+import { BottomTabParamsList } from '../navigation/TabNavigation';
+import { Screen } from 'react-native-screens';
+import { useIsFocused } from '@react-navigation/native';
 
-type HomeScreenBottomTabNavigationProp = NativeStackNavigationProp<RootStackParamList, 'TabNav'>
-type HomeScreentoRoutineNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'RoutineDetail'>
+type HomeScreenBottomTabNavigationProp = NativeStackNavigationProp<BottomTabParamsList, 'Home'>
 
 interface HomeScreenProps {
-    routineNavigation : HomeScreentoRoutineNavigationProp;
-    bottomTabNavigation : HomeScreenBottomTabNavigationProp;
+    navigation : HomeScreenBottomTabNavigationProp;
 }
 
-const HomeScreen : React.FC<HomeScreenProps> = ({routineNavigation, bottomTabNavigation}) => {
+const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
     const {userName} = useContext(AuthContext);
     const { fetchRecordData, deleteRecordData, records } = useContext(RecordContext);
-    const [latestRecords, setLatestRecords] = useState(records); // 최신 2개 기록
+    const [latestRecords, setLatestRecords] = useState(records); // 최신 3개 기록
+    const isFocused = useIsFocused();
 
     useEffect(() => {
-        fetchRecordData();
-    }, []);
+        console.log(isFocused);
+        if (isFocused) {
+            fetchRecordData();
+        }
+
+    }, [isFocused]);
 
     useEffect(() => {
-        // 가장 최신 기록 2개만 추출
+        // 가장 최신 기록 3개만 추출
         const sortedRecords = records.sort((a, b) => {
             const dateA = new Date(a.sessionDate);
             const dateB = new Date(b.sessionDate);
@@ -53,27 +58,28 @@ const HomeScreen : React.FC<HomeScreenProps> = ({routineNavigation, bottomTabNav
                 <Text style={styles.subHeaderText}>Most Recent Records:</Text>
             </View>
 
-            <FlatList 
-                data={latestRecords}
-                keyExtractor={(item) => item?.sessionDate}
-                renderItem={({item}) => 
-                    <RecordItem 
-                        record={item} 
-                        onPressRecordItem={() => 
-                            routineNavigation.navigate('UpdateRoutine', {selectedRoutines : item.routines})
-                        }
-                        onPressDeleteRecordItem = {() =>
-                            deleteRecordData(item?.recordId, item?.sessionDate)
-                        } 
-                    />
-                }
-            />
-
+            <View style={{ flex : 1 }}>
+                <FlatList 
+                    data={latestRecords}
+                    keyExtractor={(item) => item?.sessionDate}
+                    renderItem={({item}) => 
+                        <RecordItem 
+                            record={item}
+                            onPressRecordItem={() => navigation.navigate('Home', { screen: 'UpdateRoutine', params: { selectedRecord: item } })}
+                            onPressDeleteRecordItem={() => deleteRecordData(item?.recordId, item?.sessionDate)} 
+                            onPressShareRecordItem={function (): void {
+                                throw new Error('Function not implemented.');
+                            } }                        
+                        />
+                    }
+                />
+            </View>
+            
             <View style={styles.subHeader}>
                 <Text style={styles.subHeaderText}>Next PT Schedule:</Text>
             </View>
 
-            <View style={styles.contentContainer}>
+            <View style={{ flex : 1 }}>
                 {/* TODO : add schedule block here */}
             </View>
         </View>

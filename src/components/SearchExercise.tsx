@@ -6,7 +6,6 @@ import { Exercise, ExerciseContext } from "../context/ExerciseContext";
 import ExerciseItem from "./ExerciseItem";
 
 interface SearchExerciseProps {
-    // TODO: 나중에 targetfilter 도 추가하면 좋을 듯
     onCancel : () => void; 
     onExerciseSelect: (exercise: Exercise) => void;  // exercise 선택 시 호출될 콜백 함수 추가
 }
@@ -95,16 +94,16 @@ const SearchExercise : React.FC<SearchExerciseProps> = ({ onCancel, onExerciseSe
                             style={[
                                 styles.bodyPartButton,
                             ]}
-                            onPress={() => setSelectedBodyPart(bodyPart)}
+                            onPress={() => setSelectedBodyPart(prev => prev === bodyPart ? '' : bodyPart)}
                         >
-                            <Text
-                                style={[
-                                    styles.bodyPartText,
-                                    selectedBodyPart === bodyPart && styles.selectedBodyPartText,
-                                ]}
-                            >
-                                {bodyPart}
-                            </Text>
+                        <Text
+                            style={[
+                                styles.bodyPartText,
+                                selectedBodyPart === bodyPart && styles.selectedBodyPartText,
+                            ]}
+                        >
+                            {bodyPart}
+                        </Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>

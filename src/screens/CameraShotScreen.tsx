@@ -12,6 +12,7 @@ import { RoutineStackParamList } from '../navigation/RoutineNavigation';
 import { upload } from '../context/UploadContext';
 import RNFS from 'react-native-fs';
 import Config  from "react-native-config"; // .env에서 변수를 가져옴
+import { Routine } from '../context/RecordContext';
 
 type CameraShotScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'RoutineDetail'>
 
@@ -70,8 +71,17 @@ const CameraShotScreen : React.FC<CameraShotScreenProps> = ({navigation}) => {
                 );
         
                 if (response) {
-                    //Alert.alert('Upload Success', '사진이 서버에 업로드되었습니다.');
-                    navigation.navigate('UpdateRoutine', {selectedRecord : response});
+                    // 서버로부터 받은 응답 데이터를 Record와 Routine 형식에 맞게 변환
+                    const routines: Routine[] = response.map((item: any) => ({
+                        exercise_id: item.exercise_id,
+                        exercise_name: item.exercise,
+                        sets: item.sets,
+                        reps: item.reps,
+                        weight: item.weight,
+                        comment: item.comment || null,
+                    }));
+                    
+                    navigation.navigate('CreateRoutine', {selectedRoutine : routines});
                 } else {
                     Alert.alert('Error', 'Fail to process photo.');
                     navigation.navigate('ChooseOption');

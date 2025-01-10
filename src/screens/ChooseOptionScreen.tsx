@@ -12,6 +12,7 @@ import { useState } from 'react';
 import DocumentPicker from 'react-native-document-picker';
 import { upload } from '../context/UploadContext';
 import Config  from "react-native-config"; // .env에서 변수를 가져옴
+import { Record, Routine } from '../context/RecordContext';
 
 type ChooseOptionScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'RoutineDetail'>
 
@@ -34,8 +35,6 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
 
             const file = res[0]; // 첫 번째 파일 선택
             setFileUri(file.uri); // 선택한 파일의 URI를 상태에 저장
-            //Alert.alert('파일 선택', `선택한 파일 경로: ${file.uri}`);
-            console.log('Selected file: ', file) // TODO: 나중에 지우기
             
             //서버로 사진 전송
             const response = await upload(
@@ -48,8 +47,17 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
             );
     
             if (response) {
-                //Alert.alert('Upload Success', '사진이 서버에 업로드되었습니다.');
-                navigation.navigate('UpdateRoutine', {selectedRecord : response});
+                // 서버로부터 받은 응답 데이터를 Record와 Routine 형식에 맞게 변환
+                const routines: Routine[] = response.map((item: any) => ({
+                    exercise_id: item.exercise_id,
+                    exercise_name: item.exercise,
+                    sets: item.sets,
+                    reps: item.reps,
+                    weight: item.weight,
+                    comment: item.comment || null,
+                }));
+
+                navigation.navigate('CreateRoutine', {selectedRoutine : routines});
             } else {
                 Alert.alert('Error', 'Fail to process file.');
                 navigation.navigate('ChooseOption');

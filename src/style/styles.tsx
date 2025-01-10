@@ -32,7 +32,7 @@ const styles = StyleSheet.create ({
         backgroundColor : '#f5f5f5'
     },
     subHeader : {
-        padding : 16,
+        padding : 10,
         alignItems : 'flex-start',
         backgroundColor : '#f5f5f5'
     },
@@ -434,6 +434,38 @@ const styles = StyleSheet.create ({
         borderWidth: 1, 
         borderColor: '#ccc', 
         borderRadius: 5 
+    },
+    modalBackground: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)", // 배경을 반투명하게
+    },
+    modalContent: {
+        backgroundColor: "white",
+        padding: 20,
+        borderRadius: 10,
+        width: 300,
+    },
+    modalButton: {
+        padding: 10,
+        backgroundColor: "#007BFF",
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    modalButtonText: {
+        color: "white",
+        textAlign: "center",
+    },
+    modalCloseButton: {
+        padding: 10,
+        backgroundColor: "#FF0000",
+        borderRadius: 5,
+        marginTop: 10,
+    },
+    modalCloseButtonText: {
+        color: "white",
+        textAlign: "center",
     },
 });
 

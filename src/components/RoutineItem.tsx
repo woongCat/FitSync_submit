@@ -7,6 +7,7 @@ import { Routine } from "../context/RecordContext";
 interface RoutineItemProps {
     routine: Routine;
     index : number;
+    onUpdate : (updatedRoutine : Routine) => void; // 현재 랜더링 된 routine이 업데이트되면 부모에게 알리는 콜백
     onDelete: (exercise_id: number) => void; // 삭제된 운동을 부모에게 알리는 콜백
 }
 
@@ -24,7 +25,7 @@ const getMaxWeightFromRoutine = (routine: Routine): number => {
     return Math.max(maxWeight);
 };
 
-const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, index, onDelete }) => {
+const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, index, onUpdate, onDelete }) => {
     
     const [maxRep, setMaxRep] = useState(getMaxRepsFromRoutine(routine));  // maxRep 상태 추가
     const [maxWeight, setMaxWeight] = useState(getMaxWeightFromRoutine(routine));  // maxWeight 상태 추가
@@ -33,10 +34,25 @@ const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, index, o
     const [reps, setReps] = useState<number[]>([...routine.reps]); // reps 상태 관리
     const [weight, setWeight] = useState<number[]>([...routine.weight]); // weight 상태 관리
     const [comment, setComment] = useState(routine.comment); // weight 상태 관리
+    const [isChanged, setIsChanged] = useState(false); // 상세 내역 변경 확인 상태 관리
 
     const minValue = 0;  // 최소값
     const maxValue = 999; // 최대값
     const maxSets = 10; // 최대 세트 수 제한
+
+    // routine의 세부 내용이 바뀌면 routine update
+    useEffect(() => {
+        const newRoutine : Routine = {
+            exercise_id : routine.exercise_id,
+            exercise_name : routine.exercise_name,
+            sets : currentSets,
+            reps : reps, 
+            weight : weight,
+            comment : comment,
+        };
+        onUpdate(newRoutine);
+        setIsChanged(false);
+    }, [isChanged]);
 
     // reps나 weight가 바뀔 때마다 maxRep와 maxWeight를 업데이트
     useEffect(() => {
@@ -53,6 +69,7 @@ const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, index, o
             // 최대 세트 수에 도달했을 때 알림을 표시하거나, 버튼을 비활성화 할 수 있음
             Alert.alert('Exceed maximum', `You cannot add more than ${maxSets} sets.`);
         }
+        setIsChanged(true);
     };
 
     const updateValue = (setIndex: number, type: 'reps' | 'weight', value: number) => {
@@ -65,6 +82,7 @@ const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, index, o
             updatedWeight[setIndex] = value;
             setWeight(updatedWeight); // weight 상태를 업데이트
         }
+        setIsChanged(true);
     };
 
     const handleInputChange = (text: string, setIndex: number, type: 'reps' | 'weight') => {
@@ -106,6 +124,8 @@ const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, index, o
         setWeight(updatedWeight);  // weight 배열 상태 업데이트
 
         setCurrentSets(prevSets => prevSets - 1);  // set 수 감소
+        
+        setIsChanged(true);
     }
 
     const handleDeleteExercise = () => {
@@ -197,7 +217,7 @@ const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, index, o
                 placeholder="Add comment" 
                 value={comment ?? ''}
                 keyboardType="default"
-                onChangeText={setComment}
+                onChangeText={(text) => { setComment(text)}}
             />
 
             <TouchableOpacity style={styles.addSetsBtn} onPress={handleDeleteExercise}>

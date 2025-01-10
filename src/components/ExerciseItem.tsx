@@ -15,7 +15,7 @@ const ExerciseItem : React.FC<ExerciseItemProps> = React.memo(({ exercise, onPre
             {/* TODO: 나중에 uri 수정*/}
             <FastImage source={{ uri: "https://mir-s3-cdn-cf.behance.net/projects/original/fe8318108677535.Y3JvcCw5MDAsNzAzLDAsMTkz.gif", priority: FastImage.priority.normal, }} style={styles.searchExerciseImage} resizeMode={FastImage.resizeMode.stretch}/>
             <View style={styles.exerciseCardContent}>    
-                <Text style={styles.exerciseName} numberOfLines={1}> {exercise?.name} </Text>
+                <Text style={styles.exerciseName} numberOfLines={1}> {exercise?.name_en} </Text>
                 <Text style={styles.exercisePart}> {exercise?.bodypart_en} - {exercise?.target_en}  </Text>
             </View>
         </TouchableOpacity>
