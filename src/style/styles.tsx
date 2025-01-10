@@ -12,7 +12,15 @@ const styles = StyleSheet.create ({
         flex : 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding : 20
+        padding : 30
+    },
+    authContext : {
+        flexDirection : 'row',
+    },
+    authContextText : {
+        fontSize : 16,
+        fontWeight : 'bold',
+        marginVertical : 20,
     },
     optionContainer : {
         flex : 1,
@@ -44,10 +52,21 @@ const styles = StyleSheet.create ({
         width : '100%',
         height : 45, 
         borderWidth : 1,
-        borderColor : '#cccccc',
+        backgroundColor : '#ffffff',
         borderRadius : 6,
         paddingHorizontal : 10,
-        marginBottom : 10
+        paddingVertical : 10,
+        marginVertical : 10,
+    },
+    phoneInput : {
+        width : '30%',
+        height : 45, 
+        borderWidth : 1,
+        backgroundColor : '#ffffff',
+        borderRadius : 6,
+        paddingHorizontal : 10,
+        paddingVertical : 10,
+        marginVertical : 10,
     },
     button : {
         width : '100%',
@@ -56,6 +75,7 @@ const styles = StyleSheet.create ({
         justifyContent : 'center',
         alignItems : 'center',
         borderRadius : 5,
+        marginVertical : 10,
     },
     LogOutBtn : {
         padding : 10,
@@ -73,18 +93,17 @@ const styles = StyleSheet.create ({
         fontWeight : 'bold'
     },
     linkText : {
-        marginTop : 16,
+        marginVertical : 5,
         color : '#007aff'
     },
     checkboxContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
     },
     checkboxRow: {
         flexDirection: 'row', // 체크박스들을 가로로 나열
-        justifyContent: 'space-between', // 두 체크박스를 좌우에 배치
-        alignItems: 'center', // 수직 가운데 정렬
+        justifyContent: 'space-evenly', // 두 체크박스를 좌우에 배치
+        padding : 20,
     },
     checkbox: {
         width: 24,

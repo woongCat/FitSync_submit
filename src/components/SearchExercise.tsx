@@ -78,6 +78,7 @@ const SearchExercise : React.FC<SearchExerciseProps> = ({ onCancel, onExerciseSe
                 <TextInput 
                     style={styles.searchInput} 
                     placeholder="Search Exercise..."
+                    keyboardType='default' 
                     autoCapitalize='none'
                     value={exerciseName}
                     onChangeText={setExerciseName}
