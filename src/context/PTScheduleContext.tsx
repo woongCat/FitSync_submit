@@ -1,8 +1,9 @@
-import React, { createContext, useState, useContext} from 'react';
+import React, { createContext, useState, ReactNode} from 'react';
 import { Alert } from 'react-native';
 import axios from 'axios';
 import Config from 'react-native-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 // 스케줄 상세 정보
 export interface ScheduleDetail {
@@ -20,6 +21,7 @@ export interface ScheduleDetail {
 export interface PTScheduleContextProps {
     userType: string; // 사용자 유형 (예: trainer, customer)
     schedules: ScheduleDetail[]; // 스케줄 배열
+    fetchMonthlySchedules: (year: number, month: number) => Promise<void>;
     fetchSchedules: (sessionDate: string) => Promise<void>;
     addSchedule: (sessionDate : string, reservationInfo: {
         trainerId: number;
@@ -53,15 +55,47 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
     const [userType, setUserType] = useState(''); // userType 상태 추가
     const [schedules, setSchedules] =  useState<ScheduleDetail[]>([]);
 
-    // 1. 특정 날짜의 스케줄 가져오기
-    const fetchSchedules = async (sessionDate: string): Promise<void> => {
-        setIsLoading(true); // 로딩 시작
+    // 한달 치 예약 점으로 박을 수 있도록 날짜 가져오기
+    const fetchMonthlySchedules = async (year: number, month: number): Promise<void> => {
+        setIsLoading(true); // 로딩 상태 시작
         try {
             const access_token = await AsyncStorage.getItem('token'); // 토큰 가져오기
             if (!access_token) {
                 Alert.alert('Error', 'Access token is missing.');
                 setIsLoading(false);
                 return;
+            }
+
+            // API 호출
+            const response = await axios.get(`${Config.API_URL}/schedule/monthly_schedule`, {
+                params: { year, month },
+                headers: {
+                    Authorization: `${access_token}`, // 인증 토큰 추가
+                },
+            });
+
+            if (response.status === 200) {
+                setMarkedDates(response.data.markedDates); // 캘린더 마킹 업데이트 (dot 정보)
+            } else {
+                Alert.alert('Error', 'Failed to fetch monthly schedules.');
+            }
+        } catch (error: any) {
+            console.error('Error fetching monthly schedules:', error.response?.data || error.message);
+            Alert.alert('Error', 'An error occurred while fetching monthly schedules.');
+        } finally {
+            setIsLoading(false); // 로딩 상태 종료
+        }
+    };
+
+    // 1. 특정 날짜의 스케줄 가져오기
+    const fetchSchedules = async (sessionDate: string): Promise<ScheduleDetail[]> => {
+        setIsLoading(true); // 로딩 시작
+        try {
+            const access_token = await AsyncStorage.getItem('token'); // 토큰 가져오기
+            if (!access_token) {
+                Alert.alert('Error', 'Access token is missing.');
+                setIsLoading(false);
+                return [];
             }
 
             const response = await axios.get(`${Config.API_URL}/schedule/read`, {
@@ -72,26 +106,20 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
             });
 
             if (response.status === 200) {
-                console.log(response);
-                setSchedules(response.data.schedules); // 스케줄 상태 업데이트
-                setUserType(response.data.userType);
-
-                // 캘린더 마킹 업데이트
-                setMarkedDates((prev) => ({
-                    ...prev,
-                    [sessionDate]: { selected: true, marked: true, selectedColor: 'blue' },
-                }));
+                setUserType(response.data.userType); // 정확한 위치로 userType 설정
+                return response.data.schedules; // 스케줄 데이터 반환
             } else {
                 Alert.alert('Error', 'Failed to fetch schedules.');
+                return [];
             }
-            setIsLoading(false); // 로딩 종료
         } catch (error: any) {
-            console.error('Error fetching schedules:', error.response?.data || error.message);
+            console.error('Error fetching schedules:', error.message || error.response?.data);
             Alert.alert('Error', 'An error occurred while fetching schedules.');
+            return [];
         } finally {
             setIsLoading(false); // 로딩 종료
         }
-    };
+};
 
     // 2. 새로운 스케줄을 추가하는 함수
     const addSchedule = async (sessionDate : string, reservationInfo: {
@@ -226,6 +254,7 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
             value={{
                 userType,
                 schedules,
+                fetchMonthlySchedules,
                 fetchSchedules,
                 addSchedule,
                 updateSchedule,

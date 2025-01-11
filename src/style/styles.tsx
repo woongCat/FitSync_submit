@@ -329,6 +329,23 @@ const styles = StyleSheet.create ({
     timeSlot: {
         marginVertical: 5, padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 5 
     },
+    title: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    sliderContainer: {
+        marginBottom: 20,
+    },
+    slider: {
+        width: '100%',
+        height: 40,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
 });
 
 export default styles;
