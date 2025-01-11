@@ -79,16 +79,6 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation, r
             Alert.alert('Duplicate', 'Selected Exercise is already in the list.');
         }
 
-        // RDS 기준
-        // 중복된 운동이 있을 경우 추가하지 않음
-        // const isExerciseAlreadySelected = selectedExercises.some(selectedExercise => selectedExercise.id === exercise.id);
-
-        // if (!isExerciseAlreadySelected) {
-        //     setSelectedExercises(prevExercises => [...prevExercises, exercise]);  // 운동 추가
-        // } else {
-        //     Alert.alert('Duplicate', 'Selected Exercise is already in the list.');
-        // }
-
         setShowModal(false);  // 운동을 선택한 후 모달을 닫음
     };
     const handleUpdateRoutine = (newRoutine : Routine) => {

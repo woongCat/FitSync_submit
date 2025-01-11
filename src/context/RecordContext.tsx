@@ -120,6 +120,9 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
             // SessionDate 데이터 생성
             const sessionDate = date.toISOString().split('T')[0] + ' '+ time.toTimeString().split(' ')[0];
 
+            // routine 세부 내역 콘솔에 띄우기
+            console.log("Routine Details:", routine);
+
             // 요청 보내기
             const response = await axios.post(`${Config.API_URL}/record/create`, { relatedName, sessionDate, routine }, {headers : { Authorization: access_token}});
 
@@ -164,6 +167,9 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
             }
 
             console.log("update token:",  access_token);
+
+            // routine 세부 내역 콘솔에 띄우기
+            console.log("Routine Details:", routine);
 
             // 요청 보내기
             const response = await axios.put(`${Config.API_URL}/record/update`, { sessionDate, recordId, routine }, {headers : { Authorization: access_token}});

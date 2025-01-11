@@ -6,7 +6,11 @@ const styles = StyleSheet.create ({
     container : {
         flex : 1,
         color : '#f5f5f5',
-        padding : 10
+        padding : 5
+    },
+    contentContainer : {
+        flex: 1,
+        backgroundColor: '#f5f5f5',
     },
     authContainer : {
         flex : 1,
@@ -34,9 +38,9 @@ const styles = StyleSheet.create ({
     },
     topHeader : {
         flexDirection : 'row',
-        padding : 16,
+        padding : 10,
         alignItems : 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         backgroundColor : '#f5f5f5'
     },
     subHeader : {
@@ -78,7 +82,8 @@ const styles = StyleSheet.create ({
         marginVertical : 10,
     },
     LogOutBtn : {
-        padding : 10,
+        paddingHorizontal : 12,
+        paddingVertical : 10,
         backgroundColor : '#999999',
         borderRadius : 24,
     },
@@ -145,10 +150,6 @@ const styles = StyleSheet.create ({
         color: '#ffffff',
         fontWeight: 'bold',
     },
-    contentContainer : {
-        flex: 1,
-        backgroundColor: '#f5f5f5',
-    },
     RoutineOptBtn : {
         width : '80%',
         height : 50,
@@ -163,6 +164,10 @@ const styles = StyleSheet.create ({
     userInfoText : {
         fontSize : 18,
         fontWeight : 'bold'
+    },
+    userInfoDetailText : {
+        fontSize : 14,
+        color : '#85929e'
     },
     searchInput : {
         flex : 1,
@@ -210,32 +215,29 @@ const styles = StyleSheet.create ({
         color: '#666',
         fontWeight: 'bold',
     },
-    bodyPartFilterContainer: {
+    FilterContainer: {
         flexDirection: 'row',
         justifyContent: 'flex-start', 
         alignItems: 'stretch',
         marginBottom : 10,
     },
-    bodyPartFilterText : {
+    FilterText : {
         fontSize: 12,
         color: '#000',
         fontWeight: 'bold',
         marginLeft: 5,
         paddingVertical: 5,
     },
-    bodyPartButton: {
+    FilterButton: {
         paddingVertical: 5,
         paddingHorizontal: 16,
         borderRadius: 20,
     },
-    selectedBodyPartButton: {
-        backgroundColor: '#007bff',
-    },
-    bodyPartText: {
+    filterText: {
         fontSize: 12,
         color: '#666',
     },
-    selectedBodyPartText: {
+    selectedFilterText: {
         color: '#007bff',
     },
     dateContainer : {
@@ -418,7 +420,7 @@ const styles = StyleSheet.create ({
         fontSize : 14,
         color: '#aaa',
     },
-    RecordDeleteBtn : {
+    RecordOptionBtn : {
         position : 'absolute',
         top : 25,
         right : 10,
@@ -427,7 +429,7 @@ const styles = StyleSheet.create ({
         paddingVertical : 5,
         borderRadius : 4,
     },
-    RecordDeleteBtnText : {
+    RecordOptionBtnText : {
         color : '#fff',
         fontWeight : 'bold',
         fontSize : 14,
@@ -485,6 +487,55 @@ const styles = StyleSheet.create ({
     modalCloseButtonText: {
         color: "white",
         textAlign: "center",
+    },
+    GymContents : {
+        flex : 1,
+    },
+    profileHeader : {
+        flexDirection : 'row',
+        padding : 15,
+        alignItems : 'center',
+        justifyContent: 'flex-start',
+        marginTop : 5,
+    },
+    profileMenu : {
+        flexDirection : 'row',
+        padding : 5,
+        alignItems : 'center',
+        justifyContent: 'space-evenly',
+    },
+    profileMenuBtn : {
+        flexDirection: 'column',  // Stack the icon and text vertically
+        alignItems: 'center',
+        marginHorizontal: 20,
+    },
+    profileMenuIcon : {
+        width: 55, // 원의 크기 (아이콘을 포함한 크기)
+        height: 55, // 원의 크기 (아이콘을 포함한 크기)
+        borderRadius: 25, // 원 모양으로 만들기 위해 반지름 설정
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 5, // 아이콘과 텍스트 사이의 간격
+        backgroundColor : '#fff',
+        shadowColor : '#000',
+        shadowOffset : {
+            width : 0,
+            height : 2
+        },
+        shadowOpacity : 0.1,
+        shadowRadius : 4,
+        elevation : 5,
+    },
+    profileMenuText : {
+
+    },
+    profileContentContainer : {
+        flex : 1,
+        backgroundColor: '#fff',
+        borderRadius: 20, // 둥근 모서리
+        marginTop: 10, // profileMenuBtn과 겹치지 않도록 여백 추가
+        padding: 15, // 내용과의 여백
+        marginHorizontal: 5, // 양쪽 여백
     },
 });
 

@@ -217,7 +217,7 @@ const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, index, o
                 placeholder="Add comment" 
                 value={comment ?? ''}
                 keyboardType="default"
-                onChangeText={(text) => { setComment(text)}}
+                onChangeText={(text) => { setComment(text); setIsChanged(true);}}
             />
 
             <TouchableOpacity style={styles.addSetsBtn} onPress={handleDeleteExercise}>

@@ -51,8 +51,8 @@ const RecordItem : React.FC<RecordItemProps> = React.memo(({ record, onPressReco
                 }
                 </Text>
             </View>
-            <TouchableOpacity style={styles.RecordDeleteBtn} onPress={handleOptionPress}>
-                <Text style={styles.RecordDeleteBtnText}>Option</Text>
+            <TouchableOpacity style={styles.RecordOptionBtn} onPress={handleOptionPress}>
+                <Text style={styles.RecordOptionBtnText}>Option</Text>
             </TouchableOpacity>
 
              {/* Option 모달 */}

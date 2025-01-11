@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import axios from 'axios';
 import Config from 'react-native-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface Exercise {
     exercise_id : number;
@@ -29,16 +30,24 @@ export const ExerciseContext = createContext<ExerciseContextData>(
 );
 
 export const ExerciseProvider : React.FC<{children : ReactNode}> = ({children}) => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [exercises, setExercises] = useState<Exercise[]>([]);
 
     const fetchExerciseData = async() : Promise<boolean> => {
         try {
+            // AsyncStorage에서 userId,userType 값을 가져오기
+            const access_token = await AsyncStorage.getItem('token');
+
+            if (!access_token) {
+                console.error('No token found in AsyncStorage.');
+                setIsLoading(false);
+                return false;
+            }
 
             const result = await axios.get(`${Config.API_URL}/api/data/exercise`, {
                 headers : {
                     'Content-Type': 'exercise/get-data',
-                    // TODO: 인증 헤더나 추가적인 헤더가 필요하면 여기에 추가
-                    // 'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+                    Authorization : access_token,
                 },
             });
 
@@ -54,7 +63,7 @@ export const ExerciseProvider : React.FC<{children : ReactNode}> = ({children}) 
     };
 
     return <ExerciseContext.Provider
-            value={{ fetchExerciseData, exercises }}>
-            {children}
-        </ExerciseContext.Provider>;
+                value={{ fetchExerciseData, exercises }}>
+                {children}
+            </ExerciseContext.Provider>;
 };
