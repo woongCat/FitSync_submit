@@ -3,7 +3,8 @@ import {
     FlatList,
     Text,
     TouchableOpacity,
-    View
+    View,
+    ActivityIndicator
 } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
@@ -27,7 +28,9 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
     const { fetchRecordData, deleteRecordData, records } = useContext(RecordContext);
     const { fetchSchedules } = useContext(PTScheduleContext);
     const [latestRecords, setLatestRecords] = useState(records); // 최신 3개 기록
-    const [nextSchedules, setNextSchedules] = useState<any[]>([]); // 오늘 이후 7일 내의 PT 일정
+    const [nextSchedules, setNextSchedules] = useState<any[]>([]); // 오늘 이후 3일 내의 PT 일정
+    const [upcomingDates, setUpcomingDates] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const isFocused = useIsFocused();
 
     useEffect(() => {
@@ -51,23 +54,36 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
         setLatestRecords(topTwoRecords); // 상태에 저장
     }, [records]);
 
-    // 오늘 이후 7일 내의 날짜에 해당하는 PT 일정 가져오기
+    // 오늘 이후 3일 내의 날짜에 해당하는 PT 일정 가져오기
+    // 날짜 계산 및 데이터 fetch
     useEffect(() => {
         const today = new Date();
-        const upcomingDates = [];
-        
-        // 오늘부터 7일 내의 날짜 계산
-        for (let i = 1; i <= 7; i++) {
+        const dates: string[] = [];
+    
+        // 오늘부터 3일 내의 날짜 계산
+        for (let i = 1; i <= 3; i++) {
             const futureDate = new Date(today);
-            futureDate.setDate(today.getDate() + i);  // 오늘 이후의 날짜 계산
-            upcomingDates.push(futureDate.toISOString().split('T')[0]); // 날짜를 'YYYY-MM-DD' 형식으로 저장
+            futureDate.setDate(today.getDate() + i);
+            dates.push(futureDate.toISOString().split('T')[0]);
         }
+    
+        setUpcomingDates(dates); // 로컬 날짜 저장
+    
+        // 데이터 Fetch
+        setIsLoading(true);
+        Promise.all(dates.map((date) => fetchSchedules(date)))
+            .then((results) => {
+                const allSchedules = results.flat();
+                setNextSchedules(allSchedules); // 일정이 있는 경우만 저장
+            })
+            .catch((error) => console.error('Error fetching schedules:', error))
+            .finally(() => setIsLoading(false));
+    }, []);
 
-        // 각 날짜에 대한 PT 일정 가져오기
-        for (const date of upcomingDates) {
-            fetchSchedules(date); // 각 날짜에 대해 PT 일정 호출
-        }
-    }, []); // 이 부분에서 'useEffect'는 최초 1회만 실행됩니다.
+        // FlatList에 사용할 데이터 구성
+        const scheduleData = nextSchedules.filter((schedule) => 
+            upcomingDates.includes(schedule.date)
+        );
 
     return (
         <View style={styles.container}>
@@ -78,24 +94,6 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
             <View style={styles.subHeader}>
                 <Text style={styles.subHeaderText}>Most Recent Records:</Text>
             </View>
-
-            {/* <View style={{ flex : 1 }}>
-                <FlatList 
-                    data={latestRecords}
-                    keyExtractor={(item) => item?.sessionDate}
-                    renderItem={({item}) => 
-                        <RecordItem 
-                            record={item}
-                            onPressRecordItem={() => navigation.navigate('Home', { screen: 'UpdateRoutine', params: { selectedRecord: item } })}
-                            onPressDeleteRecordItem={() => deleteRecordData(item?.recordId, item?.sessionDate)} 
-                            onPressShareRecordItem={function (): void {
-                                throw new Error('Function not implemented.');
-                            } }                        
-                        />
-                    }
-                />
-                
-            </View> */}
 
             
             <View style={{ flex : 1 }}>
@@ -119,9 +117,29 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
                 <Text style={styles.subHeaderText}>Next PT Schedule:</Text>
             </View>
 
-            <View style={{ flex : 1 }}>
-                {/* TODO : add schedule block here */}
-            </View>
+            {isLoading ? (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+            ) : (
+                <FlatList
+                    data={scheduleData}
+                    keyExtractor={(item) => item.scheduleId.toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.scheduleContainer}>
+                            <Text style={styles.scheduleText}>
+                                {`Date: ${item.date}\nTrainer: ${item.trainerName}\nTime: ${item.startTime} - ${item.endTime}`}
+                            </Text>
+                        </View>
+                    )}
+                    ListEmptyComponent={
+                        <View style={styles.emptyScheduleContainer}>
+                            <Text style={styles.emptyScheduleText}>No upcoming schedules found.</Text>
+                        </View>
+                    }
+                    contentContainerStyle={{ flexGrow: 1 }}
+                />
+            )}
         </View>
     );
 };
