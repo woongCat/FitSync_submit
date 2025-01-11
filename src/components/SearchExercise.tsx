@@ -6,7 +6,6 @@ import { Exercise, ExerciseContext } from "../context/ExerciseContext";
 import ExerciseItem from "./ExerciseItem";
 
 interface SearchExerciseProps {
-    // TODO: 나중에 targetfilter 도 추가하면 좋을 듯
     onCancel : () => void; 
     onExerciseSelect: (exercise: Exercise) => void;  // exercise 선택 시 호출될 콜백 함수 추가
 }
@@ -22,7 +21,6 @@ const SearchExercise : React.FC<SearchExerciseProps> = ({ onCancel, onExerciseSe
     },[]);
 
     useEffect(() => {
-        // On-promise 기준
         // exerciseName과 selectedBodyPart를 기준으로 필터링
         const filtered = exercises.filter((exercise) => {
             // exerciseName 필터링
@@ -42,26 +40,6 @@ const SearchExercise : React.FC<SearchExerciseProps> = ({ onCancel, onExerciseSe
         );
         setFilteredExercises(uniqueExercises); // 필터링된 결과 상태에 저장
 
-        // RDS 기준
-        // exerciseName과 selectedBodyPart를 기준으로 필터링
-        // const filtered = exercises.filter((exercise) => {
-        //     // exerciseName 필터링
-        //     const matchesExerciseName = exercise.name.toLowerCase().includes(exerciseName.toLowerCase());
-
-        //     // selectedBodyPart 필터링
-        //     const matchesBodyPart = selectedBodyPart ? exercise.bodypart === selectedBodyPart : true;
-
-        //     return matchesExerciseName && matchesBodyPart; // 두 조건을 모두 만족하는 항목만 반환
-        // });   
-
-        // // 중복된 exercise_id를 제거하여 고유한 exercise만 남기기
-        // const uniqueExercises = filtered.filter((value, index, self) => 
-        //     index === self.findIndex((t) => (
-        //         t.id === value.id
-        //     ))
-        // );
-        // setFilteredExercises(uniqueExercises); // 필터링된 결과 상태에 저장
-
     }, [exerciseName, selectedBodyPart, exercises]);
 
     // bodypartfilter 목록 (필요한 필터 항목들을 추가하세요)
@@ -79,6 +57,7 @@ const SearchExercise : React.FC<SearchExerciseProps> = ({ onCancel, onExerciseSe
                 <TextInput 
                     style={styles.searchInput} 
                     placeholder="Search Exercise..."
+                    keyboardType='default' 
                     autoCapitalize='none'
                     value={exerciseName}
                     onChangeText={setExerciseName}
@@ -86,25 +65,25 @@ const SearchExercise : React.FC<SearchExerciseProps> = ({ onCancel, onExerciseSe
             </View>
 
             {/* Body part filter를 수평 스크롤로 보여주기 */}
-            <View style={styles.bodyPartFilterContainer}>
-                <Text style={styles.bodyPartFilterText}> Target : </Text>
+            <View style={styles.FilterContainer}>
+                <Text style={styles.FilterText}> Target : </Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {bodyPartOptions.map((bodyPart) => (
                         <TouchableOpacity
                             key={bodyPart}
                             style={[
-                                styles.bodyPartButton,
+                                styles.FilterButton,
                             ]}
-                            onPress={() => setSelectedBodyPart(bodyPart)}
+                            onPress={() => setSelectedBodyPart(prev => prev === bodyPart ? '' : bodyPart)}
                         >
-                            <Text
-                                style={[
-                                    styles.bodyPartText,
-                                    selectedBodyPart === bodyPart && styles.selectedBodyPartText,
-                                ]}
-                            >
-                                {bodyPart}
-                            </Text>
+                        <Text
+                            style={[
+                                styles.filterText,
+                                selectedBodyPart === bodyPart && styles.selectedFilterText,
+                            ]}
+                        >
+                            {bodyPart}
+                        </Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>

@@ -22,11 +22,13 @@ import { icon } from '../constants/icons';
 import { Routine, RecordContext } from '../context/RecordContext';
 
 type CreateRoutineScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'RoutineDetail'>
+type CreateRoutineScreenRouteProp = RouteProp<RoutineStackParamList, 'CreateRoutine'>;
 interface CreateRoutineScreenProps {
-    navigation : CreateRoutineScreenNavigationProp
+    navigation : CreateRoutineScreenNavigationProp;
+    route : CreateRoutineScreenRouteProp;
 }
 
-const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation}) => {
+const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation, route}) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);  // 선택한 운동 목록을 저장
     const [createdRoutine, setCreatedRoutine] = useState<Routine[]>([]);  // 선택한 운동 목록을 저장
@@ -44,6 +46,15 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation}) 
     const timeString = selectedDateTime.toTimeString();
     const [hours, minutes] = timeString.split(' ')[0].split(':'); // "14:30:00" -> ["14", "30"]
     const formattedTime = `${hours}시 ${minutes}분`; // "14시 30분"
+
+    useEffect(() => {
+        // route.params로 전달받은 값이 있는 경우 createdRoutine을 업데이트
+        if (route.params && route.params.selectedRoutine) {
+            setCreatedRoutine(route.params.selectedRoutine);  // 전달된 운동 목록으로 초기화
+        } else {
+            setCreatedRoutine([]);  // selectedRoutine이 없을 경우 빈 배열로 초기화
+        }
+    }, [route.params]);  // route.params가 변경될 때마다 실행
 
     const handleAddExercise = (exercise: Exercise) => {
         // on-promise 기준
@@ -68,17 +79,20 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation}) 
             Alert.alert('Duplicate', 'Selected Exercise is already in the list.');
         }
 
-        // RDS 기준
-        // 중복된 운동이 있을 경우 추가하지 않음
-        // const isExerciseAlreadySelected = selectedExercises.some(selectedExercise => selectedExercise.id === exercise.id);
-
-        // if (!isExerciseAlreadySelected) {
-        //     setSelectedExercises(prevExercises => [...prevExercises, exercise]);  // 운동 추가
-        // } else {
-        //     Alert.alert('Duplicate', 'Selected Exercise is already in the list.');
-        // }
-
         setShowModal(false);  // 운동을 선택한 후 모달을 닫음
+    };
+    const handleUpdateRoutine = (newRoutine : Routine) => {
+        // 수정된 운동 데이터를 createdRoutine에 반영
+        const updatedRoutines = createdRoutine.map((routine) =>
+            routine.exercise_id === newRoutine.exercise_id ? newRoutine : routine
+        );
+        setCreatedRoutine(updatedRoutines); // 상태 업데이트
+    };
+
+    const handleDeleteExercise = (exercise_id: number) => {
+        // exercise_id를 기준으로 routines 배열에서 해당 운동 삭제
+        const updatedRoutines = createdRoutine.filter((routine: { exercise_id: number; }) => routine.exercise_id !== exercise_id);
+        setCreatedRoutine(updatedRoutines); // 상태 업데이트
     };
 
     const handleDatePickerOpen = () => {
@@ -138,6 +152,7 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation}) 
                     onCancel={() => {
                         setOpenDatePicker(false)
                     }}
+                    maximumDate={new Date()} // 현재 날짜 이후 날짜를 선택할 수 없게 제한
                 />
                 
                 {icon.Time({ color: '#000' })}
@@ -164,13 +179,17 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation}) 
             <FlatList 
                 data={createdRoutine}
                 keyExtractor={(item) => {return item?.exercise_id + item?.exercise_name;}}
-                renderItem={({ item }) => (
-                    <RoutineItem 
-                        routine={item} 
-                        addNewSet={function (): void {
-                            throw new Error('Function not implemented.');
-                        } }                    />
-                )}
+                renderItem={({ item, index }) => {
+                    return (
+                        <RoutineItem 
+                            routine={item}
+                            index={index} 
+                            onUpdate={handleUpdateRoutine}
+                            onDelete={handleDeleteExercise}                    
+                        />
+                    );}
+                }
+                contentContainerStyle={styles.RoutineContext}
             />
 
             <TouchableOpacity onPress={() => setShowModal(true)} style={styles.addExerciseBtn}>

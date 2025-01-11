@@ -12,10 +12,12 @@ interface AuthContextData {
     token : string | null;
     isLoading : boolean;
     userId : string; //Trainer가 될 수도 있고, customer가 될 수도 있음
+    dob : string;
+    phoneNumber : string;
     userName : string;
     userType : string;
     isAuthenticated: boolean;
-    signUp : (name : string, email : string, password : string, userType : string) => Promise<boolean>;
+    signUp : (name : string, email : string, password : string, userType : string, dob : string, phoneNumber : string) => Promise<boolean>;
     signIn : (email : string, password : string, userType : string) => Promise<boolean>;
     signOut : () => Promise<void>;
     checkAuth : () => Promise<boolean>;
@@ -57,9 +59,9 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
         checkAuth();
     });
 
-    const signUp = async(name : string, email:string, password:string, userType : string) : Promise<boolean> => {
+    const signUp = async(name : string, email:string, password:string, userType : string, dob : string, phoneNumber : string) : Promise<boolean> => {
         try {
-            const result = await axios.post(`${Config.API_URL}/signup`, {email, password, name, userType});
+            const result = await axios.post(`${Config.API_URL}/signup`, {email, password, name, userType, dob, phoneNumber});
 
             if (result.status === 201) {
                 return true;

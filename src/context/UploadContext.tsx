@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 type FileData = {
@@ -8,9 +9,12 @@ type FileData = {
 
 // Generic한 업로드 함수
 export const upload = async <T extends FileData>(fileData: T, uploadUrl: string) : Promise<any> => {
+    // AsyncStorage에서 userId,userType 값을 가져오기
+    const access_token = await AsyncStorage.getItem('token');
+    
     const formData = new FormData();
 
-  // FormData에 파일을 추가
+    // FormData에 파일을 추가
     formData.append('file', {
         uri: fileData.uri,
         type: fileData.type,
@@ -22,20 +26,30 @@ export const upload = async <T extends FileData>(fileData: T, uploadUrl: string)
     const response = await axios.post(uploadUrl, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
-            // TODO: 인증 헤더나 추가적인 헤더가 필요하면 여기에 추가
-            // 'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+            Authorization: access_token,
         },
     });
 
     if (response.status === 200) {
-        console.log('Upload successful', response.data);
-        return response.data;
+        console.log('Upload successful', response.data.text);
+        return response.data.text;
     } else {
         console.error('Upload failed', response.status);
         return null;
     }
-    } catch (error) {
-        console.error('Upload error', error);
+    } catch (error:any) {
+        console.error('Error: ', error);
+        if (error.response) {
+            // 서버가 오류 응답을 보냈을 때
+            console.error('Server responded with error:', error.response.status); // 500 상태 코드
+            console.error('Response data:', error.response.data); // 서버에서 반환한 데이터
+        } else if (error.request) {
+            // 요청이 서버로 전송되지 않았을 때
+            console.error('No response received:', error.request);
+        } else {
+            // 요청을 설정하는 중에 오류가 발생했을 때
+            console.error('Error setting up the request:', error.message);
+        }
         return null;
     }
 };

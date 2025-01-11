@@ -1,27 +1,86 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
+    FlatList,
     Text,
     TouchableOpacity,
     View
 } from 'react-native';
-import { RootStackParamList } from '../navigation/RootNavigation';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../style/styles';
+import { RecordContext } from '../context/RecordContext';
+import RecordItem from '../components/RecordItem';
+import { RoutineStackParamList } from '../navigation/RoutineNavigation';
+import { BottomTabParamsList } from '../navigation/TabNavigation';
+import { Screen } from 'react-native-screens';
+import { useIsFocused } from '@react-navigation/native';
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'TabNav'>
+type HomeScreenBottomTabNavigationProp = NativeStackNavigationProp<BottomTabParamsList, 'Home'>
 
 interface HomeScreenProps {
-    navigation : HomeScreenNavigationProp
+    navigation : HomeScreenBottomTabNavigationProp;
 }
 
-const HomeScreen : React.FC = () => {
+const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
     const {userName} = useContext(AuthContext);
+    const { fetchRecordData, deleteRecordData, records } = useContext(RecordContext);
+    const [latestRecords, setLatestRecords] = useState(records); // 최신 3개 기록
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        console.log(isFocused);
+        if (isFocused) {
+            fetchRecordData();
+        }
+
+    }, [isFocused]);
+
+    useEffect(() => {
+        // 가장 최신 기록 3개만 추출
+        const sortedRecords = records.sort((a, b) => {
+            const dateA = new Date(a.sessionDate);
+            const dateB = new Date(b.sessionDate);
+          return dateB.getTime() - dateA.getTime(); // 최신 기록이 앞에 오도록 정렬
+        });
+    
+        // 최신 2개 기록만 추출
+        const topTwoRecords = sortedRecords.slice(0, 3);
+        setLatestRecords(topTwoRecords); // 상태에 저장
+    }, [records]);
 
     return (
-        <View style={styles.contentContainer}>
+        <View style={styles.container}>
             <View style={styles.topHeader}>
                 <Text style={styles.userInfoText}>Hello, {userName}</Text>
+            </View>
+
+            <View style={styles.subHeader}>
+                <Text style={styles.subHeaderText}>Most Recent Records:</Text>
+            </View>
+
+            <View style={{ flex : 1 }}>
+                <FlatList 
+                    data={latestRecords}
+                    keyExtractor={(item) => item?.sessionDate}
+                    renderItem={({item}) => 
+                        <RecordItem 
+                            record={item}
+                            onPressRecordItem={() => navigation.navigate('Home', { screen: 'UpdateRoutine', params: { selectedRecord: item } })}
+                            onPressDeleteRecordItem={() => deleteRecordData(item?.recordId, item?.sessionDate)} 
+                            onPressShareRecordItem={function (): void {
+                                throw new Error('Function not implemented.');
+                            } }                        
+                        />
+                    }
+                />
+            </View>
+            
+            <View style={styles.subHeader}>
+                <Text style={styles.subHeaderText}>Next PT Schedule:</Text>
+            </View>
+
+            <View style={{ flex : 1 }}>
+                {/* TODO : add schedule block here */}
             </View>
         </View>
     );

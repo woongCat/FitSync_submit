@@ -10,8 +10,8 @@ type TabBarButtonProps = {
 }
 
 const TabBarButton = (props: TabBarButtonProps) => {
-    const {onPress, onLongPress, isFocused, label, routeName} = props;
-    
+    const { onPress, onLongPress, isFocused, label, routeName } = props;
+
     // routeName에 해당하는 아이콘이 존재하는지 확인하고 없으면 기본 아이콘을 반환
     const IconComponent = icon[routeName];
 
@@ -20,19 +20,22 @@ const TabBarButton = (props: TabBarButtonProps) => {
         console.warn(`Icon for route '${routeName}' not found. Defaulting to 'Home'.`);
     }
 
+    // Profile 아이콘에 대해 width와 height 값을 설정
+    const iconSize = routeName === "Profile" ? { width: 24, height: 24 } : { width: 22, height: 22 };
+
     return (
         <Pressable
             onPress={onPress}
             onLongPress={onLongPress}
             style={styles.tabBarBtn}
         >
-            {IconComponent ? IconComponent({ color: isFocused ? '#007aff' : '#000' }) : icon.Home({ color: isFocused ? '#007aff' : '#000' })}
-            <Text style={{ color: isFocused ? '#007aff' : '#000' }}>
-                {label}
-            </Text>
+            {IconComponent
+                ? IconComponent({ color: isFocused ? "#007aff" : "#000", ...iconSize })
+                : icon.Home({ color: isFocused ? "#007aff" : "#000" })}
+            <Text style={{ color: isFocused ? "#007aff" : "#000" }}>{label}</Text>
         </Pressable>
-    )
-}
+    );
+};
 
 export default TabBarButton; 
 

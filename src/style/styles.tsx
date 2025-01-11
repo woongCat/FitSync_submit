@@ -6,9 +6,30 @@ const styles = StyleSheet.create ({
     container : {
         flex : 1,
         color : '#f5f5f5',
-        justifyContent : 'center',
-        alignItems : 'center',
-        padding : 10
+        padding : 5
+    },
+    contentContainer : {
+        flex: 1,
+        backgroundColor: '#f5f5f5',
+    },
+    authContainer : {
+        flex : 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding : 30
+    },
+    authContext : {
+        flexDirection : 'row',
+    },
+    authContextText : {
+        fontSize : 16,
+        fontWeight : 'bold',
+        marginVertical : 20,
+    },
+    optionContainer : {
+        flex : 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     header : {
         fontSize : 24,
@@ -17,19 +38,39 @@ const styles = StyleSheet.create ({
     },
     topHeader : {
         flexDirection : 'row',
-        padding : 16,
+        padding : 10,
         alignItems : 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         backgroundColor : '#f5f5f5'
+    },
+    subHeader : {
+        padding : 10,
+        alignItems : 'flex-start',
+        backgroundColor : '#f5f5f5'
+    },
+    subHeaderText : {
+        fontSize : 16,
+        fontWeight : 'bold',
     },
     input : {
         width : '100%',
         height : 45, 
         borderWidth : 1,
-        borderColor : '#cccccc',
+        backgroundColor : '#ffffff',
         borderRadius : 6,
         paddingHorizontal : 10,
-        marginBottom : 10
+        paddingVertical : 10,
+        marginVertical : 10,
+    },
+    phoneInput : {
+        width : '30%',
+        height : 45, 
+        borderWidth : 1,
+        backgroundColor : '#ffffff',
+        borderRadius : 6,
+        paddingHorizontal : 10,
+        paddingVertical : 10,
+        marginVertical : 10,
     },
     button : {
         width : '100%',
@@ -38,9 +79,11 @@ const styles = StyleSheet.create ({
         justifyContent : 'center',
         alignItems : 'center',
         borderRadius : 5,
+        marginVertical : 10,
     },
     LogOutBtn : {
-        padding : 10,
+        paddingHorizontal : 12,
+        paddingVertical : 10,
         backgroundColor : '#999999',
         borderRadius : 24,
     },
@@ -55,18 +98,17 @@ const styles = StyleSheet.create ({
         fontWeight : 'bold'
     },
     linkText : {
-        marginTop : 16,
+        marginVertical : 5,
         color : '#007aff'
     },
     checkboxContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
     },
     checkboxRow: {
         flexDirection: 'row', // 체크박스들을 가로로 나열
-        justifyContent: 'space-between', // 두 체크박스를 좌우에 배치
-        alignItems: 'center', // 수직 가운데 정렬
+        justifyContent: 'space-evenly', // 두 체크박스를 좌우에 배치
+        padding : 20,
     },
     checkbox: {
         width: 24,
@@ -108,10 +150,6 @@ const styles = StyleSheet.create ({
         color: '#ffffff',
         fontWeight: 'bold',
     },
-    contentContainer : {
-        flex: 1,
-        backgroundColor: '#f5f5f5',
-    },
     RoutineOptBtn : {
         width : '80%',
         height : 50,
@@ -126,6 +164,10 @@ const styles = StyleSheet.create ({
     userInfoText : {
         fontSize : 18,
         fontWeight : 'bold'
+    },
+    userInfoDetailText : {
+        fontSize : 14,
+        color : '#85929e'
     },
     searchInput : {
         flex : 1,
@@ -173,32 +215,29 @@ const styles = StyleSheet.create ({
         color: '#666',
         fontWeight: 'bold',
     },
-    bodyPartFilterContainer: {
+    FilterContainer: {
         flexDirection: 'row',
         justifyContent: 'flex-start', 
         alignItems: 'stretch',
         marginBottom : 10,
     },
-    bodyPartFilterText : {
+    FilterText : {
         fontSize: 12,
         color: '#000',
         fontWeight: 'bold',
         marginLeft: 5,
         paddingVertical: 5,
     },
-    bodyPartButton: {
+    FilterButton: {
         paddingVertical: 5,
         paddingHorizontal: 16,
         borderRadius: 20,
     },
-    selectedBodyPartButton: {
-        backgroundColor: '#007bff',
-    },
-    bodyPartText: {
+    filterText: {
         fontSize: 12,
         color: '#666',
     },
-    selectedBodyPartText: {
+    selectedFilterText: {
         color: '#007bff',
     },
     dateContainer : {
@@ -220,21 +259,69 @@ const styles = StyleSheet.create ({
         color: '#333',
     },
     RoutineCard : {
+        backgroundColor : '#ffffff',
+        borderRadius : 8,
+        padding : 10,
+        marginHorizontal : 5,
+        marginVertical : 5,
+        shadowColor : '#000',
+        shadowOffset : {
+            width : 0,
+            height : 2
+        },
+        shadowOpacity : 0.1,
+        shadowRadius : 4,
+        elevation : 5,
+    },
+    RoutineContext : {
+        flexGrow : 1,
+        paddingBottom: 5
+    },
+    RoutineHeader: {
+        flex: 3,
+        alignItems: 'flex-start',
+    },
+    RoutineExerciseName : {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    RoutineDetailText : {
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    RoutineSubText : {
+        fontSize : 14,
+        color: '#aaa',
+        marginTop : 5,
+    },
+    RoutineEmptyContainer : {
         flex : 1,
-        marginBottom: 10,
-        padding:5,
-        borderWidth: 1,
-        borderColor: '#ccc',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    RoutineHeader: {
-        flex: 2,
+    RoutineSetContainer : {
+        flex : 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal : 5,
+    },
+    deleteSetsBtn : {
+        flex : 1,
+        justifyContent: 'center',
         alignItems: 'center',
     },
-    RoutineExerciseName : {
-        fontSize: 14,
-        fontWeight: 'bold',
+    RoutineRepsContainer : {
+        flex : 6,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    RoutineWeightContainer : {
+        flex : 6,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     RoutineCardRow: {
         flexDirection: 'row',
@@ -243,7 +330,6 @@ const styles = StyleSheet.create ({
     },
     RoutineExerciseImage : {
         flex: 1,
-        width : 100,
         height : 100,
     },
     RoutineCardSetsContainer: {
@@ -269,20 +355,43 @@ const styles = StyleSheet.create ({
         textAlign: 'center',
         marginHorizontal: 5,
     },
+    setIndexContainer : {
+        flex : 1,
+        alignItems: 'center',
+    },
+    editNumBtn: {
+        position : 'static',
+        backgroundColor : '#056edd',
+        width : 30,
+        height : 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius : 5,
+    },
+    editNumBtnText : {
+        fontSize : 18,
+        fontWeight : 'bold',
+        color: '#ffffff',
+    },
+    RepsAndWeightInputBox : {
+        width : '25%',
+        textAlignVertical : 'center',
+        textAlign : 'center',
+        marginHorizontal : 20,
+        fontWeight : 'bold',
+        fontSize : 15,
+    },
     addSetsBtn : {
-        height : 40,
+        flex : 1,
+        height : 30,
         padding : 5,
         marginTop : 3,
         justifyContent : 'center',
         alignItems : 'center',
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
     },
     addSetsText : {
         fontSize : 14,
-        fontWeight : 'bold',
-        color: '#3ec2d2',
+        color: '#056edd',
     },
     RecordCard : {
         backgroundColor : '#ffffff',
@@ -309,10 +418,9 @@ const styles = StyleSheet.create ({
     },
     RecordDescription : {
         fontSize : 14,
-        color: '#ccc',
-
+        color: '#aaa',
     },
-    RecordDeleteBtn : {
+    RecordOptionBtn : {
         position : 'absolute',
         top : 25,
         right : 10,
@@ -321,13 +429,129 @@ const styles = StyleSheet.create ({
         paddingVertical : 5,
         borderRadius : 4,
     },
-    RecordDeleteBtnText : {
+    RecordOptionBtnText : {
         color : '#fff',
         fontWeight : 'bold',
         fontSize : 14,
     },
+    RoutineLabel : {
+        fontSize: 12,
+        fontWeight: 'bold',
+        marginBottom : 5,
+    },
+    RoutineComment : {
+        width: '100%',
+        height : 75,
+        borderWidth : 1,
+        borderColor : '#ccc',
+        borderRadius : 6,
+        paddingHorizontal:10,
+        marginBottom:10,
+        textAlignVertical : 'top',
+    },
     timeSlot: {
-        marginVertical: 5, padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 5 
+        marginVertical: 5, 
+        padding: 10, 
+        borderWidth: 1, 
+        borderColor: '#ccc', 
+        borderRadius: 5 
+    },
+    modalBackground: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)", // 배경을 반투명하게
+    },
+    modalContent: {
+        backgroundColor: "white",
+        padding: 20,
+        borderRadius: 10,
+        width: 300,
+    },
+    modalButton: {
+        padding: 10,
+        backgroundColor: "#007BFF",
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    modalButtonText: {
+        color: "white",
+        textAlign: "center",
+    },
+    modalCloseButton: {
+        padding: 10,
+        backgroundColor: "#FF0000",
+        borderRadius: 5,
+        marginTop: 10,
+    },
+    modalCloseButtonText: {
+        color: "white",
+        textAlign: "center",
+    },
+    GymContents : {
+        flex : 1,
+    },
+    gymItem: {
+        padding: 16,
+        backgroundColor : '#ffffff',
+    },
+    gymName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    gymLocation: {
+        fontSize: 14,
+        color: '#555',
+    },
+    gymTrainerCount: {
+        fontSize: 14,
+        color: '#888',
+    },
+    profileHeader : {
+        flexDirection : 'row',
+        padding : 15,
+        alignItems : 'center',
+        justifyContent: 'flex-start',
+        marginTop : 5,
+    },
+    profileMenu : {
+        flexDirection : 'row',
+        padding : 5,
+        alignItems : 'center',
+        justifyContent: 'space-evenly',
+    },
+    profileMenuBtn : {
+        flexDirection: 'column',  // Stack the icon and text vertically
+        alignItems: 'center',
+        marginHorizontal: 20,
+    },
+    profileMenuIcon : {
+        width: 55, // 원의 크기 (아이콘을 포함한 크기)
+        height: 55, // 원의 크기 (아이콘을 포함한 크기)
+        borderRadius: 25, // 원 모양으로 만들기 위해 반지름 설정
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 5, // 아이콘과 텍스트 사이의 간격
+        backgroundColor : '#fff',
+        shadowColor : '#000',
+        shadowOffset : {
+            width : 0,
+            height : 2
+        },
+        shadowOpacity : 0.1,
+        shadowRadius : 4,
+        elevation : 5,
+    },
+    profileMenuText : {
+
+    },
+    profileContentContainer : {
+        flex : 1,
+        backgroundColor: '#fff',
+        borderRadius: 20, // 둥근 모서리
+        marginTop: 10, // profileMenuBtn과 겹치지 않도록 여백 추가
+        padding: 15, // 내용과의 여백
+        marginHorizontal: 5, // 양쪽 여백
     },
     title: {
         fontSize: 18,

@@ -5,27 +5,30 @@ import ChooseOptionScreen from '../screens/ChooseOptionScreen';
 import CameraShotScreen from '../screens/CameraShotScreen';
 import UpdateRoutineScreen from '../screens/UpdateRoutineScreen';
 import CreateRoutineScreen from '../screens/CreateRoutineScreen';
-import { Exercise } from '../context/ExerciseContext';
-import { Record } from '../context/RecordContext';
+import { Routine, Record } from '../context/RecordContext';
+import HomeScreen from '../screens/HomeScreen';
 
 
 export type RoutineStackParamList = {
+    HomeDetail : undefined;
     RoutineDetail : undefined;
     ChooseOption : undefined;
     CameraShot : undefined;
-    CreateRoutine : { selectedExercise?: Exercise };
+    CreateRoutine : { selectedRoutine?: Routine[] };
     UpdateRoutine : { selectedRecord : Record };
 }
 
 const RoutineStack = createNativeStackNavigator<RoutineStackParamList>()
-type NavigationProp = NativeStackNavigationProp<RoutineStackParamList>
 
 const RoutineNavigation : React.FC = () => {
 
-    const navigation = useNavigation<NavigationProp>();
-
     return (
         <RoutineStack.Navigator initialRouteName="RoutineDetail">
+            <RoutineStack.Screen
+                name = "HomeDetail"
+                component={HomeScreen}
+                options={{headerShown : false}}
+            />
             <RoutineStack.Screen
                 name = "RoutineDetail"
                 component={RoutineScreen}

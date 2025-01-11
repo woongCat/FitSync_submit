@@ -7,6 +7,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RoutineStackParamList } from '../navigation/RoutineNavigation';
 import { RecordContext } from '../context/RecordContext';
 import RecordItem from '../components/RecordItem';
+import { useIsFocused } from '@react-navigation/native';
 
 type RoutineScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'RoutineDetail'>
 
@@ -15,24 +16,25 @@ interface RoutineScreenProps {
 }
 
 const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
-    const [selectedDate, setSelectedDate] = useState('');
+    const [selectedDate, setSelectedDate] = useState(new Date());
     const { fetchRecordData, deleteRecordData, records } = useContext(RecordContext);
     const [selectedDateRecord, setSelectedDateRecord] = useState(records);
+    const isFocused = useIsFocused();
 
     // 모든 record에 대해 sessionDate를 기준으로 markedDates를 설정할 수 있게 날짜 배열 생성
-    // const markedDates = (Array.isArray(records) && records.length > 0? records  : []).reduce((acc, record) => {
-    //     const dateString = record.sessionDate.split(' ')[0]; // "YYYY-MM-DD" 형식으로 변환
-    //     acc[dateString] = { marked: true, selectedDotColor: 'blue' };
-    //     return acc;
-    // }, {});
-
-    const markedDates = {};
+    const markedDates = (Array.isArray(records) && records.length > 0? records  : []).reduce((acc, record) => {
+        const dateString = record.sessionDate.split(' ')[0]; // "YYYY-MM-DD" 형식으로 변환
+        acc[dateString] = { marked: true, selectedDotColor: 'blue' };
+        return acc;
+    }, {});
 
     useEffect(() => {
-        fetchRecordData();
-    }, []);
+        console.log(isFocused);
+        if (isFocused) {
+            fetchRecordData();
+        }
 
-    //console.log(records);
+    }, [isFocused]);
 
     useEffect(() => {
         if (selectedDate && records.length > 0) {
@@ -52,16 +54,34 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
             setSelectedDateRecord(filteredRecords); // 필터링된 records를 상태에 저장
         }
     }, [selectedDate, records]);
+
+    // deleteRecordData 함수 후에 selectedDateRecord에서 해당 항목 삭제
+    const handleDeleteRecordItem = async (recordId: number, sessionDate: string) => {
+        const result = await deleteRecordData(recordId, sessionDate); // 데이터 삭제 API 호출
+        // 삭제가 성공적으로 이루어졌다면
+        if (result) {
+            // selectedDateRecord에서 해당 항목을 삭제
+            setSelectedDateRecord(prevRecords => 
+                prevRecords.filter(record => record.recordId !== recordId)
+            );
+
+            // 삭제 후 records를 새로 불러오기
+            fetchRecordData(); 
+        } else {
+            // 삭제 실패 처리 (필요시 사용자에게 알림 등을 추가할 수 있음)
+            console.log('Failed to delete record');
+        }
+    };
     
     return (
         <View style={styles.contentContainer}>
             <Calendar
-                onDayPress={(day: { dateString: SetStateAction<string>; }) => {
+                onDayPress={(day: { dateString: SetStateAction<Date>; }) => {
                     setSelectedDate(day.dateString);
                 }}
                 markedDates={{
                     ...markedDates,
-                    [selectedDate]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
+                    [String(selectedDate)]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
                 }}
             />
 
@@ -71,13 +91,12 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
                 keyExtractor={(item) => item?.sessionDate}
                 renderItem={({item}) => 
                     <RecordItem 
-                        record={item} 
-                        onPressRecordItem={() => 
-                            navigation.navigate('UpdateRoutine', {selectedRecord : item})
-                        }
-                        onPressDeleteRecordItem = {() =>
-                            deleteRecordData(item?.recordId, item?.sessionDate)
-                        } 
+                        record={item}
+                        onPressRecordItem={() => navigation.navigate('UpdateRoutine', { selectedRecord: item })}
+                        onPressDeleteRecordItem={() => handleDeleteRecordItem(item?.recordId, item?.sessionDate)} 
+                        onPressShareRecordItem={function (): void {
+                            throw new Error('Function not implemented.');
+                        }}                    
                     />
                 }
             />

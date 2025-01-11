@@ -21,7 +21,7 @@ interface ScheduleItemProps {
         status: string;
         agenda?: string[]; // Include agenda as optional
     };
-    onSelectTime?: (scheduleId: number, start: string, end: string) => void; 
+    onSelectTime?: (scheduleId: number, start: string, end: string) => void;
     onDelete?: (scheduleId: number) => void;
     onApprove?: () => void;
     onReject?: () => void;
@@ -103,6 +103,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
         return;
         }
         onSelectTime(schedule.scheduleId, selectedStartTime, selectedEndTime);
+        console.log(schedule.scheduleId, selectedStartTime, selectedEndTime)
         setSelectedStartTime(null);
         setSelectedEndTime(null);
     };
@@ -189,11 +190,11 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
                     </TouchableOpacity>
                 )}
 
-                {userType === 'customer' &&(
+                {userType === 'customer' && schedule.agenda && schedule.agenda.length === 0 && (
                 <View style={{ marginTop: 16 }}>
-                <Text style={ScheduleStyles.scheduleText}>
-                    (Optional) Change time:
-                </Text>
+                    <Text style={ScheduleStyles.scheduleText}>
+                        (Optional) Change time:
+                    </Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                     {availableTimes.map((time) => {
                     const isSelected =

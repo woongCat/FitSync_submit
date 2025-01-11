@@ -235,8 +235,9 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
         try {
             const access_token = await AsyncStorage.getItem("token");
             if (!access_token) throw new Error('Access token is missing.');
-
-            const response = await axios.delete(`${Config.API_URL}/schedules/${scheduleId}`, {
+            console.log(scheduleId);
+            const response = await axios.delete(`${Config.API_URL}/schedule/delete`,{
+                data : {scheduleId},
                 headers: {
                     Authorization: `${access_token}`,
                 },
@@ -252,9 +253,19 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
                 console.error('Failed to delete schedule');
                 return false;
             }
-        } catch (error) {
-            console.error('Error deleting schedule:', error);
-            Alert.alert('Error', 'Failed to cancel the reservation. Please try again.');
+        } catch (error: any) {
+            setIsLoading(false);
+            if (error.response) {
+                // 서버가 오류 응답을 보냈을 때
+                console.error('Server responded with error:', error.response.status); // 500 상태 코드
+                console.error('Response data:', error.response.data); // 서버에서 반환한 데이터
+            } else if (error.request) {
+                // 요청이 서버로 전송되지 않았을 때
+                console.error('No response received:', error.request);
+            } else {
+                // 요청을 설정하는 중에 오류가 발생했을 때
+                console.error('Error setting up the request:', error.message);
+            }
             return false;
         }
     };
