@@ -64,7 +64,6 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
         for (let i = 1; i <= 3; i++) {
             const futureDate = new Date(today);
             futureDate.setDate(today.getDate() + i);
-            dates.push(futureDate.toISOString().split('T')[0]);
         }
     
         setUpcomingDates(dates); // 로컬 날짜 저장
