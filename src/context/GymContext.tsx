@@ -15,6 +15,7 @@ export interface Gym {
     gymLocation : string;
     gymPhoneNumber : string;
     gymTrainers : Trainer[];
+    gymTotalCustomers : number;
 }
 
 export interface GymContextData {

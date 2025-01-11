@@ -5,11 +5,12 @@ import { Gym, Trainer } from "../context/GymContext";
 import SearchGym from "./SearchGym";
 
 interface GymInforops {
+    userType : string;
     gym : Gym | null;
     onPressChangeGymItem : (selectedGymId : number) => void;
 }
 
-const GymInfo : React.FC<GymInforops> = React.memo(({ gym, onPressChangeGymItem }) => {
+const GymInfo : React.FC<GymInforops> = React.memo(({ userType, gym, onPressChangeGymItem }) => {
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [selectedTrainer, setSelectedTrainer] = useState<Trainer | null>(null);
 
@@ -44,7 +45,7 @@ const GymInfo : React.FC<GymInforops> = React.memo(({ gym, onPressChangeGymItem 
 
                     <View>
                         {/* 트레이너 선택 드롭다운 */}
-                        {gym.gymTrainers.length > 0 && (
+                        {userType === 'customer' && gym.gymTrainers.length > 0 && (
                             <View style={styles.trainerSelectContainer}>
                                 <Text style={styles.trainerLabel}>Available Trainers:</Text>
                                 
@@ -65,10 +66,17 @@ const GymInfo : React.FC<GymInforops> = React.memo(({ gym, onPressChangeGymItem 
                         )}
 
                         {/* 선택된 트레이너 정보 표시 */}
-                        {selectedTrainer && (
+                        {userType === 'customer' && selectedTrainer && (
                             <View style={styles.trainerInfoContainer}>
                                 <Text style={styles.trainerInfoLabel}>- Speciality: {selectedTrainer.trainerSpeciality}</Text>
                                 <Text style={styles.trainerInfoLabel}>- Recent Award: {selectedTrainer.trainerRecentAward}</Text>
+                            </View>
+                        )}
+
+                        {/* userType이 'trainer'일 때 gymTotalCustomers 표시 */}
+                        {userType === 'trainer' && (
+                            <View style={styles.customerInfoContainer}>
+                                <Text style={styles.trainerLabel}>Total Customers: {gym.gymTotalCustomers}</Text>
                             </View>
                         )}
                         
@@ -76,6 +84,7 @@ const GymInfo : React.FC<GymInforops> = React.memo(({ gym, onPressChangeGymItem 
                     
                     <View>
                         <Text style={styles.locationLabel}>Location:</Text>
+                        <Text style={styles.gymLocation}>{gym.gymLocation}</Text>
                         {/* TODO: }Add location using map  */} 
                     </View>
                 </View>
@@ -123,7 +132,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     gymLocation: {
-        fontSize: 16,
+        fontSize: 14,
         color: '#555',
         marginBottom: 4,
     },
@@ -171,6 +180,9 @@ const styles = StyleSheet.create({
     trainerInfoLabel: {
         fontSize: 14,
         marginVertical: 5,  // 각 정보 간 간격
+    },
+    customerInfoContainer : {
+        marginVertical : 10,
     },
     locationLabel : {
         fontSize: 16,

@@ -25,6 +25,7 @@ const SearchGym : React.FC<SearchGymProps> = ({ onCancel, onGymSelect }) => {
                 { trainerName: 'John Doe', trainerSpeciality: 'Strength', trainerRecentAward: 'Best Trainer (2024)' },
                 { trainerName: 'Jane Smith', trainerSpeciality: 'Cardio', trainerRecentAward: 'Top Cardio Trainer (2023)' },
             ],
+            gymTotalCustomers : 5,
         },
         {
             gymId: 2,
@@ -35,6 +36,7 @@ const SearchGym : React.FC<SearchGymProps> = ({ onCancel, onGymSelect }) => {
                 { trainerName: 'Alice Brown', trainerSpeciality: 'Yoga', trainerRecentAward: 'Best Yoga Trainer (2023)' },
                 { trainerName: 'Bob White', trainerSpeciality: 'CrossFit', trainerRecentAward: 'Top CrossFit Trainer (2024)' },
             ],
+            gymTotalCustomers : 2,
         },
         {
             gymId: 3,
@@ -44,6 +46,7 @@ const SearchGym : React.FC<SearchGymProps> = ({ onCancel, onGymSelect }) => {
             gymTrainers: [
                 { trainerName: 'Charlie Green', trainerSpeciality: 'Pilates', trainerRecentAward: 'Pilates Champion (2023)' },
             ],
+            gymTotalCustomers : 10,
         },
     ]);
 

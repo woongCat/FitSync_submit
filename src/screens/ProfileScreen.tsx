@@ -31,6 +31,8 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
     const isFocused = useIsFocused();
     const { userType, gym, relatedUserInfo, fetchRegistrationInfo, updateRegistrationInfo } = useContext(RegistrationContext);
     
+    const testUserType = 'customer';
+
     // 임의의 gym 데이터 설정 (테스트용)
     const testGym: Gym = {
         gymId: 123,
@@ -63,7 +65,8 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
                 trainerSpeciality: 'HIIT',
                 trainerRecentAward: 'HIIT Superstar (2020)'
             }
-        ]
+        ],
+        gymTotalCustomers : 5,
     };
 
     useEffect(() => {
@@ -160,7 +163,8 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
 
             <View style={[styles.profileContentContainer, { backgroundColor: activeSection === null ? '' : '#fff' }]}>
                 {activeSection === 'gym' && (
-                    <GymInfo 
+                    <GymInfo
+                        userType = {testUserType}
                         gym={testGym} 
                         onPressChangeGymItem={(selectedGymId : number) => {
                             if (selectedGymId) { // updatedGym이 null이 아닐 때만 실행
