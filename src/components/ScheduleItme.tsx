@@ -139,15 +139,6 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
                 </View>
             )}
 
-            {/* 토글 버튼 */}
-            <TouchableOpacity
-                style={ScheduleStyles.toggleDetailsButton}
-                onPress={() => setShowDetails((prev) => !prev)}
-            >
-                <Text style={ScheduleStyles.buttonText}>
-                    {showDetails ? 'Hide Details' : 'View Details'}
-                </Text>
-            </TouchableOpacity>
 
             {/* 기능 버튼 */}
             <View style={ScheduleStyles.buttonGroup}>
@@ -190,11 +181,8 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
                     </TouchableOpacity>
                 )}
 
-                {userType === 'customer' && schedule.agenda && schedule.agenda.length === 0 && (
+                {userType === 'customer' && (
                 <View style={{ marginTop: 16 }}>
-                    <Text style={ScheduleStyles.scheduleText}>
-                        (Optional) Change time:
-                    </Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                     {availableTimes.map((time) => {
                     const isSelected =

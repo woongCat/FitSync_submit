@@ -55,7 +55,7 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
     const [userType, setUserType] = useState(''); // userType 상태 추가
     const [schedules, setSchedules] =  useState<ScheduleDetail[]>([]);
 
-    // 한달 치 예약 점으로 박을 수 있도록 날짜 가져오기
+    // 한달 치 예약 정보를 가져와서 단순히 저장만 하는 함수
     const fetchMonthlySchedules = async (year: number, month: number): Promise<void> => {
         setIsLoading(true); // 로딩 상태 시작
         try {
@@ -65,7 +65,7 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
                 setIsLoading(false);
                 return;
             }
-
+    
             // API 호출
             const response = await axios.get(`${Config.API_URL}/schedule/monthly_schedule`, {
                 params: { year, month },
@@ -73,9 +73,26 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
                     Authorization: `${access_token}`, // 인증 토큰 추가
                 },
             });
-
+    
             if (response.status === 200) {
-                setMarkedDates(response.data.markedDates); // 캘린더 마킹 업데이트 (dot 정보)
+                const updatedMarkedDates: Record<string, any> = {};
+    
+                // 이미 마킹된 날짜가 있다면 새로운 마킹 추가
+                response.data.forEach((date: string) => {
+                    if (!updatedMarkedDates[date]) {
+                        updatedMarkedDates[date] = {
+                            dots: [
+                                {
+                                    key: 'dot-key',
+                                    color: 'blue', // 이 부분을 동적으로 처리
+                                    selectedDotColor: 'red',
+                                },
+                            ],
+                        };
+                    }
+                });
+    
+                setMarkedDates(updatedMarkedDates); // 마킹된 날짜 설정
             } else {
                 Alert.alert('Error', 'Failed to fetch monthly schedules.');
             }

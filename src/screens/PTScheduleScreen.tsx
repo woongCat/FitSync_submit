@@ -4,12 +4,14 @@ import {
     Text,
     FlatList,
     TouchableOpacity,
+    Modal,
     Alert,
 } from 'react-native';
 import { PTScheduleContext } from '../context/PTScheduleContext';
 import {ExpandableCalendar, AgendaList, CalendarProvider, WeekCalendar} from 'react-native-calendars';
 import ScheduleItem from '../components/ScheduleItme.tsx';
 import ScheduleStyles from '../style/ScheduleStyles';
+import styles from '../style/styles';
 
 const availableTimes = [
     '00:00:00','01:00:00','02:00:00','03:00:00','04:00:00','05:00:00',
@@ -43,8 +45,7 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
     const [markedDates, setMarkedDates] = useState<Record<string, any>>({}); // 마킹된 날짜들
     const [isLoading, setIsLoading] = useState(false);
     const [agendaSections, setAgendaSections] = useState<any[]>([]); // AgendaList에 사용될 섹션 데이터 상태
-    const [selectedStartTime, setSelectedStartTime] = useState<string | null>(null);
-    const [selectedEndTime, setSelectedEndTime] = useState<string | null>(null);
+    const [showAddModal, setShowAddModal] = useState(false);
 
     // 초기화
     useEffect(() => {
@@ -106,27 +107,6 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
             }
         },
     );
-    // 시간 버튼을 눌렀을 때
-    const handleTimeClick = useCallback(
-        (time: string) => {
-        if (!selectedStartTime) {
-            // 아직 시작 시간 안 골랐으면 시작 시간부터
-            setSelectedStartTime(time);
-        } else if (!selectedEndTime) {
-            // 시작 시간을 고른 상태이면, 종료 시간이 될 수 있는지 체크
-            if (time > selectedStartTime) {
-            setSelectedEndTime(time);
-            } else {
-            Alert.alert('Error', 'End time must be after start time.');
-            }
-        } else {
-            // 이미 둘 다 골랐는데 다시 누르면 초기화
-            setSelectedStartTime(null);
-            setSelectedEndTime(null);
-        }
-        },
-        [selectedStartTime, selectedEndTime]
-    );
 
     // 예약 추가 함수 
     const handleAddSchedule = useCallback(
@@ -135,6 +115,7 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
             Alert.alert('Error', 'Please complete all fields.');
             return;
         }
+        console.log(date, trainerId, sTime)
         addSchedule(date, {
             trainerId,
             startTime: sTime,
@@ -150,27 +131,6 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
         },
         [addSchedule, fetchSchedules]
     );
-    
-    // 선택 완료 후 Confirm 버튼 누르면 실제 API 호출
-    const handleConfirm = useCallback(() => {
-        if (!selectedDate || !selectedStartTime || !selectedEndTime) {
-        Alert.alert('Error', 'Please select date, start time, and end time.');
-        return;
-        }
-        // trainerId 예시로 1 (실제로는 트레이너 선택 로직이 필요할 수도 있음)
-        const trainerId = 1;
-
-        // API가 요구하는 형식으로 구성 (예: "09:00:00")
-        const sTime = `${selectedStartTime}`;
-        const eTime = `${selectedEndTime}`;
-        console.log('selectedDate', selectedDate);
-
-        handleAddSchedule(selectedDate, trainerId, sTime, eTime);
-
-        // 선택값 리셋
-        setSelectedStartTime(null);
-        setSelectedEndTime(null);
-    }, [selectedDate, selectedStartTime, selectedEndTime, handleAddSchedule]);
 
     const handleDeleteSchedule = useCallback(
         (scheduleId: number) => {
@@ -231,6 +191,7 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
             />
         </>
         )}
+            
             <AgendaList
             sections={
                 agendaSections.length > 0
@@ -248,10 +209,6 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                     status: item.status,
                     agenda: item.agenda || [],
                 }}
-                userType={userType}
-                onSelectTime={(id, start, end) => {
-                    handleAddSchedule(selectedDate, trainerId, start, end);
-                  }}
                 onDelete={userType === 'customer' ? handleDeleteSchedule : undefined}
                 onApprove={
                     userType === 'trainer'
@@ -286,6 +243,61 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
             sectionStyle={ScheduleStyles.section}
             ListEmptyComponent={<Text>No schedules available.</Text>}
             />
+            {userType === 'customer' && (
+                <TouchableOpacity 
+                    style={styles.addButton}
+                    onPress={() => {
+                        // 모달 열기
+                        if (!selectedDate) {
+                            Alert.alert('Error', 'Please select a date first.');
+                            return;
+                        }
+                        setShowAddModal(true);
+                    }}
+                >
+                    <Text style={{ color: 'white' }}>+ Add Schedule</Text>
+                </TouchableOpacity>
+            )}
+
+            <Modal
+                visible={showAddModal}
+                transparent
+                animationType="slide"
+                onRequestClose={() => setShowAddModal(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={{ fontSize: 16, marginBottom: 10 }}>Add New Schedule</Text>
+                        <Text style={{ marginBottom: 8, color: '#666' }}>Date: {selectedDate}</Text>
+
+                        <ScheduleItem
+                            userType="customer"
+                            schedule={{
+                                scheduleId: -1,
+                                trainerName: 'Unknown',
+                                customerName: 'Customer',
+                                startTime: '',
+                                endTime: '',
+                                status: '예약',
+                                agenda: [],
+                            }}
+                            onSelectTime={(_id, start, end) => {
+                                handleAddSchedule(selectedDate || '', 1, start, end);
+                                setShowAddModal(false);
+                            }}
+                        />
+
+                        {/* 추가로 "취소" 버튼도 하나 넣고 싶으면 여기에 */}
+                        <TouchableOpacity
+                            style={[styles.cancelButton, { marginTop: 10 }]}
+                            onPress={() => setShowAddModal(false)}
+                        >
+                            <Text style={{ color: '#fff' }}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
         </CalendarProvider>
     );
 };

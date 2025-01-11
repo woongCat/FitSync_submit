@@ -346,6 +346,38 @@ const styles = StyleSheet.create ({
         textAlign: 'center',
         fontSize: 16,
     },
+    addButton: {
+        position: 'absolute',
+        right: 20,
+        bottom: 20,
+        backgroundColor: '#007bff',
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderRadius: 6
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    modalContent: {
+        width: '80%',
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    cancelButton: {
+        backgroundColor: '#ccc',
+        padding: 10,
+        borderRadius: 6,
+        alignItems: 'center'
+    },
     RoutineCardSetInput: {
         width: 60,
         height: 40,
