@@ -1,18 +1,17 @@
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
 import React, { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select';
-import { Gym, Trainer } from "../context/GymContext";
+import { Gym } from "../context/GymContext";
 import SearchGym from "./SearchGym";
+import { Trainer } from "../context/RegistrationContext";
 
-interface GymInforops {
-    userType : string;
+interface GymInfoProps {
     gym : Gym | null;
     onPressChangeGymItem : (selectedGymId : number) => void;
 }
 
-const GymInfo : React.FC<GymInforops> = React.memo(({ userType, gym, onPressChangeGymItem }) => {
+const GymInfo : React.FC<GymInfoProps> = React.memo(({ gym, onPressChangeGymItem }) => {
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [selectedTrainer, setSelectedTrainer] = useState<Trainer | null>(null);
 
     const handleOpenModal = () => {
         setIsModalVisible(true);
@@ -43,45 +42,6 @@ const GymInfo : React.FC<GymInforops> = React.memo(({ userType, gym, onPressChan
                         </TouchableOpacity>
                     </View>
 
-                    <View>
-                        {/* 트레이너 선택 드롭다운 */}
-                        {userType === 'customer' && gym.gymTrainers.length > 0 && (
-                            <View style={styles.trainerSelectContainer}>
-                                <Text style={styles.trainerLabel}>Available Trainers:</Text>
-                                
-                                {/* 드롭다운 바로 아래에 표시될 수 있도록 */}
-                                <RNPickerSelect
-                                    onValueChange={(value) => setSelectedTrainer(value)}
-                                    items={gym.gymTrainers.map((trainer) => ({
-                                        label: trainer.trainerName,
-                                        value: trainer,
-                                    }))}
-                                    value={selectedTrainer}
-                                    placeholder={{ label: "Click here to see", value: null }}
-                                    style={pickerSelectStyles}
-                                />
-
-                                
-                            </View>
-                        )}
-
-                        {/* 선택된 트레이너 정보 표시 */}
-                        {userType === 'customer' && selectedTrainer && (
-                            <View style={styles.trainerInfoContainer}>
-                                <Text style={styles.trainerInfoLabel}>- Speciality: {selectedTrainer.trainerSpeciality}</Text>
-                                <Text style={styles.trainerInfoLabel}>- Recent Award: {selectedTrainer.trainerRecentAward}</Text>
-                            </View>
-                        )}
-
-                        {/* userType이 'trainer'일 때 gymTotalCustomers 표시 */}
-                        {userType === 'trainer' && (
-                            <View style={styles.customerInfoContainer}>
-                                <Text style={styles.trainerLabel}>Total Customers: {gym.gymTotalCustomers}</Text>
-                            </View>
-                        )}
-                        
-                    </View>
-                    
                     <View>
                         <Text style={styles.locationLabel}>Location:</Text>
                         <Text style={styles.gymLocation}>{gym.gymLocation}</Text>
@@ -187,6 +147,7 @@ const styles = StyleSheet.create({
     locationLabel : {
         fontSize: 16,
         fontWeight: 'bold',
+        marginVertical: 5,
     },
 });
 

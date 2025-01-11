@@ -13,7 +13,8 @@ import { Gym } from '../context/GymContext';
 import { icon } from '../constants/icons';
 import GymInfo from '../components/GymInfo';
 import { useIsFocused } from '@react-navigation/native';
-import { RegistrationContext } from '../context/RegistrationContext';
+import { Customer, RegistrationContext, Trainer } from '../context/RegistrationContext';
+import ManageInfo from '../components/ManageInfo';
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'TabNav'>
 
@@ -29,45 +30,114 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
     // 상태 추가: 현재 활성화된 섹션
     const [activeSection, setActiveSection] = useState<'gym' | 'manage' | 'analytics'>('analytics');
     const isFocused = useIsFocused();
-    const { userType, gym, relatedUserInfo, fetchRegistrationInfo, updateRegistrationInfo } = useContext(RegistrationContext);
+    const { userType, gym, gymTrainers, gymCustomers, fetchRegistrationInfo, updateRegistrationInfo } = useContext(RegistrationContext);
     
-    const testUserType = 'customer';
 
-    // 임의의 gym 데이터 설정 (테스트용)
+    // 임의의 데이터 설정 (테스트용)
+    const testUserType = 'trainer';
+    
     const testGym: Gym = {
         gymId: 123,
         gymName: 'Test Gym',
         gymLocation: '123 Test Street',
         gymPhoneNumber: '012-234-4566',
-        gymTrainers: [
-            {
-                trainerName: 'Trainer 1',
-                trainerSpeciality: 'Strength Training',
-                trainerRecentAward: 'Best Trainer (2024)'
-            },
-            {
-                trainerName: 'Trainer 2',
-                trainerSpeciality: 'Cardio',
-                trainerRecentAward: 'Cardio Champion (2023)'
-            },
-            {
-                trainerName: 'Trainer 3',
-                trainerSpeciality: 'Yoga',
-                trainerRecentAward: 'Yoga Master (2022)'
-            },
-            {
-                trainerName: 'Trainer 4',
-                trainerSpeciality: 'Pilates',
-                trainerRecentAward: 'Pilates Excellence (2021)'
-            },
-            {
-                trainerName: 'Trainer 5',
-                trainerSpeciality: 'HIIT',
-                trainerRecentAward: 'HIIT Superstar (2020)'
-            }
-        ],
-        gymTotalCustomers : 5,
     };
+
+    const testCustomers: Customer[] = [
+        {
+            customerId: 1,
+            customerName: "John Doe",
+            customerPTType: 2,
+        },
+        {
+            customerId: 2,
+            customerName: "Jane Smith",
+            customerPTType: 10,
+        },
+        {
+            customerId: 3,
+            customerName: "Alice Brown",
+            customerPTType: 0,
+        },
+        {
+            customerId: 4,
+            customerName: "Smith Smith",
+            customerPTType: 30,
+        },
+        {
+            customerId: 5,
+            customerName: "John John",
+            customerPTType: 23,
+        },
+        {
+            customerId: 6,
+            customerName: "John John",
+            customerPTType: 23,
+        },
+        {
+            customerId: 7,
+            customerName: "John John",
+            customerPTType: 23,
+        },
+        {
+            customerId: 8,
+            customerName: "John John",
+            customerPTType: 23,
+        },
+        {
+            customerId: 9,
+            customerName: "John John",
+            customerPTType: 23,
+        },
+        {
+            customerId: 10,
+            customerName: "John John",
+            customerPTType: 23,
+        },
+    ];
+
+    const testTrainers: Trainer[] = [
+        {
+            trainerId: 101,
+            trainerName: "Mark Williams",
+            trainerSpeciality: "Strength Training",
+            trainerRecentAward: "Best Strength Trainer (2024)",
+            trainerRecentCertification: "Certified Personal Trainer (2023)",
+            trainerSelected: true,
+        },
+        {
+            trainerId: 102,
+            trainerName: "Emily Johnson",
+            trainerSpeciality: "Cardio",
+            trainerRecentAward: "Top Cardio Trainer (2023)",
+            trainerRecentCertification: "Cardio Specialist (2022)",
+            trainerSelected: false,
+        },
+        {
+            trainerId: 103,
+            trainerName: "Chris Davis",
+            trainerSpeciality: "Yoga",
+            trainerRecentAward: "Yoga Expert (2022)",
+            trainerRecentCertification: "Yoga Master Certification (2021)",
+            trainerSelected: false,
+        },
+        {
+            trainerId: 104,
+            trainerName: "Chris",
+            trainerSpeciality: "Someting",
+            trainerRecentAward: "Someting Expert (2022)",
+            trainerRecentCertification: "Someting Master Certification (2021)",
+            trainerSelected: false,
+        },
+        {
+            trainerId: 105,
+            trainerName: "Johnson",
+            trainerSpeciality: "Someting",
+            trainerRecentAward: "Someting Expert (2022)",
+            trainerRecentCertification: "Someting Master Certification (2021)",
+            trainerSelected: false,
+        },
+    ];
 
     useEffect(() => {
         console.log(isFocused);
@@ -164,7 +234,6 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
             <View style={[styles.profileContentContainer, { backgroundColor: activeSection === null ? '' : '#fff' }]}>
                 {activeSection === 'gym' && (
                     <GymInfo
-                        userType = {testUserType}
                         gym={testGym} 
                         onPressChangeGymItem={(selectedGymId : number) => {
                             if (selectedGymId) { // updatedGym이 null이 아닐 때만 실행
@@ -178,7 +247,23 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
                     <Text>Analytics Content</Text> // 'Analytics' 섹션의 내용
                 )}
                 {activeSection === 'manage' && (
-                    <Text>Manage Content</Text> // 'Manage' 섹션의 내용
+                    <ManageInfo
+                        userType={testUserType}
+                        relatedTrainers={testTrainers}
+                        relatedCustomers={testCustomers} 
+                        onPressChangeTrainer={(trainerId : number) => {
+                            if (trainerId) { // updatedGym이 null이 아닐 때만 실행
+                                console.log('selected trainer ID ', trainerId)
+                                updateRegistrationInfo('trainer', trainerId);
+                            }
+                        }} 
+                        onPressDeleteCustomer={(customerId : number) => {
+                            if (customerId) { // updatedGym이 null이 아닐 때만 실행
+                                console.log('selected customer ID ', customerId)
+                                updateRegistrationInfo('customer', customerId);
+                            }
+                        }}                        
+                    />
                 )}
             </View>
             

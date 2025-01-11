@@ -2,22 +2,14 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 import axios from 'axios';
 import Config from 'react-native-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-export interface Trainer {
-    trainerName : string;
-    trainerSpeciality : string;
-    trainerRecentAward : string; // "Title (Date)" 형식
-}
+import { Trainer } from './RegistrationContext';
 
 export interface Gym {
     gymId : number;
     gymName : string;
     gymLocation : string;
     gymPhoneNumber : string;
-    gymTrainers : Trainer[];
-    gymTotalCustomers : number;
 }
-
 export interface GymContextData {
     gyms : Gym[];
     fetchGymData : () => Promise<boolean>;

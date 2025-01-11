@@ -7,10 +7,26 @@ import { Alert } from 'react-native';
 import { Gym } from './GymContext';
 
 // Context와 Provider 설정
+export interface Customer {
+    customerId : number;
+    customerName : string;
+    customerPTType : number;
+};
+
+export interface Trainer {
+    trainerId : number;
+    trainerName : string;
+    trainerSpeciality : string;
+    trainerRecentAward : string; // "Title (Date)" 형식
+    trainerRecentCertification : string; // "Name (Date)" 형식
+    trainerSelected : boolean;
+};
+
 export interface RegistrationContextData {
     isLoading : boolean;
     userType : string;
-    relatedUserInfo : Array<{ number: string }>;
+    gymTrainers : Trainer[];
+    gymCustomers : Customer[];
     gym : Gym | null;
     fetchRegistrationInfo : () => Promise<boolean>;
     updateRegistrationInfo : (context:string, updateId : number) => Promise<boolean>;
@@ -24,7 +40,8 @@ export const RegistrationProvider : React.FC<{children : ReactNode}> = ({childre
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [userType, setUserType] = useState('');
     const [gym, setGym] = useState<Gym|null>(null);
-    const [relatedUserInfo, setRelatedUserInfo] = useState<Array<{ number: string }>>([]);
+    const [gymTrainers, setGymTrainers] = useState<Trainer[]>([]);
+    const [gymCustomers, setGymCustomers] = useState<Customer[]>([]);
     
     // Record 데이터를 가져오는 함수 (Fetch)
     const fetchRegistrationInfo = async() : Promise<boolean> => {
@@ -51,7 +68,8 @@ export const RegistrationProvider : React.FC<{children : ReactNode}> = ({childre
                 // 응답 데이터를 각각 저장
                 setUserType(response.data.userType);
                 setGym(response.data.gym);
-                setRelatedUserInfo(response.data.relatedUserInfo);
+                setGymTrainers(response.data.relatedTrainers);
+                setGymCustomers(response.data.relatedCustomers);
             }
 
             setIsLoading(false);
@@ -123,7 +141,8 @@ export const RegistrationProvider : React.FC<{children : ReactNode}> = ({childre
             value={{
                 isLoading,
                 userType,
-                relatedUserInfo,
+                gymTrainers,
+                gymCustomers,
                 gym,
                 fetchRegistrationInfo,
                 updateRegistrationInfo,
