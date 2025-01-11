@@ -602,6 +602,31 @@ const styles = StyleSheet.create ({
         fontSize: 16,
         fontWeight: 'bold',
     },
+    scheduleContainer: {
+        backgroundColor: '#f9f9f9',
+        padding: 16,
+        marginVertical: 8,
+        marginHorizontal: 16,
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    scheduleText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    emptyScheduleContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 16,
+    },
+    emptyScheduleText: {
+        fontSize: 16,
+        color: '#aaa',
+    },
 });
 
 export default styles;

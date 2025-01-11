@@ -123,6 +123,7 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
             });
 
             if (response.status === 200) {
+                console.log(response.data.schedules);
                 setUserType(response.data.userType); // 정확한 위치로 userType 설정
                 return response.data.schedules; // 스케줄 데이터 반환
             } else {
