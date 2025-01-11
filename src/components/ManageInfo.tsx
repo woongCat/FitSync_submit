@@ -4,7 +4,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import { Trainer, Customer } from "../context/RegistrationContext";
 import SearchGym from "./SearchGym";
 
-interface ManageInforops {
+interface ManageInfoProps {
     userType : string;
     relatedTrainers : Trainer[];
     relatedCustomers : Customer[];
@@ -12,7 +12,7 @@ interface ManageInforops {
     onPressDeleteCustomer : (customerId : number) => void;
 }
 
-const ManageInfo: React.FC<ManageInforops> = React.memo(({ userType, relatedTrainers = [], relatedCustomers = [], onPressChangeTrainer, onPressDeleteCustomer }) => {
+const ManageInfo: React.FC<ManageInfoProps> = React.memo(({ userType, relatedTrainers = [], relatedCustomers = [], onPressChangeTrainer, onPressDeleteCustomer }) => {
 
     // 조건에 맞는 데이터를 가져오기
     const trainersToShow = userType === 'customer' ? relatedTrainers : [];
@@ -102,7 +102,6 @@ const ManageInfo: React.FC<ManageInforops> = React.memo(({ userType, relatedTrai
                             <TouchableOpacity style={styles.itemContainer} onPress={() => handleDeleteCustomer(item.customerId)}>
                                 <Text style={styles.itemTextName}>{item.customerName}</Text>
                                 <Text style={styles.itemTextDetail}>Remaining PT Count: {item.customerPTType}</Text>
-                                {/* PT Type에 따라 다른 내용 출력 가능 */}
                             </TouchableOpacity>
                         )}
                     />
