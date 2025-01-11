@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useContext, useMemo, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useContext, useCallback, useRef } from 'react';
 import {
     View,
     Text,
     FlatList,
     TouchableOpacity,
     Alert,
-    ActivityIndicator,
 } from 'react-native';
 import { PTScheduleContext } from '../context/PTScheduleContext';
 import {ExpandableCalendar, AgendaList, CalendarProvider, WeekCalendar} from 'react-native-calendars';
@@ -62,23 +61,24 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
 
         // 오늘 날짜의 예약 정보 가져오기
         fetchSchedules(todayString)
-            .then(schedules => {
+            .then((list) => {
                 setAgendaSections([
-                    { title: todayString, data: schedules.length > 0 ? schedules : [] }
+                    { title: todayString, data: list.length > 0 ? list : [] }
                 ]);
             })
             .catch((error) => console.error('Failed to fetch today\'s schedules:', error));
-    }, []);
+    },[]);
 
     // 날짜 선택 처리
     const handleDateSelect = useCallback(
         async (day: { dateString: string }) => {
             const sessionDate = day.dateString;
             setIsLoading(true); // 로딩 상태 활성화
-
+    
             try {
                 // 선택된 날짜를 상태로 설정
                 setSelectedDate(sessionDate);
+    
                 // 캘린더 마킹 초기화 후 업데이트
                 setMarkedDates({
                     [sessionDate]: {
@@ -87,10 +87,10 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                         selectedColor: '#007bff',
                     },
                 });
-
+    
                 // 해당 날짜의 스케줄을 가져와서 업데이트
-                const schedules = await fetchSchedules(sessionDate);
-
+                const schedules = await fetchSchedules(sessionDate); // 비동기 데이터 가져오기
+    
                 // agendaSections 업데이트
                 setAgendaSections([
                     { title: sessionDate, data: schedules.length > 0 ? schedules : [] }
@@ -105,7 +105,6 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                 setIsLoading(false); // 로딩 상태 비활성화
             }
         },
-        [fetchSchedules] // 의존성 배열에 fetchSchedules 추가
     );
     // 시간 버튼을 눌렀을 때
     const handleTimeClick = useCallback(
@@ -139,7 +138,7 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
         addSchedule(date, {
             trainerId,
             startTime: sTime,
-            endTime: eTime
+            endTime: eTime,
         }).then((success) => {
             if (success) {
             Alert.alert('Success', 'Reservation added successfully!');
@@ -161,9 +160,10 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
         // trainerId 예시로 1 (실제로는 트레이너 선택 로직이 필요할 수도 있음)
         const trainerId = 1;
 
-        // API가 요구하는 형식으로 구성 (예: "2025-01-11T09:00:00")
-        const sTime = `${selectedDate}T${selectedStartTime}`;
-        const eTime = `${selectedDate}T${selectedEndTime}`;
+        // API가 요구하는 형식으로 구성 (예: "09:00:00")
+        const sTime = `${selectedStartTime}`;
+        const eTime = `${selectedEndTime}`;
+        console.log('selectedDate', selectedDate);
 
         handleAddSchedule(selectedDate, trainerId, sTime, eTime);
 
@@ -231,56 +231,6 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
             />
         </>
         )}
-        { userType === 'customer' ? (
-            <View style={{ marginTop: 20, paddingHorizontal: 16 }}>
-            <Text style={{ marginBottom: 8 }}>No schedules available.</Text>
-            <Text style={{ marginBottom: 8 }}>
-                Select start/end time to create a new reservation:
-            </Text>
-
-            {/* 예약 가능한 시간 버튼들 */}
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                {availableTimes.map((time) => {
-                const isSelected =
-                    selectedStartTime === time ||
-                    (selectedStartTime &&
-                    selectedEndTime &&
-                    time >= selectedStartTime &&
-                    time <= selectedEndTime);
-
-                return (
-                    <TouchableOpacity
-                    key={time}
-                    style={{
-                        margin: 4,
-                        paddingVertical: 8,
-                        paddingHorizontal: 12,
-                        borderRadius: 4,
-                        backgroundColor: isSelected ? '#007bff' : '#eee',
-                    }}
-                    onPress={() => handleTimeClick(time)}
-                    >
-                    <Text style={{ color: isSelected ? '#fff' : '#333' }}>
-                        {time.slice(0, 2)}
-                    </Text>
-                    </TouchableOpacity>
-                );
-                })}
-            </View>
-
-            {/* 시작·끝 시간 둘 다 선택되면 Confirm 버튼 */}
-            {selectedStartTime && selectedEndTime && (
-                <TouchableOpacity
-                style={ScheduleStyles.selectedTimeButton}
-                onPress={handleConfirm}
-                >
-                <Text style={ScheduleStyles.confirmButtonText}>
-                    Confirm Reservation ({selectedStartTime} ~ {selectedEndTime})
-                </Text>
-                </TouchableOpacity>
-            )}
-            </View>
-        ) : (
             <AgendaList
             sections={
                 agendaSections.length > 0
@@ -297,6 +247,10 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                     endTime: item.endTime,
                     status: item.status,
                     agenda: item.agenda || [],
+                }}
+                userType={userType}
+                onSelectTime={(scheduleId, start, end) => {
+                    console.log('Selected new time for scheduleId:', scheduleId, start, end);
                 }}
                 onDelete={userType === 'customer' ? handleDeleteSchedule : undefined}
                 onApprove={
@@ -332,8 +286,6 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
             sectionStyle={ScheduleStyles.section}
             ListEmptyComponent={<Text>No schedules available.</Text>}
             />
-        )
-        }
         </CalendarProvider>
     );
 };

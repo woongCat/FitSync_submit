@@ -22,7 +22,7 @@ export interface PTScheduleContextProps {
     userType: string; // 사용자 유형 (예: trainer, customer)
     schedules: ScheduleDetail[]; // 스케줄 배열
     fetchMonthlySchedules: (year: number, month: number) => Promise<void>;
-    fetchSchedules: (sessionDate: string) => Promise<void>;
+    fetchSchedules: (sessionDate: string) => Promise<ScheduleDetail[]>;
     addSchedule: (sessionDate : string, reservationInfo: {
         trainerId: number;
         startTime: string;
@@ -95,7 +95,7 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
             if (!access_token) {
                 Alert.alert('Error', 'Access token is missing.');
                 setIsLoading(false);
-                return [];
+                return[];
             }
 
             const response = await axios.get(`${Config.API_URL}/schedule/read`, {
@@ -110,56 +110,73 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
                 return response.data.schedules; // 스케줄 데이터 반환
             } else {
                 Alert.alert('Error', 'Failed to fetch schedules.');
-                return [];
+                return[];
             }
         } catch (error: any) {
             console.error('Error fetching schedules:', error.message || error.response?.data);
             Alert.alert('Error', 'An error occurred while fetching schedules.');
-            return [];
+            return[];
         } finally {
             setIsLoading(false); // 로딩 종료
         }
-};
+    };
 
     // 2. 새로운 스케줄을 추가하는 함수
-    const addSchedule = async (sessionDate : string, reservationInfo: {
-        trainerId: number;
-        startTime: string;
-        endTime: string;}): Promise<boolean> => {
+    const addSchedule = async (sessionDate : string,
+        reservationInfo: {
+            trainerId: number;
+            startTime: string;
+            endTime: string;
+          }): Promise<boolean> => {
         try {
             const access_token = await AsyncStorage.getItem("token");
             if (!access_token) {
                 console.error("Access token is missing");
                 return false;
             }
+            
+            const { trainerId, startTime, endTime } = reservationInfo;
 
-            const response = await axios.post(`${Config.API_URL}/schedule/create`, reservationInfo, {
+            console.log(sessionDate);
+            console.log(reservationInfo);
+
+            const createData = {
+                sessionDate,
+                reservationInfo: {
+                    trainerId,
+                    startTime,
+                    endTime,
+                },
+            };
+
+            const response = await axios.post(`${Config.API_URL}/schedule/create`, createData, {
                 headers: {
-                    Authorization: `${access_token}`,
-                    "Content-Type": "application/json",
+                    Authorization: `${access_token}`
                 },
             });
 
             if (response.status === 201) { // 201: Created
-                setScheduleData((prev) => {
-                    if (!prev) {// Handle the case where `prev` is null
-                        return {userType: "customer", // Default userType if not set
-                                schedules: [response.data],};
-                            }
-                            return {
-                                ...prev,
-                                schedules: [...prev.schedules, response.data], // Update only schedules
-                    };
-                });
+                const createdSchedule = response.data;
+                setSchedules((prevSchedules) => [...prevSchedules, createdSchedule]);
                 Alert.alert("Success", "Your reservation has been added.");
                 return true;
             } else {
                 console.error("Failed to add schedule");
                 return false;
             }
-        } catch (error) {
-            console.error("Error adding schedule:", error);
-            Alert.alert("Error", "Failed to add the reservation. Please try again.");
+        } catch (error: any) {
+            setIsLoading(false);
+            if (error.response) {
+                // 서버가 오류 응답을 보냈을 때
+                console.error('Server responded with error:', error.response.status); // 500 상태 코드
+                console.error('Response data:', error.response.data); // 서버에서 반환한 데이터
+            } else if (error.request) {
+                // 요청이 서버로 전송되지 않았을 때
+                console.error('No response received:', error.request);
+            } else {
+                // 요청을 설정하는 중에 오류가 발생했을 때
+                console.error('Error setting up the request:', error.message);
+            }
             return false;
         }
     };
@@ -222,19 +239,12 @@ export const PTScheduleProvider: React.FC<{ children: ReactNode }> = ({ children
             const response = await axios.delete(`${Config.API_URL}/schedules/${scheduleId}`, {
                 headers: {
                     Authorization: `${access_token}`,
-                    'Content-Type': 'application/json',
                 },
             });
 
             if (response.status === 200) {
-                setScheduleData((prev) =>
-                    {
-                        if (!prev) return null; // Handle null case
-                        return {
-                            ...prev,
-                            schedules: prev.schedules.filter((schedule: ScheduleDetail) => schedule.scheduleId !== scheduleId),
-                        };
-                    }
+                setSchedules((prevSchedules) =>
+                    prevSchedules.filter((schedule) => schedule.scheduleId !== scheduleId)
                 );
                 Alert.alert('Success', 'Your reservation has been canceled.');
                 return true;
