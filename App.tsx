@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TabNavgation from './src/navigation/TabNavigation';
 import { GymProvider } from './src/context/GymContext';
 import { RegistrationProvider } from './src/context/RegistrationContext';
+import { AnalyticsProvider } from './src/context/AnalyticsContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,13 +20,15 @@ function App(): React.JSX.Element {
         <RecordProvider>
           <GymProvider>
             <RegistrationProvider>
-              <NavigationContainer>
-                <Stack.Navigator>
-                    <Stack.Screen name="Root" component={RootNavigation} options={{headerShown : false}}/>
-                    <Stack.Screen name="Tabs" component={TabNavgation} options={{headerShown : false}}/>
-                    <Stack.Screen name="Routine" component={RoutineNavigation} options={{headerShown : false}}/>
-                  </Stack.Navigator>
-              </NavigationContainer>
+              <AnalyticsProvider>
+                <NavigationContainer>
+                  <Stack.Navigator>
+                      <Stack.Screen name="Root" component={RootNavigation} options={{headerShown : false}}/>
+                      <Stack.Screen name="Tabs" component={TabNavgation} options={{headerShown : false}}/>
+                      <Stack.Screen name="Routine" component={RoutineNavigation} options={{headerShown : false}}/>
+                    </Stack.Navigator>
+                </NavigationContainer>
+              </AnalyticsProvider>
             </RegistrationProvider>
           </GymProvider>
         </RecordProvider>

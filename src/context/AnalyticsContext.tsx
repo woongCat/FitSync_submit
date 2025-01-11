@@ -3,26 +3,21 @@ import axios from 'axios';
 import Config from 'react-native-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export interface Gym {
-    gymId : number;
-    gymName : string;
-    gymLocation : string;
-    gymPhoneNumber : string;
-}
-export interface GymContextData {
-    gyms : Gym[];
-    fetchGymData : () => Promise<boolean>;
+
+export interface AnalyticsContextData {
+    data : [];
+    fetchAnalyticsData : (context:string) => Promise<boolean>;
 };
 
-export const GymContext = createContext<GymContextData>(
-    {} as GymContextData
+export const AnalyticsContext = createContext<AnalyticsContextData>(
+    {} as AnalyticsContextData
 );
 
-export const GymProvider : React.FC<{children : ReactNode}> = ({children}) => {
+export const AnalyticsProvider : React.FC<{children : ReactNode}> = ({children}) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [gyms, setGyms] = useState<Gym[]>([]);
+    const [data, setData] = useState([]);
 
-    const fetchGymData = async() : Promise<boolean> => {
+    const fetchAnalyticsData = async(context:string) : Promise<boolean> => {
         setIsLoading(true);
 
         try {
@@ -35,11 +30,11 @@ export const GymProvider : React.FC<{children : ReactNode}> = ({children}) => {
                 return false;
             }
 
-            console.log("reading gym data")
+            console.log("reading analytics data")
 
-            const result = await axios.get(`${Config.API_URL}/gym/read`, {
+            const result = await axios.get(`${Config.API_URL}/analytics/read`, {
                 headers : {
-                    'Content-Type': 'gym/get-data',
+                    'Content-Type': `${context}/get-data`,
                     Authorization: access_token,
                 },
             });
@@ -47,7 +42,7 @@ export const GymProvider : React.FC<{children : ReactNode}> = ({children}) => {
             // 응답 처리
             if (result.status === 200) {
                 const data = result.data;
-                setGyms(data);
+                setData(data);
             }
 
             setIsLoading(false);
@@ -69,8 +64,8 @@ export const GymProvider : React.FC<{children : ReactNode}> = ({children}) => {
         }
     };
 
-    return  <GymContext.Provider
-                value={{ gyms, fetchGymData, }}>
+    return  <AnalyticsContext.Provider
+                value={{ data, fetchAnalyticsData, }}>
                 {children}
-            </GymContext.Provider>;
+            </AnalyticsContext.Provider>;
 };

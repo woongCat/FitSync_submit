@@ -15,6 +15,7 @@ import GymInfo from '../components/GymInfo';
 import { useIsFocused } from '@react-navigation/native';
 import { Customer, RegistrationContext, Trainer } from '../context/RegistrationContext';
 import ManageInfo from '../components/ManageInfo';
+import AnalyticsInfo from '../components/AnalyticsInfo';
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'TabNav'>
 
@@ -34,7 +35,7 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
     
 
     // 임의의 데이터 설정 (테스트용)
-    const testUserType = 'trainer';
+    const testUserType = 'customer';
     
     const testGym: Gym = {
         gymId: 123,
@@ -244,7 +245,7 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
                     />
                 )}
                 {activeSection === 'analytics' && (
-                    <Text>Analytics Content</Text> // 'Analytics' 섹션의 내용
+                    <AnalyticsInfo userType={testUserType} />
                 )}
                 {activeSection === 'manage' && (
                     <ManageInfo
