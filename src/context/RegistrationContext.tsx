@@ -7,32 +7,129 @@ import { Alert } from 'react-native';
 import { Gym } from './GymContext';
 
 // Context와 Provider 설정
-export interface Registration {
-    gym : Gym;
-    relatedName : string[];
-    userType : string;
-};
-
 export interface RegistrationContextData {
     isLoading : boolean;
-    registration : Registration;
+    userType : string;
+    relatedUserInfo : Array<{ number: string }>;
+    gym : Gym | null;
+    fetchRegistrationInfo : () => Promise<boolean>;
+    updateRegistrationInfo : (context:string, updateId : number) => Promise<boolean>;
 };
 
-export const RecordContext = createContext<RegistrationContextData>(
+export const RegistrationContext = createContext<RegistrationContextData>(
     {} as RegistrationContextData
 );
 
-export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) => {
+export const RegistrationProvider : React.FC<{children : ReactNode}> = ({children}) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [userType, setUserType] = useState('');
+    const [gym, setGym] = useState<Gym|null>(null);
+    const [relatedUserInfo, setRelatedUserInfo] = useState<Array<{ number: string }>>([]);
     
+    // Record 데이터를 가져오는 함수 (Fetch)
+    const fetchRegistrationInfo = async() : Promise<boolean> => {
+        
+        setIsLoading(true);
+
+        try {
+            // AsyncStorage에서 token 값을 가져오기
+            const access_token = await AsyncStorage.getItem('token');
+
+            if (!access_token) {
+                console.error('No token found in AsyncStorage.');
+                setIsLoading(false);
+                return false;
+            }
+
+            console.log("reading registration");
+
+            // 요청 보내기
+            const response = await axios.get(`${Config.API_URL}/registartion/read`, {headers: { Authorization: access_token }});
+
+            // 응답 처리
+            if (response.status === 200) {
+                // 응답 데이터를 각각 저장
+                setUserType(response.data.userType);
+                setGym(response.data.gym);
+                setRelatedUserInfo(response.data.relatedUserInfo);
+            }
+
+            setIsLoading(false);
+            return true;
+
+        } catch (error: any) {
+            setIsLoading(false);
+            if (error.response) {
+                // 서버가 오류 응답을 보냈을 때
+                console.error('Server responded with error:', error.response.status); // 500 상태 코드
+                console.error('Response data:', error.response.data); // 서버에서 반환한 데이터
+            } else if (error.request) {
+                // 요청이 서버로 전송되지 않았을 때
+                console.error('No response received:', error.request);
+            } else {
+                // 요청을 설정하는 중에 오류가 발생했을 때
+                console.error('Error setting up the request:', error.message);
+            }
+            return false;
+        }
+    };
+
+    const updateRegistrationInfo = async(context:string, updateId : number) : Promise<boolean> => {
+        setIsLoading(true);
+
+        try {
+            // AsyncStorage에서 userId,userType 값을 가져오기
+            const access_token = await AsyncStorage.getItem('token');
+
+            if (!access_token) {
+                console.error('No token found in AsyncStorage.');
+                setIsLoading(false);
+                return false;
+            }
+
+            console.log("updating registration");
+
+            // 요청 보내기
+            const response = await axios.put(`${Config.API_URL}/registartion/update`, { updateId }, { headers : { 'Content-Type': `${context}/change-data`, Authorization: access_token}});
+
+            // 응답 처리
+            if (response.status === 200) {
+                Alert.alert("Success", "The change is successfully updated.");
+            } else {
+                Alert.alert("Error", "Fail to update the change.");
+            }
+
+            setIsLoading(false);
+            return true;
+        } catch (error:any) {
+            setIsLoading(false);
+            if (error.response) {
+                // 서버가 오류 응답을 보냈을 때
+                console.error('Server responded with error:', error.response.status); // 500 상태 코드
+                console.error('Response data:', error.response.data); // 서버에서 반환한 데이터
+            } else if (error.request) {
+                // 요청이 서버로 전송되지 않았을 때
+                console.error('No response received:', error.request);
+            } else {
+                // 요청을 설정하는 중에 오류가 발생했을 때
+                console.error('Error setting up the request:', error.message);
+            }
+        }
+        return false;
+    };
 
     return (
-        <RecordContext.Provider
+        <RegistrationContext.Provider
             value={{
                 isLoading,
+                userType,
+                relatedUserInfo,
+                gym,
+                fetchRegistrationInfo,
+                updateRegistrationInfo,
             }}
         >
             {children}
-        </RecordContext.Provider>
+        </RegistrationContext.Provider>
     );
 };

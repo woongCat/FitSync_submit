@@ -491,6 +491,22 @@ const styles = StyleSheet.create ({
     GymContents : {
         flex : 1,
     },
+    gymItem: {
+        padding: 16,
+        backgroundColor : '#ffffff',
+    },
+    gymName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    gymLocation: {
+        fontSize: 14,
+        color: '#555',
+    },
+    gymTrainerCount: {
+        fontSize: 14,
+        color: '#888',
+    },
     profileHeader : {
         flexDirection : 'row',
         padding : 15,

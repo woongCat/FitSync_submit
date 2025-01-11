@@ -55,7 +55,7 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
                 return false;
             }
 
-            console.log("read token:",  access_token);
+            console.log("reading records");
 
             // 요청 보내기
             const response = await axios.get(`${Config.API_URL}/record/read`, {headers: { Authorization: access_token }});
@@ -115,7 +115,7 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
                 return false;
             }
 
-            console.log("create token:",  access_token);
+            console.log("creating records");
 
             // SessionDate 데이터 생성
             const sessionDate = date.toISOString().split('T')[0] + ' '+ time.toTimeString().split(' ')[0];
@@ -166,7 +166,7 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
                 return false;
             }
 
-            console.log("update token:",  access_token);
+            console.log("updating records");
 
             // routine 세부 내역 콘솔에 띄우기
             console.log("Routine Details:", routine);
@@ -212,7 +212,7 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
                 setIsLoading(false);
             }
 
-            console.log("delete token:",  access_token);
+            console.log("deleting record");
 
             // 요청 보내기
             const response = await axios.delete(`${Config.API_URL}/record/delete`, { data : { sessionDate, recordId }, headers : { Authorization: access_token}});

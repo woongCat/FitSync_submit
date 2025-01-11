@@ -26,7 +26,7 @@ export const upload = async <T extends FileData>(fileData: T, uploadUrl: string)
     const response = await axios.post(uploadUrl, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization': access_token,
+            Authorization: access_token,
         },
     });
 
