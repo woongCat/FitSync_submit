@@ -189,7 +189,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
                     </TouchableOpacity>
                 )}
 
-                {userType === 'customer' && schedules.length === 0 (
+                {userType === 'customer' &&(
                 <View style={{ marginTop: 16 }}>
                 <Text style={ScheduleStyles.scheduleText}>
                     (Optional) Change time:

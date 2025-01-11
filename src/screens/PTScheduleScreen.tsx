@@ -251,7 +251,7 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                 userType={userType}
                 onSelectTime={(scheduleId, start, end) => {
                     console.log('Selected new time for scheduleId:', scheduleId, start, end);
-                }}
+                  }}
                 onDelete={userType === 'customer' ? handleDeleteSchedule : undefined}
                 onApprove={
                     userType === 'trainer'
