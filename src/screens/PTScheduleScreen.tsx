@@ -23,7 +23,7 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
     const {
         schedules,
         userType,
-        fetchMonthlySchedules,
+        // fetchMonthlySchedules,
         fetchSchedules,
         updateSchedule,
         addSchedule,
@@ -32,7 +32,7 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
     
     const theme = useRef({
         todayButtonTextColor: '#007bff',
-      });
+    });
 
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [markedDates, setMarkedDates] = useState<Record<string, any>>({}); // 마킹된 날짜들
@@ -50,12 +50,12 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
         setSelectedDate(todayString);
 
         // 한 달의 예약 정보 가져오기
-        fetchMonthlySchedules(currentYear, currentMonth)
-            .then((monthlyList) => {
-                // monthlyList를 사용해 markedDates 구성
-                buildMarkedDates(monthlyList, todayString);
-            })
-            .catch((error) => console.error('Failed to fetch monthly schedules:', error));
+        // fetchMonthlySchedules(currentYear, currentMonth)
+        //     .then((monthlyList) => {
+        //         // monthlyList를 사용해 markedDates 구성
+        //         buildMarkedDates(monthlyList, todayString);
+        //     })
+        //     .catch((error) => console.error('Failed to fetch monthly schedules:', error));
 
         // 오늘 날짜의 예약 정보 가져오기
         fetchSchedules(todayString)
@@ -107,24 +107,37 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
 
     // 예약 추가 함수 
     const handleAddSchedule = useCallback(
-        (date: string, trainerId: number, sTime: string, eTime: string) => {
-        if (!date || !sTime || !eTime) {
-            Alert.alert('Error', 'Please complete all fields.');
-            return;
-        }
-        console.log(date, trainerId, sTime)
-        addSchedule(date, {
-            trainerId,
-            startTime: sTime,
-            endTime: eTime,
-        }).then((success) => {
-            if (success) {
-            Alert.alert('Success', 'Reservation added successfully!');
-            fetchSchedules(date);
-            } else {
-            Alert.alert('Error', 'Failed to add reservation.');
+        async (date: string, trainerId: number, sTime: string, eTime: string) => {
+            if (!date || !sTime || !eTime) {
+                Alert.alert('Error', 'Please complete all fields.');
+                return;
             }
-        });
+            console.log(date, trainerId, sTime);
+    
+            try {
+                const success = await addSchedule(date, {
+                    trainerId,
+                    startTime: sTime,
+                    endTime: eTime,
+                });
+    
+                if (success) {
+                    Alert.alert('Success', 'Reservation added successfully!');
+    
+                    // 스케줄 새로고침
+                    const updatedSchedules = await fetchSchedules(date);
+    
+                    // agendaSections 업데이트
+                    setAgendaSections([
+                        { title: date, data: updatedSchedules.length > 0 ? updatedSchedules : [] }
+                    ]);
+                } else {
+                    Alert.alert('Error', 'Failed to add reservation.');
+                }
+            } catch (error) {
+                console.error('Error in handleAddSchedule:', error);
+                Alert.alert('Error', 'An unexpected error occurred while adding the schedule.');
+            }
         },
         [addSchedule, fetchSchedules]
     );
@@ -135,14 +148,23 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                 { text: 'Cancel', style: 'cancel' },
                 {
                     text: 'Delete',
-                    onPress: () => {
-                        deleteSchedule(scheduleId).then((success) => {
+                    onPress: async () => {
+                        try {
+                            const success = await deleteSchedule(scheduleId);
                             if (success && selectedDate) {
-                                fetchSchedules(selectedDate);
+                                // 삭제 후 선택된 날짜의 스케줄 새로고침
+                                const schedules = await fetchSchedules(selectedDate);
+                                setAgendaSections([
+                                    { title: selectedDate, data: schedules.length > 0 ? schedules : [] }
+                                ]);
+                                Alert.alert('Success', 'Reservation canceled successfully.');
                             } else {
                                 Alert.alert('Error', 'Failed to cancel reservation.');
                             }
-                        });
+                        } catch (error) {
+                            console.error('Error deleting schedule:', error);
+                            Alert.alert('Error', 'An error occurred while canceling the reservation.');
+                        }
                     },
                 },
             ]);
@@ -167,18 +189,18 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                 handleDateSelect(day); 
                 }
             }}
-            onMonthChange={(date) => {
-                if (!isLoading) {
-                const year = date.year;
-                const month = date.month;
-                setIsLoading(true);
-                fetchMonthlySchedules(year, month)
-                    .catch((error) =>
-                    console.error(`Failed to fetch data for ${year}-${month}:`, error)
-                    )
-                    .finally(() => setIsLoading(false));
-                }
-            }}
+            // onMonthChange={(date) => {
+            //     if (!isLoading) {
+            //     const year = date.year;
+            //     const month = date.month;
+            //     setIsLoading(true);
+            //     // fetchMonthlySchedules(year, month)
+            //         .catch((error) =>
+            //         console.error(`Failed to fetch data for ${year}-${month}:`, error)
+            //         )
+            //         .finally(() => setIsLoading(false));
+            //     }
+            // }}
             theme={{
                 selectedDayBackgroundColor: '#007bff',
                 todayTextColor: '#007bff',
@@ -189,7 +211,7 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
         </>
         )}
             
-            <AgendaList
+        <AgendaList
             sections={
                 agendaSections.length > 0
                 ? agendaSections
@@ -209,31 +231,41 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                 onDelete={userType === 'customer' ? handleDeleteSchedule : undefined}
                 onApprove={
                     userType === 'trainer'
-                    ? () =>
-                        updateSchedule(
-                            item.scheduleId,
-                            '확정',
-                            selectedDate || '',
-                            item.trainerId,
-                            item.customerId,
-                            item.startTime,
-                            item.endTime
-                        )
-                    : undefined
+                        ? async () => {
+                            const success = await updateSchedule(
+                                item.scheduleId,
+                                '확정',
+                                selectedDate || '',
+                                item.trainerId,
+                                item.customerId,
+                                item.startTime,
+                                item.endTime
+                            );
+                            if (success && selectedDate) {
+                                // 선택된 날짜의 데이터를 다시 가져오기
+                                await handleDateSelect({ dateString: selectedDate });
+                            }
+                        }
+                        : undefined
                 }
                 onReject={
                     userType === 'trainer'
-                    ? () =>
-                        updateSchedule(
-                            item.scheduleId,
-                            '거절',
-                            selectedDate || '',
-                            item.trainerId,
-                            item.customerId,
-                            item.startTime,
-                            item.endTime
-                        )
-                    : undefined
+                        ? async () => {
+                            const success = await updateSchedule(
+                                item.scheduleId,
+                                '거절',
+                                selectedDate || '',
+                                item.trainerId,
+                                item.customerId,
+                                item.startTime,
+                                item.endTime
+                            );
+                            if (success && selectedDate) {
+                                // 선택된 날짜의 데이터를 다시 가져오기
+                                await handleDateSelect({ dateString: selectedDate });
+                            }
+                        }
+                        : undefined
                 }
                 />
             )}

@@ -1,7 +1,8 @@
 // ScheduleItem.tsx
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import ScheduleStyles from '../style/ScheduleStyles.tsx';
+import { PTScheduleContext } from '../context/PTScheduleContext'; // Context import
 
 const availableTimes = [
     '00:00:00','01:00:00','02:00:00','03:00:00','04:00:00','05:00:00',
@@ -37,9 +38,8 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
     onReject,
     onEdit,
 }) => {
-    const [showDetails, setShowDetails] = useState(false);
-    const [isProcessing, setIsProcessing] = useState(false); // 작업 중인지 확인
 
+    const [isProcessing, setIsProcessing] = useState(false); // 작업 중인지 확인
     // 시간 선택 UI용 상태
     const [selectedStartTime, setSelectedStartTime] = useState<string | null>(null);
     const [selectedEndTime, setSelectedEndTime] = useState<string | null>(null);
@@ -59,24 +59,38 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
     };
 
 
-    const handleApprove = () => {
-        setIsProcessing(true);
-        Alert.alert('확정 처리 중입니다...');
-        if (onApprove) {
-            onApprove();
-            Alert.alert('확정되었습니다!');
+    const handleApprove = async () => {
+        try {
+            setIsProcessing(true);
+            Alert.alert('확정 처리 중입니다...');
+    
+            if (onApprove) {
+                await onApprove();
+                Alert.alert('확정되었습니다!');
+            }
+        } catch (error) {
+            console.error('Error approving schedule:', error);
+            Alert.alert('Error', '확정 처리 중 오류가 발생했습니다.');
+        } finally {
+            setIsProcessing(false);
         }
-        setIsProcessing(false);
     };
-
-    const handleReject = () => {
-        setIsProcessing(true);
-        Alert.alert('거절 처리 중입니다...');
-        if (onReject) {
-            onReject();
-            Alert.alert('거절되었습니다!');
+    
+    const handleReject = async () => {
+        try {
+            setIsProcessing(true);
+            Alert.alert('거절 처리 중입니다...');
+    
+            if (onReject) {
+                await onReject();
+                Alert.alert('거절되었습니다!');
+            }
+        } catch (error) {
+            console.error('Error rejecting schedule:', error);
+            Alert.alert('Error', '거절 처리 중 오류가 발생했습니다.');
+        } finally {
+            setIsProcessing(false);
         }
-        setIsProcessing(false);
     };
 
     const handleTimeClick = (time: string) => {
@@ -142,34 +156,40 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
 
             {/* 기능 버튼 */}
             <View style={ScheduleStyles.buttonGroup}>
-            {schedule.status === '예약' && (
-                    <>
-                        {onApprove && (
-                            <TouchableOpacity
-                                style={[
-                                    ScheduleStyles.approveButton,
-                                    isProcessing ? ScheduleStyles.disabledButton : null,
-                                ]}
-                                onPress={handleApprove}
-                                disabled={isProcessing}
-                            >
-                                <Text style={ScheduleStyles.buttonText}>Approve</Text>
-                            </TouchableOpacity>
+                {isProcessing ? (
+                    <ActivityIndicator size="large" color="#007bff" />
+                        ) : (
+                            <>
+                                {schedule.status === '예약' && (
+                                    <>
+                                        {onApprove && (
+                                            <TouchableOpacity
+                                                style={[
+                                                    ScheduleStyles.approveButton,
+                                                    isProcessing ? ScheduleStyles.disabledButton : null,
+                                                ]}
+                                                onPress={handleApprove}
+                                                disabled={isProcessing} // 버튼 비활성화
+                                            >
+                                                <Text style={ScheduleStyles.buttonText}>Approve</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                        {onReject && (
+                                            <TouchableOpacity
+                                                style={[
+                                                    ScheduleStyles.rejectButton,
+                                                    isProcessing ? ScheduleStyles.disabledButton : null,
+                                                ]}
+                                                onPress={handleReject}
+                                                disabled={isProcessing} // 버튼 비활성화
+                                            >
+                                                <Text style={ScheduleStyles.buttonText}>Reject</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                    </>
+                                )}
+                            </>
                         )}
-                        {onReject && (
-                            <TouchableOpacity
-                                style={[
-                                    ScheduleStyles.rejectButton,
-                                    isProcessing ? ScheduleStyles.disabledButton : null,
-                                ]}
-                                onPress={handleReject}
-                                disabled={isProcessing}
-                            >
-                                <Text style={ScheduleStyles.buttonText}>Reject</Text>
-                            </TouchableOpacity>
-                        )}
-                    </>
-                )}
                 {onDelete && (
                     <TouchableOpacity style={ScheduleStyles.deleteButton} onPress={() => onDelete(schedule.scheduleId)}>
                         <Text style={ScheduleStyles.buttonText}>Delete</Text>
