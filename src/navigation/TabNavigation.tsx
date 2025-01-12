@@ -14,7 +14,7 @@ export type BottomTabParamsList = {
 
 const BottomTab = createBottomTabNavigator();
 
-const TabNavgation : React.FC = () => {
+const TabNavigation : React.FC = () => {
     return (
         <BottomTab.Navigator
             tabBar={(props) => <MyTabBar {...props} />}
@@ -27,4 +27,4 @@ const TabNavgation : React.FC = () => {
     );
 };
 
-export default TabNavgation;
+export default TabNavigation;

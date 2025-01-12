@@ -31,122 +31,17 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
     // 상태 추가: 현재 활성화된 섹션
     const [activeSection, setActiveSection] = useState<'gym' | 'manage' | 'analytics'>('analytics');
     const isFocused = useIsFocused();
+    const [isInfoChanged, setIsInfoChanged] = useState(false);
     const { userType, gym, gymTrainers, gymCustomers, fetchRegistrationInfo, updateRegistrationInfo } = useContext(RegistrationContext);
     
-
-    // 임의의 데이터 설정 (테스트용)
-    const testUserType = 'customer';
-    
-    const testGym: Gym = {
-        gymId: 123,
-        gymName: 'Test Gym',
-        gymLocation: '123 Test Street',
-        gymPhoneNumber: '012-234-4566',
-    };
-
-    const testCustomers: Customer[] = [
-        {
-            customerId: 1,
-            customerName: "John Doe",
-            customerPTType: 2,
-        },
-        {
-            customerId: 2,
-            customerName: "Jane Smith",
-            customerPTType: 10,
-        },
-        {
-            customerId: 3,
-            customerName: "Alice Brown",
-            customerPTType: 0,
-        },
-        {
-            customerId: 4,
-            customerName: "Smith Smith",
-            customerPTType: 30,
-        },
-        {
-            customerId: 5,
-            customerName: "John John",
-            customerPTType: 23,
-        },
-        {
-            customerId: 6,
-            customerName: "John John",
-            customerPTType: 23,
-        },
-        {
-            customerId: 7,
-            customerName: "John John",
-            customerPTType: 23,
-        },
-        {
-            customerId: 8,
-            customerName: "John John",
-            customerPTType: 23,
-        },
-        {
-            customerId: 9,
-            customerName: "John John",
-            customerPTType: 23,
-        },
-        {
-            customerId: 10,
-            customerName: "John John",
-            customerPTType: 23,
-        },
-    ];
-
-    const testTrainers: Trainer[] = [
-        {
-            trainerId: 101,
-            trainerName: "Mark Williams",
-            trainerSpeciality: "Strength Training",
-            trainerRecentAward: "Best Strength Trainer (2024)",
-            trainerRecentCertification: "Certified Personal Trainer (2023)",
-            trainerSelected: true,
-        },
-        {
-            trainerId: 102,
-            trainerName: "Emily Johnson",
-            trainerSpeciality: "Cardio",
-            trainerRecentAward: "Top Cardio Trainer (2023)",
-            trainerRecentCertification: "Cardio Specialist (2022)",
-            trainerSelected: false,
-        },
-        {
-            trainerId: 103,
-            trainerName: "Chris Davis",
-            trainerSpeciality: "Yoga",
-            trainerRecentAward: "Yoga Expert (2022)",
-            trainerRecentCertification: "Yoga Master Certification (2021)",
-            trainerSelected: false,
-        },
-        {
-            trainerId: 104,
-            trainerName: "Chris",
-            trainerSpeciality: "Someting",
-            trainerRecentAward: "Someting Expert (2022)",
-            trainerRecentCertification: "Someting Master Certification (2021)",
-            trainerSelected: false,
-        },
-        {
-            trainerId: 105,
-            trainerName: "Johnson",
-            trainerSpeciality: "Someting",
-            trainerRecentAward: "Someting Expert (2022)",
-            trainerRecentCertification: "Someting Master Certification (2021)",
-            trainerSelected: false,
-        },
-    ];
-
     useEffect(() => {
-        console.log(isFocused);
-        if (isFocused) {
-            //fetchRegistrationInfo();
+        console.log("landing on profile", isFocused);
+        if (isFocused || isInfoChanged) {
+            fetchRegistrationInfo();
+            setIsInfoChanged(false);
         }
-
-    }, [isFocused]);
+    }, [isFocused, isInfoChanged]);
+    
 
     const handleLogOut = () => {
         Alert.alert('Logout', 'Are you sure you want to log out?', [
@@ -165,8 +60,6 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
     };
 
     const handleGymSelect = () => {
-        // 동작 처리
-
         // 상태 설정
         setIsFocusedGym(prevState => !prevState);  // 상태 반전
         setIsFocusedManage(false);  // 다른 버튼은 비활성화
@@ -175,8 +68,6 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
     };
 
     const handleManageSelect = () => {
-        // 동작 처리
-        
         // 상태 설정
         setIsFocusedGym(false);  // 다른 버튼은 비활성화
         setIsFocusedManage(prevState => !prevState);  // 상태 반전
@@ -185,14 +76,51 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
     };
 
     const handleAnalyticsSelect = () => {
-        // 동작 처리
-        
         // 상태 설정
         setIsFocusedGym(false);  // 다른 버튼은 비활성화
         setIsFocusedManage(false);  // 다른 버튼은 비활성화
         setIsFocusedAnalytics(true);  // 상태 반전
         setActiveSection('analytics'); // 항상
     };
+
+    const handleChangeGym = async (selectedGymId : number) => {
+        if (selectedGymId) { // selectedGymId가 null이 아닐 때만 실행
+            const result = await updateRegistrationInfo('gym', selectedGymId);
+
+            if (result) {
+                setIsInfoChanged(true);
+            } else {
+                // 삭제 실패 처리 (필요시 사용자에게 알림 등을 추가할 수 있음)
+                console.log('Failed to change gym');
+            }
+        }
+    }
+
+    const handleChangeTrainer = async (trainerId : number) => {
+        if (trainerId) { // trainerId가 null이 아닐 때만 실행
+            const result = await updateRegistrationInfo('trainer', trainerId);
+
+            if (result) {
+                setIsInfoChanged(true);
+            } else {
+                // 삭제 실패 처리 (필요시 사용자에게 알림 등을 추가할 수 있음)
+                console.log('Failed to change trainer');
+            }
+        }
+    }
+
+    const handleDeleteCustomer = async (customerId : number) => {
+        if (customerId) { // customerId가 null이 아닐 때만 실행
+            const result = await updateRegistrationInfo('customer', customerId);
+
+            if (result) {
+                setIsInfoChanged(true);
+            } else {
+                // 삭제 실패 처리 (필요시 사용자에게 알림 등을 추가할 수 있음)
+                console.log('Failed to delete customer');
+            }
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -235,35 +163,20 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
             <View style={[styles.profileContentContainer, { backgroundColor: activeSection === null ? '' : '#fff' }]}>
                 {activeSection === 'gym' && (
                     <GymInfo
-                        gym={testGym} 
-                        onPressChangeGymItem={(selectedGymId : number) => {
-                            if (selectedGymId) { // updatedGym이 null이 아닐 때만 실행
-                                console.log('selected gym ID ', selectedGymId)
-                                updateRegistrationInfo('gym', selectedGymId);
-                            }
-                        }} 
+                        gym={gym} 
+                        onPressChangeGymItem={(selectedGymId : number) => handleChangeGym(selectedGymId)} 
                     />
                 )}
                 {activeSection === 'analytics' && (
-                    <AnalyticsInfo userType={testUserType} />
+                    <AnalyticsInfo userType={userType} />
                 )}
                 {activeSection === 'manage' && (
                     <ManageInfo
-                        userType={testUserType}
-                        relatedTrainers={testTrainers}
-                        relatedCustomers={testCustomers} 
-                        onPressChangeTrainer={(trainerId : number) => {
-                            if (trainerId) { // updatedGym이 null이 아닐 때만 실행
-                                console.log('selected trainer ID ', trainerId)
-                                updateRegistrationInfo('trainer', trainerId);
-                            }
-                        }} 
-                        onPressDeleteCustomer={(customerId : number) => {
-                            if (customerId) { // updatedGym이 null이 아닐 때만 실행
-                                console.log('selected customer ID ', customerId)
-                                updateRegistrationInfo('customer', customerId);
-                            }
-                        }}                        
+                        userType={userType}
+                        relatedTrainers={gymTrainers}
+                        relatedCustomers={gymCustomers} 
+                        onPressChangeTrainer={(trainerId : number) => handleChangeTrainer(trainerId)} 
+                        onPressDeleteCustomer={(customerId : number) => handleDeleteCustomer(customerId)}                        
                     />
                 )}
             </View>

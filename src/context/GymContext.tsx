@@ -47,7 +47,7 @@ export const GymProvider : React.FC<{children : ReactNode}> = ({children}) => {
             // 응답 처리
             if (result.status === 200) {
                 const data = result.data;
-                setGyms(data);
+                setGyms(data.data);
             }
 
             setIsLoading(false);

@@ -51,6 +51,9 @@ const GymInfo : React.FC<GymInfoProps> = React.memo(({ gym, onPressChangeGymItem
             ) : (
                 <View style={styles.centeredTextContainer}>
                     <Text style={styles.centeredText}>No Gym Information Available</Text>
+                    <TouchableOpacity onPress={handleOpenModal} style={styles.addButton}>
+                        <Text style={styles.addButtonText}>Search gym to register</Text>
+                    </TouchableOpacity>
                 </View>
             )}
 
@@ -113,6 +116,20 @@ const styles = StyleSheet.create({
     changeButtonText: {
         color: '#fff',
         fontSize: 16,
+    },
+    addButton : {
+        width : '60%',
+        height : 40,
+        backgroundColor : '#056edd',
+        justifyContent : 'center',
+        alignItems : 'center',
+        borderRadius : 5,
+        marginVertical : 10,
+    },
+    addButtonText : {
+        fontSize : 16,
+        fontWeight : 'bold',
+        color: '#fff'
     },
     centeredTextContainer: {
         flex: 1, // View가 화면 전체를 차지하도록 함

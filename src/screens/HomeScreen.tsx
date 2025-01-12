@@ -8,14 +8,13 @@ import {
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import styles from '../style/styles';
-import { RecordContext } from '../context/RecordContext';
+import { Record, RecordContext } from '../context/RecordContext';
 import RecordItem from '../components/RecordItem';
-import { RoutineStackParamList } from '../navigation/RoutineNavigation';
 import { BottomTabParamsList } from '../navigation/TabNavigation';
-import { Screen } from 'react-native-screens';
 import { useIsFocused } from '@react-navigation/native';
+import { RoutineStackParamList } from '../navigation/RoutineNavigation';
 
-type HomeScreenBottomTabNavigationProp = NativeStackNavigationProp<BottomTabParamsList, 'Home'>
+type HomeScreenBottomTabNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'HomeDetail'>
 
 interface HomeScreenProps {
     navigation : HomeScreenBottomTabNavigationProp;
@@ -28,7 +27,7 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        console.log(isFocused);
+        console.log("landing on home", isFocused);
         if (isFocused) {
             fetchRecordData();
         }
@@ -42,11 +41,18 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
             const dateB = new Date(b.sessionDate);
           return dateB.getTime() - dateA.getTime(); // 최신 기록이 앞에 오도록 정렬
         });
-    
-        // 최신 2개 기록만 추출
-        const topTwoRecords = sortedRecords.slice(0, 3);
-        setLatestRecords(topTwoRecords); // 상태에 저장
+
+        const topThreeRecords = sortedRecords.slice(0, 3);
+        setLatestRecords(topThreeRecords); // 상태에 저장
     }, [records]);
+
+    const handlePressRecordItem = (record: Record | undefined) => {
+        if (record) {
+            navigation.navigate('UpdateRoutine', { selectedRecord: record });
+        } else {
+            console.log("Record item is undefined or null.");
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -65,7 +71,7 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
                     renderItem={({item}) => 
                         <RecordItem 
                             record={item}
-                            onPressRecordItem={() => navigation.navigate('Home', { screen: 'UpdateRoutine', params: { selectedRecord: item } })}
+                            onPressRecordItem={() => handlePressRecordItem(item)}
                             onPressDeleteRecordItem={() => deleteRecordData(item?.recordId, item?.sessionDate)} 
                             onPressShareRecordItem={function (): void {
                                 throw new Error('Function not implemented.');

@@ -10,49 +10,26 @@ interface SearchGymProps {
 }
 
 const SearchGym : React.FC<SearchGymProps> = ({ onCancel, onGymSelect }) => {
-
     const [gymName, setGymName] = useState('');
-    //const {fetchGymData, gyms} = useContext(GymContext);
-
-    // 임시 gyms 데이터 설정
-    const [gyms, setGyms] = useState<Gym[]>([
-        {
-            gymId: 1,
-            gymName: 'Fit Hub',
-            gymLocation: '123 Fit Street',
-            gymPhoneNumber: '123-456-7890',
-            gymTrainers: [
-                { trainerName: 'John Doe', trainerSpeciality: 'Strength', trainerRecentAward: 'Best Trainer (2024)' },
-                { trainerName: 'Jane Smith', trainerSpeciality: 'Cardio', trainerRecentAward: 'Top Cardio Trainer (2023)' },
-            ],
-            gymTotalCustomers : 5,
-        },
-        {
-            gymId: 2,
-            gymName: 'Powerhouse Gym',
-            gymLocation: '456 Power Road',
-            gymPhoneNumber: '987-654-3210',
-            gymTrainers: [
-                { trainerName: 'Alice Brown', trainerSpeciality: 'Yoga', trainerRecentAward: 'Best Yoga Trainer (2023)' },
-                { trainerName: 'Bob White', trainerSpeciality: 'CrossFit', trainerRecentAward: 'Top CrossFit Trainer (2024)' },
-            ],
-            gymTotalCustomers : 2,
-        },
-        {
-            gymId: 3,
-            gymName: 'Elite Fitness',
-            gymLocation: '789 Elite Avenue',
-            gymPhoneNumber: '555-123-4567',
-            gymTrainers: [
-                { trainerName: 'Charlie Green', trainerSpeciality: 'Pilates', trainerRecentAward: 'Pilates Champion (2023)' },
-            ],
-            gymTotalCustomers : 10,
-        },
-    ]);
+    const {fetchGymData, gyms} = useContext(GymContext);
+    const [filteredGyms, setFilteredGyms] = useState(gyms);
 
     useEffect(() => {
-        //fetchGymData();
+        fetchGymData();
     },[]);
+
+    useEffect(() => {
+        // exerciseName과 selectedBodyPart를 기준으로 필터링
+        const filtered = gyms.filter((gym) => {
+            // exerciseName 필터링
+            const matchesGymName = gym.gymName.toLowerCase().includes(gymName.toLowerCase());
+
+            return matchesGymName ; // 조건을  만족하는 항목만 반환
+        });   
+
+        setFilteredGyms(filtered); // 필터링된 결과 상태에 저장
+
+    }, [gymName, gyms]);
 
     // gym 항목을 선택했을 때 실행될 함수
     const handleGymSelect = (gym: Gym) => {
@@ -80,7 +57,7 @@ const SearchGym : React.FC<SearchGymProps> = ({ onCancel, onGymSelect }) => {
 
             {/* gym 목록을 FlatList로 표시 */}
             <FlatList
-                data={gyms.filter(gym => gym.gymName.toLowerCase().includes(gymName.toLowerCase()))} 
+                data={filteredGyms} 
                 keyExtractor={(item) => item.gymId.toString()+item.gymName}  
                 renderItem={({ item }) => (
                     <TouchableOpacity
@@ -89,7 +66,7 @@ const SearchGym : React.FC<SearchGymProps> = ({ onCancel, onGymSelect }) => {
                     >
                         <Text style={styles.gymName}>{item.gymName}</Text>
                         <Text style={styles.gymLocation}>{item.gymLocation}</Text>
-                        <Text style={styles.gymTrainerCount}>No. of Trainers: {item.gymTrainers.length}</Text>
+                        <Text style={styles.gymPhoneNumber}>{item.gymPhoneNumber}</Text>
                     </TouchableOpacity>
                 )}
             />

@@ -503,7 +503,7 @@ const styles = StyleSheet.create ({
         fontSize: 14,
         color: '#555',
     },
-    gymTrainerCount: {
+    gymPhoneNumber: {
         fontSize: 14,
         color: '#888',
     },

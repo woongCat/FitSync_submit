@@ -29,7 +29,7 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
     }, {});
 
     useEffect(() => {
-        console.log(isFocused);
+        console.log("landing on routine ", isFocused);
         if (isFocused) {
             fetchRecordData();
         }
