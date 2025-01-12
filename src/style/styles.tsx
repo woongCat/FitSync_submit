@@ -425,13 +425,12 @@ const styles = StyleSheet.create ({
         top : 25,
         right : 10,
         backgroundColor : '#056edd',
-        paddingHorizontal : 5,
+        paddingHorizontal : 8,
         paddingVertical : 5,
         borderRadius : 4,
     },
     RecordOptionBtnText : {
         color : '#fff',
-        fontWeight : 'bold',
         fontSize : 14,
     },
     RoutineLabel : {

@@ -79,19 +79,28 @@ const ManageInfo: React.FC<ManageInfoProps> = React.memo(({ userType, relatedTra
 
                     {/* 가능한 트레이너들 */}
                     <Text style={styles.sectionTitle}>Available Trainers:</Text>
-                    <Text style={styles.sectionDetail}>* Select trainer to change</Text>
-                    <FlatList
-                        data={availableTrainers}
-                        keyExtractor={(item) => item.trainerId.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity style={styles.itemContainer} onPress={() => handleChangeTrainer(item.trainerId)}>
-                                <Text style={styles.itemTextName}>{item.trainerName}</Text>
-                                <Text style={styles.itemTextDetail}>Speciality: {item.trainerSpeciality}</Text>
-                                <Text style={styles.itemTextDetail}>Recent Award: {item.trainerRecentAward}</Text>
-                                <Text style={styles.itemTextDetail}>Certification: {item.trainerRecentCertification}</Text>
-                            </TouchableOpacity>
-                        )}
-                    />
+                    {availableTrainers ? (
+                        <View>
+                            <Text style={styles.sectionDetail}>* Select trainer to change</Text>
+                            <FlatList
+                                data={availableTrainers}
+                                keyExtractor={(item) => item.trainerId.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity style={styles.itemContainer} onPress={() => handleChangeTrainer(item.trainerId)}>
+                                        <Text style={styles.itemTextName}>{item.trainerName}</Text>
+                                        <Text style={styles.itemTextDetail}>Speciality: {item.trainerSpeciality}</Text>
+                                        <Text style={styles.itemTextDetail}>Recent Award: {item.trainerRecentAward}</Text>
+                                        <Text style={styles.itemTextDetail}>Certification: {item.trainerRecentCertification}</Text>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                        </View>
+                    ) : (
+                        <View style={styles.noTrainerContainer}>
+                            <Text style={styles.noTrainerText}>No trainer is currently avaliable.</Text>
+                        </View>
+                    )}
+                    
                 </View>
             )}
 

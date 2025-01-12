@@ -29,6 +29,7 @@ export interface RecordContextData {
     fetchRecordData : () => Promise<boolean>;
     createRecordData : (date : Date, time : Date, relatedName : string, routines : Routine[]) => Promise<boolean>;
     updateRecordDate : (recordId:number, sessionDate : string, routines : Routine[]) => Promise<boolean>;
+    updateRecordUserId : (recordId:number, sessionDate : string, sharedUserId : number) => Promise<boolean>;
     deleteRecordData : (recordId:number, sessionDate : string ) => Promise<boolean>;
 };
 
@@ -200,6 +201,51 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
         return false;
     };
 
+    const updateRecordUserId = async(recordId:number, sessionDate : string, sharedUserId : number) : Promise<boolean> => {
+        setIsLoading(true);
+
+        try {
+            // AsyncStorage에서 userId,userType 값을 가져오기
+            const access_token = await AsyncStorage.getItem('token');
+
+            if (!access_token) {
+                console.error('No token found in AsyncStorage.');
+                setIsLoading(false);
+                return false;
+            }
+
+            console.log("updating record related ID");
+
+
+            // 요청 보내기
+            const response = await axios.put(`${Config.API_URL}/record/update/id`, { sessionDate, recordId, sharedUserId }, {headers : { Authorization: access_token}});
+
+            // 응답 처리
+            if (response.status === 200) {
+                Alert.alert("Success", "The record is successfully updated.");
+            } else {
+                Alert.alert("Error", "Fail to update selected record.");
+            }
+
+            setIsLoading(false);
+            return true;
+        } catch (error:any) {
+            setIsLoading(false);
+            if (error.response) {
+                // 서버가 오류 응답을 보냈을 때
+                console.error('Server responded with error:', error.response.status); // 500 상태 코드
+                console.error('Response data:', error.response.data); // 서버에서 반환한 데이터
+            } else if (error.request) {
+                // 요청이 서버로 전송되지 않았을 때
+                console.error('No response received:', error.request);
+            } else {
+                // 요청을 설정하는 중에 오류가 발생했을 때
+                console.error('Error setting up the request:', error.message);
+            }
+        }
+        return false;
+    };
+
     const deleteRecordData = async(recordId:number, sessionDate : string ) : Promise<boolean> => {
         setIsLoading(true);
         
@@ -252,6 +298,7 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
                 fetchRecordData,
                 createRecordData,
                 updateRecordDate,
+                updateRecordUserId,
                 deleteRecordData,
             }}
         >
