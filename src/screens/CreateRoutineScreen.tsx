@@ -7,12 +7,11 @@ import {
     FlatList,
     Alert,
     TextInput,
-    Button,
-    Keyboard,
+    ActivityIndicator,
 } from 'react-native';
 import styles from '../style/styles';
 import { RoutineStackParamList } from '../navigation/RoutineNavigation';
-import { SetStateAction, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import SearchExercise from '../components/SearchExercise';
 import { RouteProp } from '@react-navigation/native';
 import { Exercise } from '../context/ExerciseContext';
@@ -29,6 +28,7 @@ interface CreateRoutineScreenProps {
 }
 
 const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation, route}) => {
+    const [isCreateLoading, setIsCreateLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);  // 선택한 운동 목록을 저장
     const [createdRoutine, setCreatedRoutine] = useState<Routine[]>([]);  // 선택한 운동 목록을 저장
@@ -118,11 +118,14 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation, r
             Alert.alert('No data', 'Please add some exercises before confirming.');
             return;
         }
-        
-        // TODO: record 관련자 이름 넣기
+
+        setIsCreateLoading(true);
+
         const relatedName = '';
 
         const result = await createRecordData(selectedDate, selectedDateTime, relatedName, createdRoutine);
+
+        setIsCreateLoading(false);
 
         if (result) {
             navigation.navigate('RoutineDetail');
@@ -207,6 +210,16 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation, r
             >
                 <SearchExercise onCancel={() => setShowModal(false)} onExerciseSelect={handleAddExercise} />
             </Modal>
+
+            {/* 로딩 상태일 때 Modal 표시 */}
+            {isCreateLoading && (
+                <Modal transparent animationType="fade">
+                <View style={styles.overlay}>
+                    <ActivityIndicator size="large" color="red" />
+                    <Text style={styles.loadingText}>Loading...</Text>
+                </View>
+                </Modal>
+            )}
         </View>
     );
 };

@@ -3,7 +3,8 @@ import React, { createContext, useState, ReactNode } from 'react';
 import axios from 'axios';
 import Config from 'react-native-config';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Alert } from 'react-native';
+import { ActivityIndicator, Alert, Modal, StyleSheet, Text, View } from 'react-native';
+import styles from '../style/styles';
 
 // Context와 Provider 설정
 export interface Routine{

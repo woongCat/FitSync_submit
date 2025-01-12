@@ -552,6 +552,17 @@ const styles = StyleSheet.create ({
         padding: 15, // 내용과의 여백
         marginHorizontal: 5, // 양쪽 여백
     },
+    overlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#fff',
+    },
 });
 
 export default styles;

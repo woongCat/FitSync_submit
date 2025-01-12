@@ -5,6 +5,8 @@ import {
     StyleSheet,
     TouchableOpacity,
     Alert,
+    Modal,
+    ActivityIndicator,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
@@ -21,6 +23,7 @@ interface CameraShotScreenProps {
 }
 
 const CameraShotScreen : React.FC<CameraShotScreenProps> = ({navigation}) => {
+    const [isUploadLoading, setIsUploadLoading] = useState(false);
     const [hasCameraPermission, setHasCameraPermission] = useState(false);
     const [photoUri, setPhotoUri] = useState('');
     const devices = useCameraDevices();
@@ -51,6 +54,8 @@ const CameraShotScreen : React.FC<CameraShotScreenProps> = ({navigation}) => {
         // cameraRef.current가 null이 아닌지 확인
         if (cameraRef.current) {
             try {
+                setIsUploadLoading (true);
+
                 const photo = await cameraRef.current.takePhoto();
                 //Alert.alert('Photo Taken', `사진이 저장되었습니다: ${photo.path}`);
 
@@ -69,6 +74,8 @@ const CameraShotScreen : React.FC<CameraShotScreenProps> = ({navigation}) => {
                     },
                     `${Config.API_URL}/upload` // TODO: url 나중에 수정
                 );
+
+                setIsUploadLoading (false);
         
                 if (response) {
                     // 서버로부터 받은 응답 데이터를 Record와 Routine 형식에 맞게 변환
@@ -108,6 +115,16 @@ const CameraShotScreen : React.FC<CameraShotScreenProps> = ({navigation}) => {
             <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
                 <Text style={styles.captureButtonText}>Capture</Text>
             </TouchableOpacity>
+
+            {/* 로딩 상태일 때 Modal 표시 */}
+            {isUploadLoading && (
+                <Modal transparent animationType="fade">
+                <View style={styles.overlay}>
+                    <ActivityIndicator size="large" color="red" />
+                    <Text style={styles.loadingText}>Loading...</Text>
+                </View>
+                </Modal>
+            )}
         </View>
     );
 };
@@ -136,10 +153,17 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20,
     },
+    overlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#fff',
+    },
 });
 
 export default CameraShotScreen;
-
-function requestStoragePermission() {
-    throw new Error('Function not implemented.');
-}

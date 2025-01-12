@@ -1,10 +1,8 @@
 import { View, Text, TouchableOpacity, Image, FlatList, TextInput, Button, Modal } from "react-native";
 import styles from "../style/styles";
 import React, { useContext, useEffect, useState } from "react";
-import FastImage from 'react-native-fast-image';
 import { Record } from "../context/RecordContext";
 import { AuthContext } from "../context/AuthContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface RecordItemProps {
     record : Record;
@@ -55,8 +53,8 @@ const RecordItem : React.FC<RecordItemProps> = React.memo(({ record, onPressReco
                 <Text style={styles.RecordOptionBtnText}>Option</Text>
             </TouchableOpacity>
 
-             {/* Option 모달 */}
-             <Modal
+            {/* Option 모달 */}
+            <Modal
                 visible={isModalVisible}
                 animationType="slide"
                 transparent={true}

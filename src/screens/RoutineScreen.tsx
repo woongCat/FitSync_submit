@@ -1,5 +1,5 @@
 import { SetStateAction, useContext, useEffect, useState } from 'react';
-import { FlatList, Modal, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Modal, Text, View } from 'react-native';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -16,8 +16,9 @@ interface RoutineScreenProps {
 }
 
 const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
+    const [isOptionLoading, setIsOptionLoading] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const { fetchRecordData, deleteRecordData, updateRecordUserId, records } = useContext(RecordContext);
+    const { isLoading, fetchRecordData, deleteRecordData, updateRecordUserId, records } = useContext(RecordContext);
     const [selectedDateRecord, setSelectedDateRecord] = useState(records);
     const [selectedShareRecord, setSelectedShareRecord] = useState<Record>();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -65,6 +66,9 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
 
     // deleteRecordData 함수 후에 selectedDateRecord에서 해당 항목 삭제
     const handleDeleteRecordItem = async (recordId: number, sessionDate: string) => {
+
+        setIsOptionLoading(true);
+
         const result = await deleteRecordData(recordId, sessionDate); // 데이터 삭제 API 호출
         // 삭제가 성공적으로 이루어졌다면
         if (result) {
@@ -74,11 +78,14 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
             );
 
             // 삭제 후 records를 새로 불러오기
-            fetchRecordData(); 
+            fetchRecordData();
+            
         } else {
             // 삭제 실패 처리 (필요시 사용자에게 알림 등을 추가할 수 있음)
             console.log('Failed to delete the record');
         }
+        
+        setIsOptionLoading(false);
     };
 
     const openShareModal = () => {
@@ -90,9 +97,10 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
     };
 
     const handleUserSelection = async (selectedUserId: number) => {
-        console.log(selectedShareRecord);
-        console.log(selectedUserId);
         if (!selectedUserId || !selectedShareRecord) return;
+
+        setIsOptionLoading(true);
+
         const result = await updateRecordUserId(selectedShareRecord.recordId, selectedShareRecord.sessionDate, selectedUserId);
         // 삭제가 성공적으로 이루어졌다면
         if (result) {
@@ -105,6 +113,7 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
             console.log('Failed to share the record');
         }
         closeShareModal(); // 모달 닫기
+        setIsOptionLoading(false);
     };
     
     return (
@@ -120,21 +129,29 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
             />
 
             {/*  render all the record */}
-            <FlatList 
-                data={selectedDateRecord}
-                keyExtractor={(item) => item?.sessionDate}
-                renderItem={({item}) => 
-                    <RecordItem 
-                        record={item}
-                        onPressRecordItem={() => navigation.navigate('UpdateRoutine', { selectedRecord: item })}
-                        onPressDeleteRecordItem={() => handleDeleteRecordItem(item?.recordId, item?.sessionDate)} 
-                        onPressShareRecordItem={() => {
-                            setSelectedShareRecord(item);
-                            openShareModal();
-                        }}                    
-                    />
-                }
-            />
+            {isLoading ? (
+                <View style={{ flex : 1 , justifyContent : 'center', alignItems : 'center'}}>
+                    <ActivityIndicator size="large" color="grey" />
+                </View>
+            ) : (
+                <View style={{ flex : 1 }}>
+                    <FlatList 
+                    data={selectedDateRecord}
+                    keyExtractor={(item) => item?.sessionDate}
+                    renderItem={({item}) => 
+                        <RecordItem 
+                            record={item}
+                            onPressRecordItem={() => navigation.navigate('UpdateRoutine', { selectedRecord: item })}
+                            onPressDeleteRecordItem={() => handleDeleteRecordItem(item?.recordId, item?.sessionDate)} 
+                            onPressShareRecordItem={() => {
+                                setSelectedShareRecord(item);
+                                openShareModal();
+                            }}                    
+                        />
+                    }
+                />
+                </View>
+            )}
 
             {/* 공유할 사용자 선택 모달 */}
             <Modal
@@ -201,6 +218,16 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
             >
                 <Text style={styles.addBtnText}>Add New</Text>
             </TouchableOpacity>
+
+            {/* 로딩 상태일 때 Modal 표시 */}
+            {isOptionLoading && (
+                <Modal transparent animationType="fade">
+                <View style={styles.overlay}>
+                    <ActivityIndicator size="large" color="red" />
+                    <Text style={styles.loadingText}>Loading...</Text>
+                </View>
+                </Modal>
+            )}
         </View>
     );
 };
@@ -272,6 +299,17 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#ffffff',
         fontWeight: 'bold',
+    },
+    overlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#fff',
     },
 });
 

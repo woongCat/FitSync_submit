@@ -1,4 +1,4 @@
-import { Text, TextInput, TouchableOpacity, View, FlatList, ScrollView, StyleSheet } from "react-native";
+import { Text, TextInput, TouchableOpacity, View, FlatList, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import styles from "../style/styles";
 import { icon } from "../constants/icons";
 import React, { useContext, useEffect, useState } from "react";
@@ -10,12 +10,17 @@ interface SearchGymProps {
 }
 
 const SearchGym : React.FC<SearchGymProps> = ({ onCancel, onGymSelect }) => {
+    const [isLoading, setIsLoading] = useState(false);
     const [gymName, setGymName] = useState('');
     const {fetchGymData, gyms} = useContext(GymContext);
     const [filteredGyms, setFilteredGyms] = useState(gyms);
 
     useEffect(() => {
+        setIsLoading(true);
+
         fetchGymData();
+
+        setIsLoading(false);
     },[]);
 
     useEffect(() => {
@@ -55,21 +60,30 @@ const SearchGym : React.FC<SearchGymProps> = ({ onCancel, onGymSelect }) => {
                 />
             </View>
 
-            {/* gym 목록을 FlatList로 표시 */}
-            <FlatList
-                data={filteredGyms} 
-                keyExtractor={(item) => item.gymId.toString()+item.gymName}  
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        onPress={() => handleGymSelect(item)}  // gym 선택 시 handleGymSelect 호출
-                        style={styles.gymItem}
-                    >
-                        <Text style={styles.gymName}>{item.gymName}</Text>
-                        <Text style={styles.gymLocation}>{item.gymLocation}</Text>
-                        <Text style={styles.gymPhoneNumber}>{item.gymPhoneNumber}</Text>
-                    </TouchableOpacity>
-                )}
-            />
+            {isLoading ? (
+                <View style={{ flex : 1 , justifyContent : 'center', alignItems : 'center'}}>
+                    <ActivityIndicator size="large" color="grey" />
+                    <Text style={styles.loadingText}>Loading...</Text>
+                </View>
+            ) : (
+                <View style={{ flex : 1 }}>
+                    {/* gym 목록을 FlatList로 표시 */}
+                    <FlatList
+                        data={filteredGyms} 
+                        keyExtractor={(item) => item.gymId.toString()+item.gymName}  
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                onPress={() => handleGymSelect(item)}  // gym 선택 시 handleGymSelect 호출
+                                style={styles.gymItem}
+                            >
+                                <Text style={styles.gymName}>{item.gymName}</Text>
+                                <Text style={styles.gymLocation}>{item.gymLocation}</Text>
+                                <Text style={styles.gymPhoneNumber}>{item.gymPhoneNumber}</Text>
+                            </TouchableOpacity>
+                        )}
+                    />
+                </View>
+            )}
 
         </View>
     );

@@ -1,8 +1,8 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
+    ActivityIndicator,
     FlatList,
     Text,
-    TouchableOpacity,
     View
 } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
@@ -10,7 +10,6 @@ import { AuthContext } from '../context/AuthContext';
 import styles from '../style/styles';
 import { Record, RecordContext } from '../context/RecordContext';
 import RecordItem from '../components/RecordItem';
-import { BottomTabParamsList } from '../navigation/TabNavigation';
 import { useIsFocused } from '@react-navigation/native';
 import { RoutineStackParamList } from '../navigation/RoutineNavigation';
 
@@ -22,7 +21,7 @@ interface HomeScreenProps {
 
 const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
     const {userName} = useContext(AuthContext);
-    const { fetchRecordData, deleteRecordData, records } = useContext(RecordContext);
+    const { isLoading, fetchRecordData, deleteRecordData, records } = useContext(RecordContext);
     const [latestRecords, setLatestRecords] = useState(records); // 최신 3개 기록
     const isFocused = useIsFocused();
 
@@ -64,22 +63,28 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
                 <Text style={styles.subHeaderText}>Most Recent Records:</Text>
             </View>
 
-            <View style={{ flex : 1 }}>
-                <FlatList 
-                    data={latestRecords}
-                    keyExtractor={(item) => item?.sessionDate}
-                    renderItem={({item}) => 
-                        <RecordItem 
-                            record={item}
-                            onPressRecordItem={() => handlePressRecordItem(item)}
-                            onPressDeleteRecordItem={() => deleteRecordData(item?.recordId, item?.sessionDate)} 
-                            onPressShareRecordItem={function (): void {
-                                throw new Error('Function not implemented.');
-                            } }                        
-                        />
-                    }
-                />
-            </View>
+            {isLoading ? (
+                <View style={{ flex : 1 , justifyContent : 'center', alignItems : 'center'}}>
+                    <ActivityIndicator size="large" color="grey" />
+                </View>
+            ) : (
+                <View style={{ flex : 1 }}>
+                    <FlatList 
+                        data={latestRecords}
+                        keyExtractor={(item) => item?.sessionDate}
+                        renderItem={({item}) => 
+                            <RecordItem 
+                                record={item}
+                                onPressRecordItem={() => handlePressRecordItem(item)}
+                                onPressDeleteRecordItem={() => deleteRecordData(item?.recordId, item?.sessionDate)} 
+                                onPressShareRecordItem={function (): void {
+                                    throw new Error('Function not implemented.');
+                                } }                        
+                            />
+                        }
+                    />
+                </View>
+            )}
             
             <View style={styles.subHeader}>
                 <Text style={styles.subHeaderText}>Next PT Schedule:</Text>

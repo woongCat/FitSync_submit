@@ -9,11 +9,10 @@ import { AuthContext } from '../context/AuthContext';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigation';
 import styles from '../style/styles';
-import { Gym } from '../context/GymContext';
 import { icon } from '../constants/icons';
 import GymInfo from '../components/GymInfo';
 import { useIsFocused } from '@react-navigation/native';
-import { Customer, RegistrationContext, Trainer } from '../context/RegistrationContext';
+import { RegistrationContext } from '../context/RegistrationContext';
 import ManageInfo from '../components/ManageInfo';
 import AnalyticsInfo from '../components/AnalyticsInfo';
 
@@ -32,7 +31,7 @@ const ProfileScreen : React.FC<ProfileScreenProps> = ({navigation}) => {
     const [activeSection, setActiveSection] = useState<'gym' | 'manage' | 'analytics'>('analytics');
     const isFocused = useIsFocused();
     const [isInfoChanged, setIsInfoChanged] = useState(false);
-    const { userType, gym, gymTrainers, gymCustomers, fetchRegistrationInfo, updateRegistrationInfo } = useContext(RegistrationContext);
+    const { isLoading, userType, gym, gymTrainers, gymCustomers, fetchRegistrationInfo, updateRegistrationInfo } = useContext(RegistrationContext);
     
     useEffect(() => {
         console.log("landing on profile", isFocused);

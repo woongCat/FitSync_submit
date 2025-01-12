@@ -5,12 +5,14 @@ import {
     TouchableOpacity,
     FlatList,
     Alert,
+    Modal,
+    ActivityIndicator,
 } from 'react-native';
 import styles from '../style/styles';
 import { RoutineStackParamList } from '../navigation/RoutineNavigation';
 import { RouteProp } from '@react-navigation/native';
 import RoutineItem from '../components/RoutineItem';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { RecordContext, Routine } from '../context/RecordContext';
 
 type UpdateRoutineScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'RoutineDetail'>
@@ -22,6 +24,7 @@ interface UpdateRoutineScreenProps {
 };
 
 const UpdateRoutineScreen : React.FC<UpdateRoutineScreenProps> = ({navigation, route}) => {
+    const [isUpdateLoading, setIsUpdateLoading] = useState(false);
     const { selectedRecord } = route.params; // selectedRecord 값을 가져옵니다.
     const [routines, setRoutines] = useState(selectedRecord.routines); // 상태 관리 추가
     const { updateRecordDate } = useContext(RecordContext);
@@ -46,8 +49,12 @@ const UpdateRoutineScreen : React.FC<UpdateRoutineScreenProps> = ({navigation, r
             return;
         }
 
+        setIsUpdateLoading(true);
+
         const result = await updateRecordDate(selectedRecord.recordId, selectedRecord.sessionDate, routines);
 
+        setIsUpdateLoading(false);
+        
         if (result) {
             navigation.navigate('RoutineDetail');
         } else {
@@ -75,6 +82,16 @@ const UpdateRoutineScreen : React.FC<UpdateRoutineScreenProps> = ({navigation, r
             <TouchableOpacity onPress={handleRoutineConfirm} style={styles.button}>
                 <Text style={styles.bottonText}>Confirm</Text>
             </TouchableOpacity>
+
+            {/* 로딩 상태일 때 Modal 표시 */}
+            {isUpdateLoading && (
+                <Modal transparent animationType="fade">
+                <View style={styles.overlay}>
+                    <ActivityIndicator size="large" color="red" />
+                    <Text style={styles.loadingText}>Loading...</Text>
+                </View>
+                </Modal>
+            )}
         </View>
     );
 };
