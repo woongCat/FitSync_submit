@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext, useCallback, useRef } from 'rea
 import {
     View,
     Text,
-    FlatList,
     TouchableOpacity,
     Modal,
     Alert,
@@ -20,89 +19,101 @@ interface Props {
 const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
     const {weekView} = props;
 
-    const {
-        schedules,
-        userType,
-        // fetchMonthlySchedules,
-        fetchSchedules,
-        updateSchedule,
-        addSchedule,
-        deleteSchedule,
-    } = useContext(PTScheduleContext);
+    // const {
+    //     schedules,
+    //     userType,
+    //     // fetchMonthlySchedules,
+    //     fetchSchedules,
+    //     updateSchedule,
+    //     addSchedule,
+    //     deleteSchedule,
+    // } = useContext(PTScheduleContext);
     
-    const theme = useRef({
-        todayButtonTextColor: '#007bff',
-    });
+    // const theme = useRef({
+    //     todayButtonTextColor: '#007bff',
+    // });
 
-    const [selectedDate, setSelectedDate] = useState<string | null>(null);
-    const [markedDates, setMarkedDates] = useState<Record<string, any>>({}); // 마킹된 날짜들
+    // const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    // const [markedDates, setMarkedDates] = useState<Record<string, any>>({}); // 마킹된 날짜들
+    // const [isLoading, setIsLoading] = useState(false);
+    // const [agendaSections, setAgendaSections] = useState<any[]>([]); // AgendaList에 사용될 섹션 데이터 상태
+    // const [showAddModal, setShowAddModal] = useState(false);
+
+    const { fetchSchedules, addSchedule, deleteSchedule, updateSchedule, userType } = useContext(PTScheduleContext);
+
+    const theme = useRef({ todayButtonTextColor: '#007bff' });
+    const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+    const [markedDates, setMarkedDates] = useState<Record<string, any>>({});
+    const [agendaSections, setAgendaSections] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [agendaSections, setAgendaSections] = useState<any[]>([]); // AgendaList에 사용될 섹션 데이터 상태
     const [showAddModal, setShowAddModal] = useState(false);
 
+    // 초기화: 오늘 날짜의 스케줄 가져오기
     // 초기화
+    // useEffect(() => {
+    //     const today = new Date();
+    //     const currentYear = today.getFullYear();
+    //     const currentMonth = today.getMonth() + 1;
+    //     const todayString = today.toISOString().split('T')[0];
+
+    //     setSelectedDate(todayString);
+
+    //     // 한 달의 예약 정보 가져오기
+    //     // fetchMonthlySchedules(currentYear, currentMonth)
+    //     //     .then((monthlyList) => {
+    //     //         // monthlyList를 사용해 markedDates 구성
+    //     //         buildMarkedDates(monthlyList, todayString);
+    //     //     })
+    //     //     .catch((error) => console.error('Failed to fetch monthly schedules:', error));
+
+    //     // 오늘 날짜의 예약 정보 가져오기
+    //     fetchSchedules(todayString)
+    //         .then((list) => {
+    //             setAgendaSections([
+    //                 { title: todayString, data: list.length > 0 ? list : [] }
+    //             ]);
+    //         })
+    //         .catch((error) => console.error('Failed to fetch today\'s schedules:', error));
+    // },[]);
+
+
+    // 초기화: 오늘 날짜의 스케줄 가져오기
     useEffect(() => {
-        const today = new Date();
-        const currentYear = today.getFullYear();
-        const currentMonth = today.getMonth() + 1;
-        const todayString = today.toISOString().split('T')[0];
+        fetchAndSetSchedules(selectedDate);
+    }, []);
 
-        setSelectedDate(todayString);
-
-        // 한 달의 예약 정보 가져오기
-        // fetchMonthlySchedules(currentYear, currentMonth)
-        //     .then((monthlyList) => {
-        //         // monthlyList를 사용해 markedDates 구성
-        //         buildMarkedDates(monthlyList, todayString);
-        //     })
-        //     .catch((error) => console.error('Failed to fetch monthly schedules:', error));
-
-        // 오늘 날짜의 예약 정보 가져오기
-        fetchSchedules(todayString)
-            .then((list) => {
-                setAgendaSections([
-                    { title: todayString, data: list.length > 0 ? list : [] }
-                ]);
-            })
-            .catch((error) => console.error('Failed to fetch today\'s schedules:', error));
-    },[]);
-
-    // 날짜 선택 처리
-    const handleDateSelect = useCallback(
-        async (day: { dateString: string }) => {
-            const sessionDate = day.dateString;
-            setIsLoading(true); // 로딩 상태 활성화
-    
+    // 스케줄 데이터 가져오기 및 상태 업데이트
+    const fetchAndSetSchedules = useCallback(
+        async (date: string) => {
+            setIsLoading(true);
             try {
-                // 선택된 날짜를 상태로 설정
-                setSelectedDate(sessionDate);
-    
-                // 캘린더 마킹 초기화 후 업데이트
+                const schedules = await fetchSchedules(date);
+                setAgendaSections([{ title: date, data: schedules }]);
                 setMarkedDates({
-                    [sessionDate]: {
+                    [date]: {
                         marked: true,
                         selected: true,
                         selectedColor: '#007bff',
                     },
                 });
-    
-                // 해당 날짜의 스케줄을 가져와서 업데이트
-                const schedules = await fetchSchedules(sessionDate); // 비동기 데이터 가져오기
-    
-                // agendaSections 업데이트
-                setAgendaSections([
-                    { title: sessionDate, data: schedules.length > 0 ? schedules : [] }
-                ]);
             } catch (error) {
-                console.error('Error in handleDateSelect:', error);
-                Alert.alert(
-                    'Error',
-                    'Failed to fetch schedules for the selected date. Please try again.'
-                );
+                console.error('Failed to fetch schedules:', error);
+                Alert.alert('Error', 'Failed to fetch schedules for the selected date.');
             } finally {
-                setIsLoading(false); // 로딩 상태 비활성화
+                setIsLoading(false);
             }
         },
+        [fetchSchedules] // Add fetchSchedules as a dependency
+    );
+
+    // 날짜 선택 처리
+    const handleDateSelect = useCallback(
+        async (day: { dateString: string }) => {
+            const date = day.dateString;
+            setSelectedDate(date);
+            fetchAndSetSchedules(date);
+        },
+        [fetchAndSetSchedules] // Add fetchAndSetSchedules as a dependency
     );
 
     // 예약 추가 함수 
@@ -142,6 +153,7 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
         [addSchedule, fetchSchedules]
     );
 
+    // 예약 삭제
     const handleDeleteSchedule = useCallback(
         (scheduleId: number) => {
             Alert.alert('Cancel Reservation', 'Are you sure?', [
@@ -174,42 +186,28 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
 
     return (
         <CalendarProvider
-            date={agendaSections.length > 0 ? agendaSections[0].title : new Date().toISOString().split('T')[0]}
-            showTodayButton
+            date={selectedDate}
+            // showTodayButton // 나중에~
             theme={theme.current}
         >
-        {weekView ? (
-        <WeekCalendar markedDates={markedDates} firstDay={1} />
-        ) : (
-        <>
-            <ExpandableCalendar
-            markedDates={markedDates}
-            onDayPress={(day) => {
-                if (!isLoading) {
-                handleDateSelect(day); 
-                }
-            }}
-            // onMonthChange={(date) => {
-            //     if (!isLoading) {
-            //     const year = date.year;
-            //     const month = date.month;
-            //     setIsLoading(true);
-            //     // fetchMonthlySchedules(year, month)
-            //         .catch((error) =>
-            //         console.error(`Failed to fetch data for ${year}-${month}:`, error)
-            //         )
-            //         .finally(() => setIsLoading(false));
-            //     }
-            // }}
-            theme={{
-                selectedDayBackgroundColor: '#007bff',
-                todayTextColor: '#007bff',
-                arrowColor: '#007bff',
-            }}
-            firstDay={1}
-            />
-        </>
-        )}
+            {weekView ? (
+                <WeekCalendar markedDates={markedDates} firstDay={1} />
+            ) : (
+                <ExpandableCalendar
+                    markedDates={markedDates}
+                    onDayPress={(day) => {
+                        if (!isLoading) {
+                            handleDateSelect(day); // 선택된 날짜의 데이터를 다시 가져오기
+                        }
+                    }}
+                    theme={{
+                        selectedDayBackgroundColor: '#007bff',
+                        todayTextColor: '#007bff',
+                        arrowColor: '#007bff',
+                    }}
+                    firstDay={1}
+                />
+            )}
             
         <AgendaList
             sections={
