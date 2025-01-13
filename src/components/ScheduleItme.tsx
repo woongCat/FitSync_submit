@@ -157,7 +157,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
             {/* 기능 버튼 */}
             <View style={ScheduleStyles.buttonGroup}>
                 {isProcessing ? (
-                    <ActivityIndicator size="large" color="#007bff" />
+                    <ActivityIndicator size="large" color="#0000ff" />
                         ) : (
                             <>
                                 {schedule.status === '예약' && (

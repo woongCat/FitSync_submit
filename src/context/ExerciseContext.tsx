@@ -17,7 +17,7 @@ export interface Exercise {
     secondarymuscles : string | null;
     secondarymuscles_en : string | null;
     instructions : string | null;
-    gifUrl : string | null;
+    gifurl : string ;
 }
 
 export interface ExerciseContextData {

@@ -87,7 +87,7 @@ const UpdateRoutineScreen : React.FC<UpdateRoutineScreenProps> = ({navigation, r
             {isUpdateLoading && (
                 <Modal transparent animationType="fade">
                 <View style={styles.overlay}>
-                    <ActivityIndicator size="large" color="red" />
+                    <ActivityIndicator size="large" color="#0000ff" />
                     <Text style={styles.loadingText}>Loading...</Text>
                 </View>
                 </Modal>

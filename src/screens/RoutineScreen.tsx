@@ -216,14 +216,14 @@ const RoutineScreen : React.FC<RoutineScreenProps> = ({navigation}) => {
                 style={styles.addBtn}
                 onPress={() => navigation.navigate('ChooseOption')}
             >
-                <Text style={styles.addBtnText}>Add New</Text>
+                <Text style={styles.addBtnText}>Add Record</Text>
             </TouchableOpacity>
 
             {/* 로딩 상태일 때 Modal 표시 */}
             {isOptionLoading && (
                 <Modal transparent animationType="fade">
                 <View style={styles.overlay}>
-                    <ActivityIndicator size="large" color="red" />
+                    <ActivityIndicator size="large" color="#0000ff" />
                     <Text style={styles.loadingText}>Loading...</Text>
                 </View>
                 </Modal>
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
         right: 16,
         bottom: 16,
         backgroundColor: '#007aff',
-        width: 110,
+        width: 130,
         height: 50,
         borderRadius: 25,
         justifyContent: 'center',

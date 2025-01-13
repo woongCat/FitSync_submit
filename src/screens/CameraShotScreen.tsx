@@ -70,9 +70,9 @@ const CameraShotScreen : React.FC<CameraShotScreenProps> = ({navigation}) => {
                     {
                         uri: `file://${destPath}`,
                         type: 'image/jpeg', // 사진의 MIME 타입
-                        name: fileName, // TODO: 파일 이름 형식 나중에 수정
+                        name: fileName,
                     },
-                    `${Config.API_URL}/upload` // TODO: url 나중에 수정
+                    `${Config.API_URL}/upload`
                 );
 
                 setIsUploadLoading (false);
@@ -120,7 +120,7 @@ const CameraShotScreen : React.FC<CameraShotScreenProps> = ({navigation}) => {
             {isUploadLoading && (
                 <Modal transparent animationType="fade">
                 <View style={styles.overlay}>
-                    <ActivityIndicator size="large" color="red" />
+                    <ActivityIndicator size="large" color="#0000ff" />
                     <Text style={styles.loadingText}>Loading...</Text>
                 </View>
                 </Modal>

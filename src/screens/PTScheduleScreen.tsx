@@ -282,7 +282,7 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                         setShowAddModal(true);
                     }}
                 >
-                    <Text style={{ color: 'white' }}>+ Add Schedule</Text>
+                    <Text style={styles.addBtnText}>Add Schedule</Text>
                 </TouchableOpacity>
             )}
 

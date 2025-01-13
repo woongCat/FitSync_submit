@@ -57,7 +57,6 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation, r
     }, [route.params]);  // route.params가 변경될 때마다 실행
 
     const handleAddExercise = (exercise: Exercise) => {
-        // on-promise 기준
         // 중복된 운동이 있을 경우 추가하지 않음
         const isExerciseAlreadySelected = selectedExercises.some(selectedExercise => selectedExercise.exercise_id === exercise.exercise_id);
 
@@ -70,6 +69,7 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation, r
                 reps : [10], // 기본값
                 weight : [0], // 기본값
                 comment : '', // 기본값
+                exercise_gifUrl : exercise.gifurl,
             };
 
             setSelectedExercises(prevExercises => [...prevExercises, exercise]);  // 선택해둔 운동 추가
@@ -215,7 +215,7 @@ const CreateRoutineScreen : React.FC<CreateRoutineScreenProps> = ({navigation, r
             {isCreateLoading && (
                 <Modal transparent animationType="fade">
                 <View style={styles.overlay}>
-                    <ActivityIndicator size="large" color="red" />
+                    <ActivityIndicator size="large" color="#0000ff" />
                     <Text style={styles.loadingText}>Loading...</Text>
                 </View>
                 </Modal>

@@ -49,7 +49,9 @@ const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, index, o
             reps : reps, 
             weight : weight,
             comment : comment,
+            exercise_gifUrl : routine.exercise_gifUrl
         };
+
         onUpdate(newRoutine);
         setIsChanged(false);
     }, [isChanged]);
@@ -141,7 +143,7 @@ const RoutineItem : React.FC<RoutineItemProps> = React.memo(({ routine, index, o
                     <Text style={styles.RoutineSubText}>Max. Weight : {maxWeight} kg</Text>
                 </View>     
                     {/* TODO: 나중에 uri 수정*/}
-                <FastImage source={{ uri: "https://mir-s3-cdn-cf.behance.net/projects/original/fe8318108677535.Y3JvcCw5MDAsNzAzLDAsMTkz.gif", priority: FastImage.priority.normal, }} style={styles.RoutineExerciseImage} resizeMode={FastImage.resizeMode.stretch}/>
+                <FastImage source={{ uri: routine.exercise_gifUrl, priority: FastImage.priority.normal, }} style={styles.RoutineExerciseImage} resizeMode={FastImage.resizeMode.stretch}/>
             </View>
                 
             <View style={styles.RoutineCardRow}>

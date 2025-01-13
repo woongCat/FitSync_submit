@@ -3,8 +3,7 @@ import React, { createContext, useState, ReactNode } from 'react';
 import axios from 'axios';
 import Config from 'react-native-config';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ActivityIndicator, Alert, Modal, StyleSheet, Text, View } from 'react-native';
-import styles from '../style/styles';
+import { Alert } from 'react-native';
 
 // Context와 Provider 설정
 export interface Routine{
@@ -14,6 +13,7 @@ export interface Routine{
     reps : number[];
     weight : number[];
     comment : string | null;
+    exercise_gifUrl? : string;
 };
 
 export interface Record {
@@ -121,9 +121,6 @@ export const RecordProvider : React.FC<{children : ReactNode}> = ({children}) =>
 
             // SessionDate 데이터 생성
             const sessionDate = date.toISOString().split('T')[0] + ' '+ time.toTimeString().split(' ')[0];
-
-            // routine 세부 내역 콘솔에 띄우기
-            console.log("Routine Details:", routine);
 
             // 요청 보내기
             const response = await axios.post(`${Config.API_URL}/record/create`, { relatedName, sessionDate, routine }, {headers : { Authorization: access_token}});

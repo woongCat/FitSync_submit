@@ -348,12 +348,15 @@ const styles = StyleSheet.create ({
     },
     addButton: {
         position: 'absolute',
-        right: 20,
-        bottom: 20,
-        backgroundColor: '#007bff',
-        paddingVertical: 10,
-        paddingHorizontal: 16,
-        borderRadius: 6
+        right: 16,
+        bottom: 16,
+        backgroundColor: '#007aff',
+        width: 130,
+        height: 50,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 4,
     },
     modalOverlay: {
         flex: 1,
@@ -492,12 +495,6 @@ const styles = StyleSheet.create ({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)", // 배경을 반투명하게
-    },
-    modalContent: {
-        backgroundColor: "white",
-        padding: 20,
-        borderRadius: 10,
-        width: 300,
     },
     modalButton: {
         padding: 10,

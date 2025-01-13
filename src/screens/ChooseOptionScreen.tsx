@@ -51,6 +51,8 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
             );
 
             setIsUploadLoading (false);
+
+            console.log(response);
     
             if (response) {
                 // 서버로부터 받은 응답 데이터를 Record와 Routine 형식에 맞게 변환
@@ -98,7 +100,7 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
             {isUploadLoading && (
                 <Modal transparent animationType="fade">
                 <View style={styles.overlay}>
-                    <ActivityIndicator size="large" color="red" />
+                    <ActivityIndicator size="large" color="#0000ff" />
                     <Text style={styles.loadingText}>Loading...</Text>
                 </View>
                 </Modal>
