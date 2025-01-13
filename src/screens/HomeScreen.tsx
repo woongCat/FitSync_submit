@@ -25,7 +25,7 @@ interface HomeScreenProps {
 const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
     const {userName} = useContext(AuthContext);
     const { fetchSchedules } = useContext(PTScheduleContext);
-    const { isLoading, fetchRecordData, deleteRecordData, records } = useContext(RecordContext);
+    const { isLoading, fetchRecordData, records } = useContext(RecordContext);
     const [latestRecords, setLatestRecords] = useState(records); // 최신 3개 기록
     const [nextSchedules, setNextSchedules] = useState<any[]>([]); // 오늘 이후 3일 내의 PT 일정
     const [isScheduleLoading, setIsScheduleLoading] = useState(false);
@@ -61,19 +61,6 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
         setLatestRecords(topThreeRecords); // 상태에 저장
     }, [records]);
 
-    
-    useEffect(() => {
-
-    }, []);
-
-
-    const handlePressRecordItem = (record: Record | undefined) => {
-        if (record) {
-            navigation.navigate('UpdateRoutine', { selectedRecord: record });
-        } else {
-            console.log("Record item is undefined or null.");
-        }
-    };
 
     return (
         <View style={styles.container}>
@@ -133,15 +120,24 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
             ) : (
                 <View style={{ flex : 1 }}>
                     <FlatList
-                        data={nextSchedules}
+                        data={nextSchedules.filter(item => item.status !== '거절')}
                         keyExtractor={(item) => item.scheduleId?.toString() || `${item.startTime}`}
-                        renderItem={({ item }) => (
-                            <View style={styles.scheduleContainer}>
-                                <Text style={styles.scheduleText}>
-                                    {`Date: ${new Date().toISOString().split('T')[0]}\nTrainer: ${item.trainerName}\nTime: ${item.startTime} - ${item.endTime}`}
-                                </Text>
-                            </View>
-                        )}
+                        renderItem={({ item }) => {
+                            // status에 따라 backgroundColor 결정
+                            let backgroundColor = '#ffffff'; // 기본 배경색
+                            if (item.status === '예약') {
+                                backgroundColor = '#ffebcc'; // 예시: 예약 상태에 대한 색상
+                            } else if (item.status === '확정') {
+                                backgroundColor = '#d4edda'; // 예시: 완료 상태에 대한 색상
+                            } else if (item.status === '거절') {
+                                backgroundColor = '#f8d7da'; // 예시: 거절 상태에 대한 색상
+                            }
+                            return  <View style={[styles.scheduleContainer, { backgroundColor }]}>
+                                        <Text style={styles.scheduleText}>
+                                            {`Date: ${new Date().toISOString().split('T')[0]}\nTrainer: ${item.trainerName}\nTime: ${item.startTime} - ${item.endTime}`}
+                                        </Text>
+                                    </View>
+                        }}
                         ListEmptyComponent={
                             <View style={styles.emptyScheduleContainer}>
                                 <Text style={styles.emptyScheduleText}>No schedules found for today.</Text>
