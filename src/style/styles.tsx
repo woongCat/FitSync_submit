@@ -376,7 +376,7 @@ const styles = StyleSheet.create ({
         elevation: 5
     },
     cancelButton: {
-        backgroundColor: '#ccc',
+        backgroundColor: '#FF0000',
         padding: 10,
         borderRadius: 6,
         alignItems: 'center'

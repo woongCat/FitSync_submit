@@ -158,10 +158,10 @@ const ScheduleStyles = StyleSheet.create({
         color: '#333',
         textTransform: 'capitalize',
         paddingVertical: 5,
-        paddingHorizontal: 10,
+        paddingHorizontal: 20,
         fontSize: 16,
-      },
-      timeContainer: {
+    },
+    timeContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',

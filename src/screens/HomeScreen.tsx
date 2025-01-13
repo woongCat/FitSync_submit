@@ -95,14 +95,23 @@ const HomeScreen : React.FC<HomeScreenProps> = ({navigation}) => {
                         data={latestRecords}
                         keyExtractor={(item) => item?.sessionDate}
                         renderItem={({item}) => 
-                            <RecordItem 
-                                record={item}
-                                onPressRecordItem={() => handlePressRecordItem(item)}
-                                onPressDeleteRecordItem={() => deleteRecordData(item?.recordId, item?.sessionDate)} 
-                                onPressShareRecordItem={function (): void {
-                                    throw new Error('Function not implemented.');
-                                } }                        
-                            />
+                            <View style={styles.RecordCard}>
+                                <Text style={styles.RecordHeader}> {item?.sessionDate} </Text>
+                                <Text style={styles.RecordDescription}> 
+                                with {
+                                    // 1. trainerName, customerName, userName이 모두 같을 경우 userName만 띄우기
+                                    (item?.trainerName && item?.customerName && item?.trainerName === item?.customerName && item?.trainerName === userName)
+                                    ? userName
+                                    : // 2. trainerName이 userName과 같으면 customerName만 표시
+                                    (item?.trainerName === userName)
+                                    ? item?.customerName
+                                    : // 3. customerName이 userName과 같으면 trainerName만 표시
+                                    (item?.customerName === userName)
+                                    ? item?.trainerName
+                                    : ''
+                                }
+                                </Text>
+                            </View>
                         }
                         ListEmptyComponent={
                             <View style={styles.emptyScheduleContainer}>

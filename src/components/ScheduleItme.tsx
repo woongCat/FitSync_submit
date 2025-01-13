@@ -62,15 +62,15 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
     const handleApprove = async () => {
         try {
             setIsProcessing(true);
-            Alert.alert('확정 처리 중입니다...');
+            Alert.alert('Approving the schedule...');
     
             if (onApprove) {
                 await onApprove();
-                Alert.alert('확정되었습니다!');
+                Alert.alert('Approved!');
             }
         } catch (error) {
             console.error('Error approving schedule:', error);
-            Alert.alert('Error', '확정 처리 중 오류가 발생했습니다.');
+            Alert.alert('Error', 'Error occured during approving the schedule.');
         } finally {
             setIsProcessing(false);
         }
@@ -79,15 +79,15 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
     const handleReject = async () => {
         try {
             setIsProcessing(true);
-            Alert.alert('거절 처리 중입니다...');
+            Alert.alert('Rejecting the schedule...');
     
             if (onReject) {
                 await onReject();
-                Alert.alert('거절되었습니다!');
+                Alert.alert('Rejected!');
             }
         } catch (error) {
             console.error('Error rejecting schedule:', error);
-            Alert.alert('Error', '거절 처리 중 오류가 발생했습니다.');
+            Alert.alert('Error', 'Error occured during rejecting the schedule.');
         } finally {
             setIsProcessing(false);
         }
@@ -95,17 +95,17 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
 
     const handleTimeClick = (time: string) => {
         if (!selectedStartTime) {
-          setSelectedStartTime(time);
+            setSelectedStartTime(time);
         } else if (!selectedEndTime) {
-          if (time > selectedStartTime) {
-            setSelectedEndTime(time);
-          } else {
-            Alert.alert('Error', 'End time must be after start time.');
-          }
+            if (time > selectedStartTime) {
+                setSelectedEndTime(time);
+            } else {
+                Alert.alert('Error', 'End time must be after start time.');
+            }
         } else {
-          // 이미 둘 다 선택됐다면 다시 누르면 초기화
-          setSelectedStartTime(null);
-          setSelectedEndTime(null);
+            // 이미 둘 다 선택됐다면 다시 누르면 초기화
+            setSelectedStartTime(null);
+            setSelectedEndTime(null);
         }
     };
     
@@ -202,47 +202,48 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
                 )}
 
                 {userType === 'customer' && (
-                <View style={{ marginTop: 16 }}>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    {availableTimes.map((time) => {
-                    const isSelected =
-                        selectedStartTime === time ||
-                        (selectedStartTime &&
-                        selectedEndTime &&
-                        time >= selectedStartTime &&
-                        time <= selectedEndTime);
+                <View style={{ marginTop: 10 }}>
+                    <Text style={ScheduleStyles.scheduleText}>Select Start & End Time</Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                        {availableTimes.map((time) => {
+                        const isSelected =
+                            selectedStartTime === time ||
+                            (selectedStartTime &&
+                            selectedEndTime &&
+                            time >= selectedStartTime &&
+                            time <= selectedEndTime);
 
-                    return (
+                        return (
+                            <TouchableOpacity
+                            key={time}
+                            style={[
+                                {
+                                margin: 4,
+                                paddingVertical: 8,
+                                paddingHorizontal: 12,
+                                borderRadius: 4,
+                                backgroundColor: isSelected ? '#007bff' : '#eee',
+                                },
+                            ]}
+                            onPress={() => handleTimeClick(time)}
+                            >
+                            <Text style={{ color: isSelected ? '#fff' : '#333' }}>
+                                {time.slice(0, 2)}
+                            </Text>
+                            </TouchableOpacity>
+                        );
+                        })}
+                    </View>
+                    {selectedStartTime && selectedEndTime && (
                         <TouchableOpacity
-                        key={time}
-                        style={[
-                            {
-                            margin: 4,
-                            paddingVertical: 8,
-                            paddingHorizontal: 12,
-                            borderRadius: 4,
-                            backgroundColor: isSelected ? '#007bff' : '#eee',
-                            },
-                        ]}
-                        onPress={() => handleTimeClick(time)}
+                        style={ScheduleStyles.approveButton}
+                        onPress={handleConfirmTime}
                         >
-                        <Text style={{ color: isSelected ? '#fff' : '#333' }}>
-                            {time.slice(0, 2)}
+                        <Text style={ScheduleStyles.buttonText}>
+                            Confirm ({selectedStartTime} ~ {selectedEndTime})
                         </Text>
                         </TouchableOpacity>
-                    );
-                    })}
-                </View>
-                {selectedStartTime && selectedEndTime && (
-                    <TouchableOpacity
-                    style={ScheduleStyles.approveButton}
-                    onPress={handleConfirmTime}
-                    >
-                    <Text style={ScheduleStyles.buttonText}>
-                        Confirm ({selectedStartTime} ~ {selectedEndTime})
-                    </Text>
-                    </TouchableOpacity>
-                )}
+                    )}
                 </View>
             )}
             </View>

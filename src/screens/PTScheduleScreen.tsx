@@ -11,6 +11,9 @@ import {ExpandableCalendar, AgendaList, CalendarProvider, WeekCalendar} from 're
 import ScheduleItem from '../components/ScheduleItme.tsx';
 import ScheduleStyles from '../style/ScheduleStyles';
 import styles from '../style/styles';
+import { useIsFocused } from '@react-navigation/native';
+import { Trainer, RegistrationContext } from '../context/RegistrationContext.tsx';
+import { AuthContext } from '../context/AuthContext.tsx';
 
 interface Props {
     weekView?: boolean;
@@ -38,8 +41,9 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
     // const [isLoading, setIsLoading] = useState(false);
     // const [agendaSections, setAgendaSections] = useState<any[]>([]); // AgendaList에 사용될 섹션 데이터 상태
     // const [showAddModal, setShowAddModal] = useState(false);
-
+    const { userName } = useContext(AuthContext);
     const { fetchSchedules, addSchedule, deleteSchedule, updateSchedule, userType } = useContext(PTScheduleContext);
+    const { gymTrainers, fetchRegistrationInfo } = useContext(RegistrationContext);
 
     const theme = useRef({ todayButtonTextColor: '#007bff' });
     const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -47,6 +51,9 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
     const [agendaSections, setAgendaSections] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
+    const isFocused = useIsFocused();
+
+    const [currentTrainer, setCurrentTrainer] = useState<Trainer>();
 
     // 초기화: 오늘 날짜의 스케줄 가져오기
     // 초기화
@@ -79,8 +86,16 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
 
     // 초기화: 오늘 날짜의 스케줄 가져오기
     useEffect(() => {
-        fetchAndSetSchedules(selectedDate);
-    }, []);
+        if (isFocused) {
+            fetchAndSetSchedules(selectedDate);
+            fetchRegistrationInfo();
+
+            if (userType === 'customer') {
+                const myTrainer = gymTrainers.find(trainer => trainer.trainerSelected === true);
+                setCurrentTrainer(myTrainer);
+            }
+        }
+    }, [isFocused]);
 
     // 스케줄 데이터 가져오기 및 상태 업데이트
     const fetchAndSetSchedules = useCallback(
@@ -119,8 +134,11 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
     // 예약 추가 함수 
     const handleAddSchedule = useCallback(
         async (date: string, trainerId: number, sTime: string, eTime: string) => {
-            if (!date || !sTime || !eTime) {
+            if (!date || !sTime || !eTime ) {
                 Alert.alert('Error', 'Please complete all fields.');
+                return;
+            } else if (trainerId === -1) {
+                Alert.alert('Error', 'There is no matched trainer.');
                 return;
             }
             console.log(date, trainerId, sTime);
@@ -208,69 +226,70 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                     firstDay={1}
                 />
             )}
-            
-        <AgendaList
-            sections={
-                agendaSections.length > 0
-                ? agendaSections
-                : [{ title: 'No Data', data: [] }]
-            }
-            renderItem={({ item }) => (
-                <ScheduleItem
-                schedule={{
-                    scheduleId: item.scheduleId,
-                    trainerName: item.trainerName,
-                    customerName: item.customerName,
-                    startTime: item.startTime,
-                    endTime: item.endTime,
-                    status: item.status,
-                    agenda: item.agenda || [],
-                }}
-                onDelete={userType === 'customer' ? handleDeleteSchedule : undefined}
-                onApprove={
-                    userType === 'trainer'
-                        ? async () => {
-                            const success = await updateSchedule(
-                                item.scheduleId,
-                                '확정',
-                                selectedDate || '',
-                                item.trainerId,
-                                item.customerId,
-                                item.startTime,
-                                item.endTime
-                            );
-                            if (success && selectedDate) {
-                                // 선택된 날짜의 데이터를 다시 가져오기
-                                await handleDateSelect({ dateString: selectedDate });
-                            }
-                        }
-                        : undefined
+                
+            <AgendaList
+                sections={
+                    agendaSections.length > 0
+                    ? agendaSections
+                    : [{ title: 'No Data', data: [] }]
                 }
-                onReject={
-                    userType === 'trainer'
-                        ? async () => {
-                            const success = await updateSchedule(
-                                item.scheduleId,
-                                '거절',
-                                selectedDate || '',
-                                item.trainerId,
-                                item.customerId,
-                                item.startTime,
-                                item.endTime
-                            );
-                            if (success && selectedDate) {
-                                // 선택된 날짜의 데이터를 다시 가져오기
-                                await handleDateSelect({ dateString: selectedDate });
-                            }
+                renderItem={({ item }) => (
+                    <ScheduleItem
+                        schedule={{
+                            scheduleId: item.scheduleId,
+                            trainerName: item.trainerName,
+                            customerName: item.customerName,
+                            startTime: item.startTime,
+                            endTime: item.endTime,
+                            status: item.status,
+                            agenda: item.agenda || [],
+                        }}
+                        onDelete={userType === 'customer' ? handleDeleteSchedule : undefined}
+                        onApprove={
+                            userType === 'trainer'
+                                ? async () => {
+                                    const success = await updateSchedule(
+                                        item.scheduleId,
+                                        '확정',
+                                        selectedDate || '',
+                                        item.trainerId,
+                                        item.customerId,
+                                        item.startTime,
+                                        item.endTime
+                                    );
+                                    if (success && selectedDate) {
+                                        // 선택된 날짜의 데이터를 다시 가져오기
+                                        await handleDateSelect({ dateString: selectedDate });
+                                    }
+                                }
+                                : undefined
                         }
-                        : undefined
-                }
-                />
-            )}
-            sectionStyle={ScheduleStyles.section}
-            ListEmptyComponent={<Text>No schedules available.</Text>}
+                        onReject={
+                            userType === 'trainer'
+                                ? async () => {
+                                    const success = await updateSchedule(
+                                        item.scheduleId,
+                                        '거절',
+                                        selectedDate || '',
+                                        item.trainerId,
+                                        item.customerId,
+                                        item.startTime,
+                                        item.endTime
+                                    );
+                                    if (success && selectedDate) {
+                                        // 선택된 날짜의 데이터를 다시 가져오기
+                                        await handleDateSelect({ dateString: selectedDate });
+                                    }
+                                }
+                                : undefined
+                        }
+                    />
+                )}
+                sectionStyle={ScheduleStyles.section}
+                ListEmptyComponent={<Text>No schedules available.</Text>}
             />
-            {userType === 'customer' && (
+
+            {userType === 'customer' && currentTrainer && (
                 <TouchableOpacity 
                     style={styles.addButton}
                     onPress={() => {
@@ -292,6 +311,7 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                 animationType="slide"
                 onRequestClose={() => setShowAddModal(false)}
             >
+
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Text style={{ fontSize: 16, marginBottom: 10 }}>Add New Schedule</Text>
@@ -301,15 +321,15 @@ const UnifiedScheduleScreen: React.FC<Props> = (props: Props) => {
                             userType="customer"
                             schedule={{
                                 scheduleId: -1,
-                                trainerName: 'Unknown',
-                                customerName: 'Customer',
+                                trainerName: currentTrainer? currentTrainer.trainerName : '',
+                                customerName: userName,
                                 startTime: '',
                                 endTime: '',
                                 status: '예약',
                                 agenda: [],
                             }}
                             onSelectTime={(_id, start, end) => {
-                                handleAddSchedule(selectedDate || '', 1, start, end);
+                                handleAddSchedule(selectedDate || '', currentTrainer? currentTrainer.trainerId: -1, start, end);
                                 setShowAddModal(false);
                             }}
                         />
