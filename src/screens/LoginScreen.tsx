@@ -4,7 +4,9 @@ import {
     Text,
     View,
     TouchableOpacity,
-    TextInput
+    TextInput,
+    Modal,
+    ActivityIndicator
 } from 'react-native';
 import { RootStackParamList } from '../navigation/RootNavigation';
 import { SetStateAction, useContext, useState } from 'react';
@@ -21,7 +23,7 @@ const LoginScreen : React.FC<LoginScreenProps> = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [userType, setUserType] = useState('');
-    const {signIn} = useContext(AuthContext);
+    const {isLoading, signIn} = useContext(AuthContext);
 
     const handleUserType = (option: SetStateAction<string>) => {
         setUserType(option === userType ? '' : option); // 이미 선택된 옵션을 다시 클릭하면 해제
@@ -88,6 +90,7 @@ const LoginScreen : React.FC<LoginScreenProps> = ({navigation}) => {
             <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
                 <Text style={styles.linkText}>New Here? Sign up</Text>
             </TouchableOpacity>
+
         </View>
     );
 };

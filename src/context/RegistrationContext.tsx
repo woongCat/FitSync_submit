@@ -29,7 +29,7 @@ export interface RegistrationContextData {
     gymCustomers : Customer[];
     gym : Gym | null;
     fetchRegistrationInfo : () => Promise<boolean>;
-    updateRegistrationInfo : (context:string, updateId : number) => Promise<boolean>;
+    updateRegistrationInfo : (updateType:string, updateData : number) => Promise<boolean>;
 };
 
 export const RegistrationContext = createContext<RegistrationContextData>(
@@ -61,15 +61,15 @@ export const RegistrationProvider : React.FC<{children : ReactNode}> = ({childre
             console.log("reading registration");
 
             // 요청 보내기
-            const response = await axios.get(`${Config.API_URL}/registartion/read`, {headers: { Authorization: access_token }});
+            const response = await axios.get(`${Config.API_URL}/registration/read`, {headers: { Authorization: access_token }});
 
             // 응답 처리
             if (response.status === 200) {
                 // 응답 데이터를 각각 저장
-                setUserType(response.data.userType);
-                setGym(response.data.gym);
-                setGymTrainers(response.data.relatedTrainers);
-                setGymCustomers(response.data.relatedCustomers);
+                setUserType(response.data.data.userType);
+                setGym(response.data.data.gym);
+                setGymTrainers(response.data.data.gymTrainers);
+                setGymCustomers(response.data.data.gymCustomers);
             }
 
             setIsLoading(false);
@@ -92,7 +92,7 @@ export const RegistrationProvider : React.FC<{children : ReactNode}> = ({childre
         }
     };
 
-    const updateRegistrationInfo = async(context:string, updateId : number) : Promise<boolean> => {
+    const updateRegistrationInfo = async(updateType:string, updateData : number) : Promise<boolean> => {
         setIsLoading(true);
 
         try {
@@ -108,7 +108,7 @@ export const RegistrationProvider : React.FC<{children : ReactNode}> = ({childre
             console.log("updating registration");
 
             // 요청 보내기
-            const response = await axios.put(`${Config.API_URL}/registartion/update`, { updateId }, { headers : { 'Content-Type': `${context}/change-data`, Authorization: access_token}});
+            const response = await axios.put(`${Config.API_URL}/registration/update`, { updateType, updateData  }, { headers: { Authorization: access_token } });
 
             // 응답 처리
             if (response.status === 200) {

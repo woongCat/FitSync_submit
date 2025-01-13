@@ -2,7 +2,7 @@ import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-na
 import { useNavigation } from '@react-navigation/native';
 import { useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import TabNavgation from './TabNavigation';
+import TabNavigation from './TabNavigation';
 import IndexScreen from '../screens/IndexScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
@@ -57,7 +57,7 @@ const RootNavigation : React.FC = () => {
                 />
                 <RootStack.Screen 
                     name = "TabNav" 
-                    component={TabNavgation}
+                    component={TabNavigation}
                     options={{headerShown : false}}
                 />
             </RootStack.Navigator>

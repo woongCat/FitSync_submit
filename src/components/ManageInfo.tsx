@@ -64,30 +64,43 @@ const ManageInfo: React.FC<ManageInfoProps> = React.memo(({ userType, relatedTra
                 <View style={{ flex : 1}}>
                     {/* 현재 선택된 트레이너 표시 */}
                     <Text style={styles.sectionTitle}>Current Trainer:</Text>
-                    {selectedTrainer && (
+                    {selectedTrainer ? (
                         <View style={styles.itemContainer}>
                             <Text style={styles.itemTextName}>{selectedTrainer.trainerName}</Text>
                             <Text style={styles.itemTextDetail}>Speciality: {selectedTrainer.trainerSpeciality}</Text>
                             <Text style={styles.itemTextDetail}>Recent Award: {selectedTrainer.trainerRecentAward}</Text>
                             <Text style={styles.itemTextDetail}>Recent Certification: {selectedTrainer.trainerRecentCertification}</Text>
                         </View>
+                    ) : (
+                        <View style={styles.noTrainerContainer}>
+                            <Text style={styles.noTrainerText}>No trainer is currently selected.</Text>
+                        </View>
                     )}
 
                     {/* 가능한 트레이너들 */}
                     <Text style={styles.sectionTitle}>Available Trainers:</Text>
-                    <Text style={styles.sectionDetail}>* Select trainer to change</Text>
-                    <FlatList
-                        data={availableTrainers}
-                        keyExtractor={(item) => item.trainerId.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity style={styles.itemContainer} onPress={() => handleChangeTrainer(item.trainerId)}>
-                                <Text style={styles.itemTextName}>{item.trainerName}</Text>
-                                <Text style={styles.itemTextDetail}>Speciality: {item.trainerSpeciality}</Text>
-                                <Text style={styles.itemTextDetail}>Recent Award: {item.trainerRecentAward}</Text>
-                                <Text style={styles.itemTextDetail}>Certification: {item.trainerRecentCertification}</Text>
-                            </TouchableOpacity>
-                        )}
-                    />
+                    {availableTrainers ? (
+                        <View>
+                            <Text style={styles.sectionDetail}>* Select trainer to change</Text>
+                            <FlatList
+                                data={availableTrainers}
+                                keyExtractor={(item) => item.trainerId.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity style={styles.itemContainer} onPress={() => handleChangeTrainer(item.trainerId)}>
+                                        <Text style={styles.itemTextName}>{item.trainerName}</Text>
+                                        <Text style={styles.itemTextDetail}>Speciality: {item.trainerSpeciality}</Text>
+                                        <Text style={styles.itemTextDetail}>Recent Award: {item.trainerRecentAward}</Text>
+                                        <Text style={styles.itemTextDetail}>Certification: {item.trainerRecentCertification}</Text>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                        </View>
+                    ) : (
+                        <View style={styles.noTrainerContainer}>
+                            <Text style={styles.noTrainerText}>No trainer is currently avaliable.</Text>
+                        </View>
+                    )}
+                    
                 </View>
             )}
 
@@ -138,6 +151,17 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#333',
         marginBottom: 4,
+    },
+    noTrainerContainer: {
+        padding: 5,
+        marginBottom: 5,
+        borderRadius: 8,
+    },
+    noTrainerText : {
+        fontSize: 16,
+        color: '#999',
+        fontStyle: 'italic',
+        marginVertical: 10,
     },
     buttonContainer: {
         marginTop: 20,

@@ -61,6 +61,7 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
 
     const signUp = async(name : string, email:string, password:string, userType : string, dob : string, phoneNumber : string) : Promise<boolean> => {
         try {
+
             const result = await axios.post(`${Config.API_URL}/signup`, {email, password, name, userType, dob, phoneNumber});
 
             if (result.status === 201) {
@@ -82,6 +83,7 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
 
     const signIn = async(email:string, password:string, userType : string) : Promise<boolean> => {
         try {
+          
             const result = await axios.post(`${Config.API_URL}/login`, {email, password, userType}); 
 
             if (Platform.OS === 'ios') {
@@ -89,6 +91,7 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
             }
 
             //console.log(result);
+
             if (result.status === 200) {
                 Alert.alert('Success', `Welcome ${result.data.name}!`);
                 // 여기 set 추가되는 만큼 logout에서 remove & null 처리 해줘야함
@@ -97,6 +100,7 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
                 setUserName(result.data.name);
                 await AsyncStorage.setItem('userName', result.data.name);
                 setisAuthenticated(true);
+
                 return true;
             } else {
                 return false;
@@ -142,8 +146,6 @@ export const AuthProvider : React.FC<{children : ReactNode}> = ({children}) => {
             console.error(e);
         }
     };
-
-    if (isLoading) return <ActivityIndicator size={'large'} color={'red'}/>
 
     return <AuthContext.Provider 
                 value={{token, userName, isLoading, isAuthenticated, signIn, signUp, signOut, checkAuth}}>

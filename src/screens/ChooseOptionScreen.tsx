@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     Alert,
     Modal,
+    ActivityIndicator,
 } from 'react-native';
 import styles from '../style/styles';
 import { RoutineStackParamList } from '../navigation/RoutineNavigation';
@@ -12,7 +13,7 @@ import { useState } from 'react';
 import DocumentPicker from 'react-native-document-picker';
 import { upload } from '../context/UploadContext';
 import Config  from "react-native-config"; // .env에서 변수를 가져옴
-import { Record, Routine } from '../context/RecordContext';
+import { Routine } from '../context/RecordContext';
 
 type ChooseOptionScreenNavigationProp = NativeStackNavigationProp<RoutineStackParamList, 'RoutineDetail'>
 
@@ -21,6 +22,7 @@ interface ChooseOptionScreenProps {
 }
 
 const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) => {
+    const [isUploadLoading, setIsUploadLoading] = useState(false);
     const [fileUri, setFileUri] = useState<string | null>(null);
 
     //DocumentPicker를 사용하는 경우 가져오는 파일에 대한 권한을 자동으로 요청 및 세팅하므로 requestStoragePermission가 필요없음.
@@ -33,6 +35,8 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
                 type: [DocumentPicker.types.images, DocumentPicker.types.pdf], // 선택할 파일 타입을 지정
             });
 
+            setIsUploadLoading (true);
+
             const file = res[0]; // 첫 번째 파일 선택
             setFileUri(file.uri); // 선택한 파일의 URI를 상태에 저장
             
@@ -41,10 +45,12 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
                 {
                     uri: file.uri,
                     type: file.type, // 사진의 MIME 타입
-                    name: 'photo.jpg', // TODO: 파일 이름 형식 나중에 수정
+                    name: 'photo.jpg', 
                 },
-                `${Config.API_URL}/upload` // TODO: url 나중에 수정
+                `${Config.API_URL}/upload` 
             );
+
+            setIsUploadLoading (false);
     
             if (response) {
                 // 서버로부터 받은 응답 데이터를 Record와 Routine 형식에 맞게 변환
@@ -88,7 +94,15 @@ const ChooseOptionScreen : React.FC<ChooseOptionScreenProps> = ({navigation}) =>
                 <Text style={styles.bottonText}>Create New</Text>
             </TouchableOpacity>
 
-
+            {/* 로딩 상태일 때 Modal 표시 */}
+            {isUploadLoading && (
+                <Modal transparent animationType="fade">
+                <View style={styles.overlay}>
+                    <ActivityIndicator size="large" color="red" />
+                    <Text style={styles.loadingText}>Loading...</Text>
+                </View>
+                </Modal>
+            )}
         </View>
     );
 };

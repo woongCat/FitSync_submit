@@ -1,4 +1,4 @@
-import { Text, TextInput, TouchableOpacity, View, FlatList, ScrollView } from "react-native";
+import { Text, TextInput, TouchableOpacity, View, FlatList, ScrollView, ActivityIndicator } from "react-native";
 import styles from "../style/styles";
 import { icon } from "../constants/icons";
 import React, { useContext, useEffect, useState } from "react";
@@ -11,13 +11,18 @@ interface SearchExerciseProps {
 }
 
 const SearchExercise : React.FC<SearchExerciseProps> = ({ onCancel, onExerciseSelect }) => {
+    const [isLoading, setIsLoading] = useState(false);
     const [exerciseName, setExerciseName] = useState('');
     const {fetchExerciseData, exercises} = useContext(ExerciseContext);
     const [filteredExercises, setFilteredExercises] = useState(exercises);
     const [selectedBodyPart, setSelectedBodyPart] = useState<string>('');
 
     useEffect(() => {
+        setIsLoading(true);
+
         fetchExerciseData();
+
+        setIsLoading(false);
     },[]);
 
     useEffect(() => {
@@ -89,11 +94,22 @@ const SearchExercise : React.FC<SearchExerciseProps> = ({ onCancel, onExerciseSe
                 </ScrollView>
             </View>
             
-            <FlatList 
-                data={filteredExercises}
-                keyExtractor={(item) => item?.id + item?.exercise_id + item?.name}
-                renderItem={({item}) => <ExerciseItem exercise={item} onPress={() => onExerciseSelect(item)} />}
-            />
+            
+
+            {isLoading ? (
+                <View style={{ flex : 1 , justifyContent : 'center', alignItems : 'center'}}>
+                    <ActivityIndicator size="large" color="grey" />
+                    <Text style={styles.loadingText}>Loading...</Text>
+                </View>
+            ) : (
+                <View style={{ flex : 1 }}>
+                    <FlatList 
+                        data={filteredExercises}
+                        keyExtractor={(item) => item?.id + item?.exercise_id + item?.name}
+                        renderItem={({item}) => <ExerciseItem exercise={item} onPress={() => onExerciseSelect(item)} />}
+                    />
+                </View>
+            )}
 
         </View>
     );

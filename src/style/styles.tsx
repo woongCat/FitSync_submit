@@ -457,13 +457,12 @@ const styles = StyleSheet.create ({
         top : 25,
         right : 10,
         backgroundColor : '#056edd',
-        paddingHorizontal : 5,
+        paddingHorizontal : 8,
         paddingVertical : 5,
         borderRadius : 4,
     },
     RecordOptionBtnText : {
         color : '#fff',
-        fontWeight : 'bold',
         fontSize : 14,
     },
     RoutineLabel : {
@@ -535,7 +534,7 @@ const styles = StyleSheet.create ({
         fontSize: 14,
         color: '#555',
     },
-    gymTrainerCount: {
+    gymPhoneNumber: {
         fontSize: 14,
         color: '#888',
     },
@@ -626,6 +625,17 @@ const styles = StyleSheet.create ({
     emptyScheduleText: {
         fontSize: 16,
         color: '#aaa',
+    },
+    overlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#fff',
     },
 });
 

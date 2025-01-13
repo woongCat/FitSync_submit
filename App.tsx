@@ -24,11 +24,7 @@ function App(): React.JSX.Element {
               <RegistrationProvider>
                 <AnalyticsProvider>
                   <NavigationContainer>
-                    <Stack.Navigator>
-                        <Stack.Screen name="Root" component={RootNavigation} options={{headerShown : false}}/>
-                        <Stack.Screen name="Tabs" component={TabNavgation} options={{headerShown : false}}/>
-                        <Stack.Screen name="Routine" component={RoutineNavigation} options={{headerShown : false}}/>
-                      </Stack.Navigator>
+                    <RootNavigation />
                   </NavigationContainer>
                 </AnalyticsProvider>
               </RegistrationProvider>
