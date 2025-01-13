@@ -346,6 +346,38 @@ const styles = StyleSheet.create ({
         textAlign: 'center',
         fontSize: 16,
     },
+    addButton: {
+        position: 'absolute',
+        right: 20,
+        bottom: 20,
+        backgroundColor: '#007bff',
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderRadius: 6
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    modalContent: {
+        width: '80%',
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    cancelButton: {
+        backgroundColor: '#ccc',
+        padding: 10,
+        borderRadius: 6,
+        alignItems: 'center'
+    },
     RoutineCardSetInput: {
         width: 60,
         height: 40,
@@ -551,6 +583,48 @@ const styles = StyleSheet.create ({
         marginTop: 10, // profileMenuBtn과 겹치지 않도록 여백 추가
         padding: 15, // 내용과의 여백
         marginHorizontal: 5, // 양쪽 여백
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    sliderContainer: {
+        marginBottom: 20,
+    },
+    slider: {
+        width: '100%',
+        height: 40,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    scheduleContainer: {
+        backgroundColor: '#f9f9f9',
+        padding: 16,
+        marginVertical: 8,
+        marginHorizontal: 16,
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    scheduleText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    emptyScheduleContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 16,
+    },
+    emptyScheduleText: {
+        fontSize: 16,
+        color: '#aaa',
     },
     overlay: {
         flex: 1,

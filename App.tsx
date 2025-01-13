@@ -10,6 +10,7 @@ import TabNavgation from './src/navigation/TabNavigation';
 import { GymProvider } from './src/context/GymContext';
 import { RegistrationProvider } from './src/context/RegistrationContext';
 import { AnalyticsProvider } from './src/context/AnalyticsContext';
+import { PTScheduleProvider } from './src/context/PTScheduleContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,17 +19,19 @@ function App(): React.JSX.Element {
     <AuthProvider>
       <ExerciseProvider>
         <RecordProvider>
-          <GymProvider>
-            <RegistrationProvider>
-              <AnalyticsProvider>
-                <NavigationContainer>
-                  <RootNavigation />
-                </NavigationContainer>
-              </AnalyticsProvider>
-            </RegistrationProvider>
-          </GymProvider>
+          <PTScheduleProvider>
+            <GymProvider>
+              <RegistrationProvider>
+                <AnalyticsProvider>
+                  <NavigationContainer>
+                    <RootNavigation />
+                  </NavigationContainer>
+                </AnalyticsProvider>
+              </RegistrationProvider>
+            </GymProvider>
+          </PTScheduleProvider>
         </RecordProvider>
-      </ExerciseProvider> 
+      </ExerciseProvider>
     </AuthProvider>
   );
 }

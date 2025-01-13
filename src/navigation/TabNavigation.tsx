@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import ScheduleScreen from "../screens/ScheduleScreen";
+import UnifiedScheduleScreen from "../screens/PTScheduleScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import MyTabBar from "../components/TabBar";
 import RoutineNavigation from "./RoutineNavigation";
@@ -20,7 +20,7 @@ const TabNavigation : React.FC = () => {
             tabBar={(props) => <MyTabBar {...props} />}
         >
             <BottomTab.Screen name="Home" component={HomeScreen} options={{headerShown : false}}/>
-            <BottomTab.Screen name="Schedule" component={ScheduleScreen} options={{headerShown : false}}/>
+            <BottomTab.Screen name="Schedule" component={UnifiedScheduleScreen} options={{headerShown : false}}/>
             <BottomTab.Screen name="Routine" component={RoutineNavigation} options={{headerShown : false}}/>
             <BottomTab.Screen name="Profile" component={ProfileScreen} options={{headerShown : false}}/>
         </BottomTab.Navigator>
