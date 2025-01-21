@@ -29,7 +29,11 @@ FitSync는 다음과 같은 목적을 위해 개발되었습니다:
 6. **자동화된 데이터 동기화**
    - Airflow를 활용한 주기적인 데이터 동기화 및 업데이트
 
+![login](https://github.com/user-attachments/assets/37da3546-5591-484d-a35b-f0a86631aa8d)
 
+![Make_PT_Reservation](https://github.com/user-attachments/assets/2c032dad-9c8b-45a4-b477-500cf2bcc05f)
+
+![OCR-Recrod-video](https://github.com/user-attachments/assets/8259c6a0-ae67-414e-9c94-38ff53e6a9ef)
 
 ## **사전 요구 사항**
 
